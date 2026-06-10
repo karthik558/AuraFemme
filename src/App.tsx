@@ -238,9 +238,9 @@ function App() {
       <div className="app-container">
         <motion.header 
           className="glass-card app-header"
-          initial={{ x: 50, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ y: -20, opacity: 0, filter: 'blur(10px)' }}
+          animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
         >
           <div className="header-content">
             <div className="header-brand">
@@ -273,9 +273,9 @@ function App() {
         <section className="main-layout">
           <motion.aside 
             className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''}`}
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ x: -30, opacity: 0, filter: 'blur(10px)' }}
+            animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
           >
             <div className="glass-card panel">
               <div className="panel-header">
@@ -349,10 +349,10 @@ function App() {
           </motion.aside>
 
           <motion.main 
-            className="content-area"
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="main-content"
+            initial={{ y: 30, opacity: 0, filter: 'blur(10px)' }}
+            animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
             <motion.section layout className="glass-card panel">
               <div className="metrics-grid">
@@ -379,7 +379,7 @@ function App() {
             </motion.section>
 
             <div>
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+              <motion.div initial={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
                 <div className="glass-card panel">
                   <div className="panel-header" style={{ alignItems: 'center' }}>
                     <div>
@@ -557,9 +557,9 @@ function App() {
           {/* Footer */}
           <motion.footer 
             className="app-footer"
-            initial={{ x: 50, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 }}
           >
             <p className="footer-text">
               &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
