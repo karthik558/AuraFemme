@@ -22,23 +22,27 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
     
     try {
       const canvas = await html2canvas(reportRef.current, {
-        scale: 2, // High resolution
+        scale: 2, // Restored high resolution
         useCORS: true,
         backgroundColor: '#ffffff'
       });
       
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
+        compress: true
       });
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('Aura-Femme-Clinical-Report.pdf');
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      const now = new Date();
+      const dateStr = now.toISOString().split('T')[0];
+      const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+      pdf.save(`Aura-Femme-${dateStr}-${timeStr}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
     } finally {
@@ -112,7 +116,8 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
           maxWidth: '800px',
           margin: '0 auto',
           position: 'relative',
-          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
           fontFamily: 'Inter, system-ui, sans-serif'
         }}
       >
@@ -127,7 +132,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
           </div>
           <div style={{ textAlign: 'right' }}>
             <p style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Date Generated</p>
-            <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>{new Date().toLocaleDateString()}</p>
+            <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>{new Date().toLocaleString()}</p>
           </div>
         </div>
 
@@ -204,7 +209,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         </div>
 
         {/* Footer Note */}
-        <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid #eee', textAlign: 'center' }}>
+        <div style={{ marginTop: '60px', paddingTop: '20px', borderTop: '1px solid #eee', textAlign: 'center' }}>
           <p style={{ margin: 0, fontSize: '12px', color: '#999' }}>Generated securely by Aura Femme • Developed by Karthik Lal</p>
         </div>
       </div>
