@@ -82,7 +82,7 @@ function App() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [ready, setReady] = useState(false)
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
-  const [symptomNotes, setSymptomNotes] = useState<Record<number, string>>({})
+
   const [sharedCaseStudy, setSharedCaseStudy] = useState<CaseStudyResult | null>(null)
   const [lastPeriodDate, setLastPeriodDate] = useState(() => addUtcDays(utcTodayIso(), -12))
   const [cycleLength, setCycleLength] = useState(28)
@@ -165,7 +165,7 @@ function App() {
     return calendarDays.find((day) => day.cycleDay === selectedDay.cycleDay) ?? calendarDays[0]
   }, [calendarDays, selectedDay])
 
-  const selectedDayNote = activeDay ? symptomNotes[activeDay.cycleDay] ?? '' : ''
+
   const currentPhaseSentence = metrics.currentPhase === 'menstruation' ? 'Bleeding window'
       : metrics.currentPhase === 'follicular' ? 'Follicular build'
       : metrics.currentPhase === 'ovulation' ? 'Peak fertility window' : 'Luteal stabilization'
@@ -485,17 +485,7 @@ function App() {
                               <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
                             </div>
 
-                            <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
-                              <label className="field-group">
-                                <span className="field-label">Symptom note</span>
-                                <textarea
-                                  value={selectedDayNote}
-                                  onChange={(e) => setSymptomNotes(curr => ({ ...curr, [activeDay.cycleDay]: e.target.value }))}
-                                  placeholder="Log mood shifts, cramps, discharge, etc."
-                                  style={{ minHeight: '8rem', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', color: 'var(--text-strong)', outline: 'none' }}
-                                />
-                              </label>
-                            </div>
+
                           </section>
                         )}
                       </div>
