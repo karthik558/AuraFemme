@@ -93,6 +93,7 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
+  background-color: currentColor;
   box-shadow: 0 0 8px currentColor;
 }
 
