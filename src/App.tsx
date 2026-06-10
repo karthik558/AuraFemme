@@ -1,3 +1,4 @@
+import auraLogo from './assets/icon-color.png'
 import { motion } from 'framer-motion'
 import {
   Activity,
@@ -243,8 +244,7 @@ function App() {
         >
           <div className="header-content">
             <div className="header-brand">
-              <img src="/favicon.svg" alt="Aura Femme Logo" className="brand-logo-img" />
-              <h1 className="brand-title">Aura Femme</h1>
+              <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
             </div>
             <div className="header-actions">
               <div className="today-badge">
