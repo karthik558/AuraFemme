@@ -3,6 +3,7 @@ import { ArrowRightLeft, FlaskConical, Radar, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { CaseStudyResult } from '../types'
 import { buildCaseStudyResult, clampNumber, formatUtcDateLabel, utcTodayIso } from '../utils/calculator'
+import { DateTriplet } from './DateTriplet'
 import './SafetyAnalyzer.css'
 
 interface SafetyAnalyzerProps {
@@ -64,13 +65,13 @@ export function SafetyAnalyzer({ initialCycleLength, initialLutealPhaseLength, o
         </div>
 
         <div className="controls-grid">
-          <InputField
+          <DateTriplet
             label="Last period date"
             value={lastPeriodDate}
             onChange={setLastPeriodDate}
             helper="The cycle baseline used for the model."
           />
-          <InputField
+          <DateTriplet
             label="Intercourse date"
             value={intercourseDate}
             onChange={setIntercourseDate}
@@ -175,31 +176,6 @@ function Metric({ label, value }: { label: string; value: string }) {
       <dt className="input-metric-label">{label}</dt>
       <dd className="input-metric-value">{value}</dd>
     </div>
-  )
-}
-
-function InputField({
-  label,
-  value,
-  onChange,
-  helper,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  helper: string
-}) {
-  return (
-    <label className="control-field">
-      <span className="control-label">{label}</span>
-      <input
-        type="date"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="control-input"
-      />
-      <span className="control-helper">{helper}</span>
-    </label>
   )
 }
 

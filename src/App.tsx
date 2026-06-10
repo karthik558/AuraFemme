@@ -15,16 +15,13 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
+import { DateTriplet } from './components/DateTriplet'
 import {
   addUtcDays,
   buildCalendarDays,
   buildCycleMetrics,
   clampNumber,
-  daysInUtcMonth,
   formatUtcDateLabel,
-  monthNames,
-  splitUtcIso,
-  toUtcIso,
   utcTodayIso,
 } from './utils/calculator'
 import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode } from './types'
@@ -285,7 +282,7 @@ function App() {
               </div>
 
               <div className="panel-body">
-                <DateTriplet value={lastPeriodDate} onChange={handleDatePartsChange} />
+                <DateTriplet label="Last period start date" value={lastPeriodDate} onChange={handleDatePartsChange} />
 
                 <SliderField label="Cycle duration" helper="21 to 40 days" value={cycleLength} min={21} max={40} onChange={setCycleLength} />
                 <SliderField label="Bleeding duration" helper="Menstruation length" value={bleedingDuration} min={2} max={10} onChange={setBleedingDuration} />
@@ -602,37 +599,6 @@ function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: T
           {themeModeLabels[option]}
         </button>
       ))}
-    </div>
-  )
-}
-
-function DateTriplet({ value, onChange }: { value: string; onChange: (nextIso: string) => void }) {
-  const { year, month, day } = splitUtcIso(value)
-  const yearOptions = Array.from({ length: 12 }, (_, i) => new Date().getUTCFullYear() - 5 + i)
-  const dayOptions = daysInUtcMonth(year, month)
-
-  return (
-    <div className="field-group">
-      <div className="field-header" style={{ justifyContent: 'flex-start' }}>
-        <CalendarDays className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
-        <span className="field-label">Last period start date</span>
-      </div>
-      <div className="date-triplet-grid">
-        <SelectField value={year} onChange={(y) => onChange(toUtcIso(new Date(Date.UTC(y, month - 1, Math.min(day, daysInUtcMonth(y, month))))))} options={yearOptions.map(i => ({ value: i, label: String(i) }))} />
-        <SelectField value={month} onChange={(m) => onChange(toUtcIso(new Date(Date.UTC(year, m - 1, Math.min(day, daysInUtcMonth(year, m))))))} options={monthNames.map((n, i) => ({ value: i + 1, label: n }))} />
-        <SelectField value={day} onChange={(d) => onChange(toUtcIso(new Date(Date.UTC(year, month - 1, d))))} options={Array.from({ length: dayOptions }, (_, i) => i + 1).map(i => ({ value: i, label: String(i) }))} />
-      </div>
-      <p className="field-helper">{formatUtcDateLabel(value)}</p>
-    </div>
-  )
-}
-
-function SelectField({ value, options, onChange }: { value: number; options: Array<{ value: number; label: string }>; onChange: (val: number) => void }) {
-  return (
-    <div className="select-wrapper">
-      <select value={value} onChange={(e) => onChange(Number(e.target.value))} className="custom-select">
-        {options.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-      </select>
     </div>
   )
 }
