@@ -344,28 +344,6 @@ function App() {
                 </div>
               </div>
             </div>
-
-            <div className="glass-card panel">
-              <p className="panel-label">Clinical snapshot</p>
-              <div className="snapshot-list" style={{ marginTop: '1rem' }}>
-                <div className="snapshot-item">
-                  <span>Current status</span>
-                  <span className="snapshot-value">Day {metrics.cycleDay} of {metrics.cycleLength}</span>
-                </div>
-                <div className="snapshot-item">
-                  <span>Phase</span>
-                  <span className="snapshot-value">{metrics.currentPhaseLabel}</span>
-                </div>
-                <div className="snapshot-item">
-                  <span>Ovulation</span>
-                  <span className="snapshot-value">{metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}</span>
-                </div>
-                <div className="snapshot-item">
-                  <span>Next period</span>
-                  <span className="snapshot-value">{metrics.isOverdue ? 'Due now' : `${metrics.nextPeriodCountdown} days`}</span>
-                </div>
-              </div>
-            </div>
           </motion.aside>
 
           <motion.main 
