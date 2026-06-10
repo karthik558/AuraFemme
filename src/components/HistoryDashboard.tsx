@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { CalendarClock, Filter, Trash2 } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { CalendarClock, Filter, Trash2, Download, Upload } from 'lucide-react'
+import { useMemo, useState, useRef } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './HistoryDashboard.css'
@@ -9,12 +9,15 @@ interface HistoryDashboardProps {
   logs: Record<string, DailyLog>
   currentCycleStartIso: string
   onDeleteLog?: (dateIso: string) => void
+  onExportData?: () => void
+  onImportData?: (file: File) => void
 }
 
 type FilterOption = 'all' | 'this_cycle' | 'last_7_days'
 
-export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: HistoryDashboardProps) {
+export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onExportData, onImportData }: HistoryDashboardProps) {
   const [filter, setFilter] = useState<FilterOption>('this_cycle')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const filteredLogs = useMemo(() => {
     const allLogs = Object.values(logs).sort((a, b) => b.dateIso.localeCompare(a.dateIso))
@@ -35,6 +38,16 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
     return allLogs
   }, [logs, filter, currentCycleStartIso])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && onImportData) {
+      onImportData(file)
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
   return (
     <section className="history-dashboard animate-fade-in">
       <div className="history-header">
@@ -43,9 +56,9 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
           <h2 className="heading-primary" style={{ fontSize: '1.75rem', margin: 0 }}>Symptom History</h2>
         </div>
         
-        <div className="history-filters">
-          <Filter className="w-4 h-4 text-muted" />
+        <div className="history-filters" style={{ flexWrap: 'wrap', gap: '1rem' }}>
           <div className="filter-buttons">
+            <Filter className="w-4 h-4 text-muted" style={{ marginRight: '0.5rem' }} />
             <button 
               className={`btn ${filter === 'last_7_days' ? 'btn-primary' : 'btn-outline'}`}
               onClick={() => setFilter('last_7_days')}
@@ -67,6 +80,28 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
             >
               All Time
             </button>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '0.5rem', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '1rem' }}>
+            {onExportData && (
+              <button className="btn btn-outline" onClick={onExportData} title="Export JSON" style={{ padding: '0.4rem 0.75rem' }}>
+                <Download size={16} />
+              </button>
+            )}
+            {onImportData && (
+              <>
+                <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} title="Import JSON" style={{ padding: '0.4rem 0.75rem' }}>
+                  <Upload size={16} />
+                </button>
+                <input 
+                  type="file" 
+                  accept=".json" 
+                  ref={fileInputRef} 
+                  style={{ display: 'none' }} 
+                  onChange={handleFileChange}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

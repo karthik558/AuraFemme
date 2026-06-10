@@ -118,6 +118,35 @@ function App() {
     })
   }
 
+  const handleExportData = () => {
+    const dataStr = JSON.stringify({ logs }, null, 2)
+    const blob = new Blob([dataStr], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `aura-femme-data-${utcTodayIso()}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+  }
+
+  const handleImportData = async (file: File) => {
+    try {
+      const text = await file.text()
+      const parsed = JSON.parse(text)
+      if (parsed && parsed.logs && typeof parsed.logs === 'object') {
+        setLogs(prev => ({ ...prev, ...parsed.logs }))
+        alert('Data imported successfully!')
+      } else {
+        alert('Invalid data format. Could not import.')
+      }
+    } catch (err) {
+      console.error(err)
+      alert('Failed to parse file.')
+    }
+  }
+
   const [lastPeriodDate, setLastPeriodDate] = useState(() => addUtcDays(utcTodayIso(), -12))
   const [cycleLength, setCycleLength] = useState(28)
   const [bleedingDuration, setBleedingDuration] = useState(5)
@@ -548,7 +577,9 @@ function App() {
                       <HistoryDashboard 
                         logs={logs} 
                         currentCycleStartIso={metrics.cycleStartIso} 
-                        onDeleteLog={handleDeleteLog} 
+                        onDeleteLog={handleDeleteLog}
+                        onExportData={handleExportData}
+                        onImportData={handleImportData}
                       />
                     </motion.div>
 
