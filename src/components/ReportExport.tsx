@@ -205,7 +205,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
 
         {/* Footer Note */}
         <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid #eee', textAlign: 'center' }}>
-          <p style={{ margin: 0, fontSize: '12px', color: '#999' }}>Generated securely by Aura Femme • 100% Client-Side Privacy</p>
+          <p style={{ margin: 0, fontSize: '12px', color: '#999' }}>Generated securely by Aura Femme • Developed by Karthik Lal</p>
         </div>
       </div>
     </div>
