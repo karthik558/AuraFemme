@@ -209,20 +209,26 @@
   }
   
   .app-nav {
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.5rem;
     gap: 0.5rem;
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-full);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
   }
 
   .nav-item {
-    flex: 1 1 calc(50% - 0.5rem);
+    flex: 0 0 auto;
     justify-content: center;
     text-align: center;
-    font-size: 0.8rem;
-    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+    padding: 0.6rem 1.25rem;
+    white-space: nowrap;
+    scroll-snap-align: start;
   }
   
   .report-grid-3, .report-grid-2 {
