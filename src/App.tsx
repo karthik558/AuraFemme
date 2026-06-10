@@ -9,6 +9,7 @@ import {
   HeartPulse,
   MoonStar,
   ShieldAlert,
+  ShieldCheck,
   Sparkles,
   SunMedium,
   Target,
@@ -513,9 +514,14 @@ function App() {
                           <div className="phase-summary">
                             <p className="panel-label">Exported case study</p>
                             {sharedCaseStudy ? (
-                              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <div className="badge">{sharedCaseStudy.riskLabel} Risk</div>
-                                <div className="metric-helper">{sharedCaseStudy.summary}</div>
+                              <div className={`risk-card ${sharedCaseStudy.riskLevel === 'elevated' ? 'risk-high' : 'risk-low'}`}>
+                                <div className="risk-card-header">
+                                  {sharedCaseStudy.riskLevel === 'elevated' ? <ShieldAlert size={18} className="risk-icon" /> : <ShieldCheck size={18} className="risk-icon" />}
+                                  <span className="risk-title">{sharedCaseStudy.riskLabel} Risk Assessment</span>
+                                </div>
+                                <div className="risk-card-body">
+                                  {sharedCaseStudy.summary}
+                                </div>
                               </div>
                             ) : (
                               <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>

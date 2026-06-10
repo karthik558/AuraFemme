@@ -627,19 +627,47 @@
   background: linear-gradient(to bottom right, rgba(239, 74, 93, 0.12), transparent);
 }
 
-.badge {
-  border-radius: 9999px;
+.risk-card {
+  margin-top: 1rem;
+  border-radius: var(--radius-md);
+  padding: 1rem;
   border: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.375rem 0.75rem;
-  font-size: 0.75rem;
-  color: var(--text-main);
-  width: max-content;
-  max-width: 100%;
-  white-space: normal;
-  overflow-wrap: anywhere;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
+.risk-high {
+  background: rgba(197, 34, 51, 0.08);
+  border-color: rgba(197, 34, 51, 0.2);
+}
+
+.risk-low {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.risk-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.risk-high .risk-title, .risk-high .risk-icon {
+  color: var(--accent-primary);
+}
+
+.risk-low .risk-title, .risk-low .risk-icon {
+  color: #10b981;
+}
+
+.risk-card-body {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
 /* Progress Bars */
 .progress-container {
   display: flex;
