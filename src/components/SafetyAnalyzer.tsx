@@ -7,8 +7,12 @@ import { DateTriplet } from './DateTriplet'
 import './SafetyAnalyzer.css'
 
 interface SafetyAnalyzerProps {
-  initialCycleLength: number
-  initialLutealPhaseLength: number
+  lastPeriodDate: string
+  onLastPeriodDateChange: (date: string) => void
+  cycleLength: number
+  onCycleLengthChange: (length: number) => void
+  lutealPhaseLength: number
+  onLutealPhaseLengthChange: (length: number) => void
   onExport: (result: CaseStudyResult) => void
 }
 
@@ -26,11 +30,16 @@ const riskStyles: Record<'elevated' | 'low' | 'negligible', string> = {
   negligible: 'risk-negligible',
 }
 
-export function SafetyAnalyzer({ initialCycleLength, initialLutealPhaseLength, onExport }: SafetyAnalyzerProps) {
-  const [lastPeriodDate, setLastPeriodDate] = useState(() => utcTodayIso())
+export function SafetyAnalyzer({
+  lastPeriodDate,
+  onLastPeriodDateChange,
+  cycleLength,
+  onCycleLengthChange,
+  lutealPhaseLength,
+  onLutealPhaseLengthChange,
+  onExport,
+}: SafetyAnalyzerProps) {
   const [intercourseDate, setIntercourseDate] = useState(() => utcTodayIso())
-  const [cycleLength, setCycleLength] = useState(initialCycleLength)
-  const [lutealPhaseLength, setLutealPhaseLength] = useState(initialLutealPhaseLength)
 
   const result = useMemo(
     () =>
@@ -68,7 +77,7 @@ export function SafetyAnalyzer({ initialCycleLength, initialLutealPhaseLength, o
           <DateTriplet
             label="Last period date"
             value={lastPeriodDate}
-            onChange={setLastPeriodDate}
+            onChange={onLastPeriodDateChange}
             helper="The cycle baseline used for the model."
           />
           <DateTriplet
@@ -82,7 +91,7 @@ export function SafetyAnalyzer({ initialCycleLength, initialLutealPhaseLength, o
             value={cycleLength}
             min={21}
             max={40}
-            onChange={setCycleLength}
+            onChange={onCycleLengthChange}
             unit="days"
           />
           <RangeField
@@ -90,7 +99,7 @@ export function SafetyAnalyzer({ initialCycleLength, initialLutealPhaseLength, o
             value={lutealPhaseLength}
             min={10}
             max={18}
-            onChange={setLutealPhaseLength}
+            onChange={onLutealPhaseLengthChange}
             unit="days"
           />
         </div>

@@ -484,7 +484,15 @@ function App() {
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                       style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
                     >
-                      <SafetyAnalyzer initialCycleLength={cycleLength} initialLutealPhaseLength={lutealPhaseLength} onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} />
+                      <SafetyAnalyzer 
+                        lastPeriodDate={lastPeriodDate}
+                        onLastPeriodDateChange={setLastPeriodDate}
+                        cycleLength={cycleLength}
+                        onCycleLengthChange={setCycleLength}
+                        lutealPhaseLength={lutealPhaseLength}
+                        onLutealPhaseLengthChange={setLutealPhaseLength}
+                        onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
+                      />
                     </motion.div>
 
                     {/* Reports Section */}
