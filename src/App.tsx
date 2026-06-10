@@ -15,6 +15,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
+import { KnowledgeBase } from './components/KnowledgeBase'
 import { DateTriplet } from './components/DateTriplet'
 import {
   addUtcDays,
@@ -27,7 +28,7 @@ import {
 import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode } from './types'
 import './App.css'
 
-type TabKey = 'overview' | 'calendar' | 'safety' | 'reports'
+type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'reference'
 
 const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
   overview: {
@@ -45,6 +46,10 @@ const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
   reports: {
     title: 'Reports section',
     subtitle: 'Exports, summaries, and an executive view of the cycle data.',
+  },
+  reference: {
+    title: 'Reference Library',
+    subtitle: 'Educational resources and clinical knowledge.',
   },
 }
 
@@ -528,6 +533,19 @@ function App() {
                           </div>
                         </div>
                       </div>
+                    </motion.div>
+
+                    {/* Reference Library */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'reference' ? 1 : 0, 
+                        x: activeTab === 'reference' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
+                    >
+                      <KnowledgeBase />
                     </motion.div>
 
                   </div>
