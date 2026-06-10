@@ -233,7 +233,12 @@ function App() {
     <div className="app-wrapper">
       <div className="app-bg-glow" />
       <div className="app-container">
-        <header className="glass-card app-header">
+        <motion.header 
+          className="glass-card app-header"
+          initial={{ x: 50, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
           <div className="header-content">
             <div className="header-brand">
               <img src="/favicon.svg" alt="Aura Femme Logo" className="brand-logo-img" />
@@ -261,10 +266,15 @@ function App() {
               </button>
             ))}
           </nav>
-        </header>
+        </motion.header>
 
         <section className="main-layout">
-          <aside className="sidebar animate-slide-up">
+          <motion.aside 
+            className="sidebar"
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          >
             <div className="glass-card panel">
               <div className="panel-header">
                 <div>
@@ -334,9 +344,14 @@ function App() {
                 </div>
               </div>
             </div>
-          </aside>
+          </motion.aside>
 
-          <main className="content-area animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <motion.main 
+            className="content-area"
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
             <motion.section layout className="glass-card panel">
               <div className="metrics-grid">
                 <MetricCard
@@ -376,116 +391,165 @@ function App() {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: '1.5rem' }}>
-                    <div style={{ display: activeTab === 'overview' ? 'grid' : 'none', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }} className="dashboard-content">
-                      <div className="phase-summary highlight">
-                        <p className="panel-label">Phase summary</p>
-                        <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
-                        <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
-                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-                          <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
-                          <span className="badge">Ovulation day {metrics.ovulationDay}</span>
-                          <span className="badge">Cycle length {metrics.cycleLength}</span>
+                  <div style={{ marginTop: '1.5rem', position: 'relative' }}>
+                    
+                    {/* Clinical Dashboard (Overview) */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'overview' ? 1 : 0, 
+                        x: activeTab === 'overview' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
+                    >
+                      <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+                        <div className="phase-summary highlight">
+                          <p className="panel-label">Phase summary</p>
+                          <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
+                          <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+                            <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
+                            <span className="badge">Ovulation day {metrics.ovulationDay}</span>
+                            <span className="badge">Cycle length {metrics.cycleLength}</span>
+                          </div>
+                        </div>
+
+                        <div className="phase-summary">
+                          <p className="panel-label">Phase split</p>
+                          <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem' }}>
+                            {reportPhaseSplit.map((segment) => (
+                              <div key={segment.label}>
+                                <div className="progress-header">
+                                  <span className="field-label">{segment.label}</span>
+                                  <span className="field-helper">{segment.value} days</span>
+                                </div>
+                                <div className="progress-track" style={{ marginTop: '0.25rem' }}>
+                                  <div className={`progress-bar ${segment.tone}`} style={{ width: `${Math.max(8, (segment.value / cycleLength) * 100)}%` }} />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
+                    </motion.div>
 
-                      <div className="phase-summary">
-                        <p className="panel-label">Phase split</p>
-                        <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem' }}>
-                          {reportPhaseSplit.map((segment) => (
-                            <div key={segment.label}>
-                              <div className="progress-header">
-                                <span className="field-label">{segment.label}</span>
-                                <span className="field-helper">{segment.value} days</span>
-                              </div>
-                              <div className="progress-track" style={{ marginTop: '0.25rem' }}>
-                                <div className={`progress-bar ${segment.tone}`} style={{ width: `${Math.max(8, (segment.value / cycleLength) * 100)}%` }} />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div style={{ display: activeTab === 'calendar' ? 'flex' : 'none', flexDirection: 'column', gap: '1.5rem' }}>
-                      <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
-                      {activeDay && (
-                        <section className="phase-summary">
-                          <div className="panel-header">
-                            <div>
-                              <p className="panel-label">Chronology terminal</p>
-                              <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
-                              <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
-                            </div>
-                            <div className="badge">{activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable'}</div>
-                          </div>
-                          
-                          <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
-                            <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
-                            <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
-                            <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
-                          </div>
-
-                          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
-                            <label className="field-group">
-                              <span className="field-label">Symptom note</span>
-                              <textarea
-                                value={selectedDayNote}
-                                onChange={(e) => setSymptomNotes(curr => ({ ...curr, [activeDay.cycleDay]: e.target.value }))}
-                                placeholder="Log mood shifts, cramps, discharge, etc."
-                                style={{ minHeight: '8rem', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', color: 'var(--text-strong)', outline: 'none' }}
-                              />
-                            </label>
-                          </div>
-                        </section>
-                      )}
-                    </div>
-
-                    <div style={{ display: activeTab === 'safety' ? 'block' : 'none' }}>
-                      <SafetyAnalyzer initialCycleLength={cycleLength} initialLutealPhaseLength={lutealPhaseLength} onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} />
-                    </div>
-
-                    <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }} className="dashboard-content">
+                    {/* Calendar Terminal */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'calendar' ? 1 : 0, 
+                        x: activeTab === 'calendar' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
+                    >
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <div className="phase-summary">
-                          <p className="panel-label">Reports</p>
-                          <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Executive summary</h3>
-                          <p className="metric-helper" style={{ marginTop: '0.75rem' }}>Consolidates cycle info, advisories, and exports.</p>
-                          <ReportExport 
-                            metrics={metrics} 
-                            cycleLength={cycleLength} 
-                            lutealPhaseLength={lutealPhaseLength} 
-                            caseStudy={sharedCaseStudy}
-                          />
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
-                        <div className="phase-summary">
-                          <p className="panel-label">Exported case study</p>
-                          {sharedCaseStudy ? (
-                            <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                              <div className="badge">{sharedCaseStudy.riskLabel} Risk</div>
-                              <div className="metric-helper">{sharedCaseStudy.summary}</div>
+                        <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
+                        {activeDay && (
+                          <section className="phase-summary">
+                            <div className="panel-header">
+                              <div>
+                                <p className="panel-label">Chronology terminal</p>
+                                <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
+                                <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
+                              </div>
+                              <div className="badge">{activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable'}</div>
                             </div>
-                          ) : (
-                            <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
-                          )}
+                            
+                            <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
+                              <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
+                              <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
+                              <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                            </div>
+
+                            <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
+                              <label className="field-group">
+                                <span className="field-label">Symptom note</span>
+                                <textarea
+                                  value={selectedDayNote}
+                                  onChange={(e) => setSymptomNotes(curr => ({ ...curr, [activeDay.cycleDay]: e.target.value }))}
+                                  placeholder="Log mood shifts, cramps, discharge, etc."
+                                  style={{ minHeight: '8rem', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', color: 'var(--text-strong)', outline: 'none' }}
+                                />
+                              </label>
+                            </div>
+                          </section>
+                        )}
+                      </div>
+                    </motion.div>
+
+                    {/* Safety Analyzer */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'safety' ? 1 : 0, 
+                        x: activeTab === 'safety' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
+                    >
+                      <SafetyAnalyzer initialCycleLength={cycleLength} initialLutealPhaseLength={lutealPhaseLength} onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} />
+                    </motion.div>
+
+                    {/* Reports Section */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'reports' ? 1 : 0, 
+                        x: activeTab === 'reports' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'reports' ? 'block' : 'none' }}
+                    >
+                      <div className="dashboard-content">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                          <div className="phase-summary">
+                            <p className="panel-label">Reports</p>
+                            <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Executive summary</h3>
+                            <p className="metric-helper" style={{ marginTop: '0.75rem' }}>Consolidates cycle info, advisories, and exports.</p>
+                            <ReportExport 
+                              metrics={metrics} 
+                              cycleLength={cycleLength} 
+                              lutealPhaseLength={lutealPhaseLength} 
+                              caseStudy={sharedCaseStudy}
+                            />
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
+                          <div className="phase-summary">
+                            <p className="panel-label">Exported case study</p>
+                            {sharedCaseStudy ? (
+                              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <div className="badge">{sharedCaseStudy.riskLabel} Risk</div>
+                                <div className="metric-helper">{sharedCaseStudy.summary}</div>
+                              </div>
+                            ) : (
+                              <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
+
                   </div>
                 </div>
               </motion.div>
             </div>
-          </main>
+          </motion.main>
 
           {/* Footer */}
-          <footer className="app-footer">
+          <motion.footer 
+            className="app-footer"
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          >
             <p className="footer-text">
               &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
             </p>
-          </footer>
+          </motion.footer>
         </section>
       </div>
     </div>
