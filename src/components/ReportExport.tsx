@@ -30,9 +30,14 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('pdf-report-container');
           if (el) {
+            // Force desktop layout for PDF on the cloned DOM
             el.style.width = '800px';
             el.style.minWidth = '800px';
             el.style.maxWidth = '800px';
+            el.style.padding = '40px';
+            el.style.position = 'absolute';
+            el.style.left = '0';
+            el.style.top = '0';
           }
         }
       });
@@ -120,11 +125,13 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         style={{
           background: '#ffffff',
           color: '#1a1a1a',
-          padding: '40px',
+          padding: 'clamp(15px, 5vw, 40px)',
           borderRadius: '12px',
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
           width: '100%',
           maxWidth: '800px',
+          minWidth: 0,
+          boxSizing: 'border-box',
           margin: '0 auto',
           position: 'relative',
           display: 'flex',
@@ -133,14 +140,14 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img src={faviconGradient} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
             <div>
               <p style={{ margin: 0, fontSize: '14px', color: '#666', fontWeight: 600 }}>Clinical Cycle Intelligence Report</p>
             </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'left' }}>
             <p style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Date Generated</p>
             <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>{new Date().toLocaleString()}</p>
           </div>
@@ -170,7 +177,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         </h2>
         
         {caseStudy && (
-           <div style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid #c52233' }}>
+           <div style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid #c52233', wordBreak: 'break-word' }}>
               <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}><strong>Summary:</strong> {caseStudy.summary}</p>
            </div>
         )}

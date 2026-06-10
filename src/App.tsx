@@ -514,18 +514,20 @@ function App() {
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                       style={{ display: activeTab === 'reports' ? 'block' : 'none' }}
                     >
-                      <div className="dashboard-content">
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                          <div className="phase-summary">
+                      <div className="dashboard-content" style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+                          <div className="phase-summary" style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
                             <p className="panel-label">Reports</p>
                             <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Executive summary</h3>
                             <p className="metric-helper" style={{ marginTop: '0.75rem' }}>Consolidates cycle info, advisories, and exports.</p>
-                            <ReportExport 
-                              metrics={metrics} 
-                              cycleLength={cycleLength} 
-                              lutealPhaseLength={lutealPhaseLength} 
-                              caseStudy={sharedCaseStudy}
-                            />
+                            <div style={{ width: '100%', overflowX: 'auto', minWidth: 0 }}>
+                              <ReportExport 
+                                metrics={metrics} 
+                                cycleLength={cycleLength} 
+                                lutealPhaseLength={lutealPhaseLength} 
+                                caseStudy={sharedCaseStudy}
+                              />
+                            </div>
                           </div>
                         </div>
 
