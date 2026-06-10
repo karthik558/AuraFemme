@@ -272,7 +272,7 @@ function App() {
 
         <section className="main-layout">
           <motion.aside 
-            className="sidebar"
+            className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''}`}
             initial={{ x: 50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}

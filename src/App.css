@@ -234,6 +234,12 @@
   }
 }
 
+@media (max-width: 1279px) {
+  .sidebar.mobile-hidden {
+    display: none;
+  }
+}
+
 .content-area {
   display: flex;
   flex-direction: column;
