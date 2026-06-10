@@ -10,10 +10,11 @@ interface ReportExportProps {
   metrics: any;
   cycleLength: number;
   lutealPhaseLength: number;
+  userName: string;
   caseStudy?: CaseStudyResult | null;
 }
 
-export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStudy }: ReportExportProps) {
+export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -148,8 +149,9 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
             </div>
           </div>
           <div style={{ textAlign: 'left' }}>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: 600 }}>Date Generated</p>
-            <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>{new Date().toLocaleString()}</p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>Patient Name: <strong style={{ color: '#1a1a1a' }}>{userName}</strong></p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>Generated: <strong style={{ color: '#1a1a1a' }}>{new Date().toLocaleDateString()}</strong></p>
+            <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>Aura Femme ID: <strong style={{ color: '#1a1a1a' }}>AF-{Math.floor(Math.random() * 10000)}</strong></p>
           </div>
         </div>
 

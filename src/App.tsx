@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Clock3,
   HeartPulse,
+  LogOut,
   MoonStar,
   ShieldAlert,
   ShieldCheck,
@@ -23,6 +24,8 @@ import { KnowledgeBase } from './components/KnowledgeBase'
 import { DateTriplet } from './components/DateTriplet'
 import { DailyLogEditor } from './components/DailyLogEditor'
 import { HistoryDashboard } from './components/HistoryDashboard'
+import { OnboardingModal } from './components/OnboardingModal'
+import { LoginScreen } from './components/LoginScreen'
 import {
   addUtcDays,
   buildCalendarDays,
@@ -31,7 +34,7 @@ import {
   formatUtcDateLabel,
   utcTodayIso,
 } from './utils/calculator'
-import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode, DailyLog } from './types'
+import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode, DailyLog, UserProfile } from './types'
 import './App.css'
 
 type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'reference'
@@ -118,8 +121,73 @@ function App() {
     })
   }
 
+  const [authMode, setAuthMode] = useState<'unauthenticated' | 'authenticated' | 'guest'>(() => {
+    const savedMode = localStorage.getItem('aura-femme-authmode')
+    if (savedMode === 'guest' || savedMode === 'unauthenticated' || savedMode === 'authenticated') {
+      return savedMode
+    }
+    return localStorage.getItem('aura-femme-profile') ? 'authenticated' : 'unauthenticated'
+  })
+
+  const handleSetAuthMode = (mode: 'unauthenticated' | 'authenticated' | 'guest') => {
+    setAuthMode(mode)
+    localStorage.setItem('aura-femme-authmode', mode)
+  }
+  
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
+    const saved = localStorage.getItem('aura-femme-profile')
+    if (saved) {
+      try { return JSON.parse(saved) } catch (e) {}
+    }
+    const oldName = localStorage.getItem('aura-femme-user')
+    if (oldName) {
+      return {
+        name: oldName,
+        managementType: 'self',
+        lastPeriodDate: addUtcDays(utcTodayIso(), -12),
+        cycleLength: 28,
+        bleedingDuration: 5
+      }
+    }
+    return null
+  })
+
+  const handleCompleteOnboarding = (profile: UserProfile) => {
+    localStorage.setItem('aura-femme-profile', JSON.stringify(profile))
+    localStorage.removeItem('aura-femme-user')
+    setUserProfile(profile)
+    setLastPeriodDate(profile.lastPeriodDate)
+    setCycleLength(profile.cycleLength)
+    setBleedingDuration(profile.bleedingDuration)
+    handleSetAuthMode('authenticated')
+  }
+
+  const handleLogin = () => {
+    if (userProfile) {
+      setLastPeriodDate(userProfile.lastPeriodDate)
+      setCycleLength(userProfile.cycleLength)
+      setBleedingDuration(userProfile.bleedingDuration)
+    }
+    handleSetAuthMode('authenticated')
+  }
+
+  const handleGuestLogin = () => {
+    setLastPeriodDate(addUtcDays(utcTodayIso(), -12))
+    setCycleLength(28)
+    setBleedingDuration(5)
+    handleSetAuthMode('guest')
+  }
+
+  const handleDeleteProfile = () => {
+    localStorage.removeItem('aura-femme-profile')
+    localStorage.removeItem('aura-femme-authmode')
+    setUserProfile(null)
+    setLogs({})
+    handleSetAuthMode('unauthenticated')
+  }
+
   const handleExportData = () => {
-    const dataStr = JSON.stringify({ logs }, null, 2)
+    const dataStr = JSON.stringify({ userName: userProfile?.name, userProfile, logs }, null, 2)
     const blob = new Blob([dataStr], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -147,9 +215,23 @@ function App() {
     }
   }
 
-  const [lastPeriodDate, setLastPeriodDate] = useState(() => addUtcDays(utcTodayIso(), -12))
-  const [cycleLength, setCycleLength] = useState(28)
-  const [bleedingDuration, setBleedingDuration] = useState(5)
+  const [lastPeriodDate, setLastPeriodDate] = useState<string>(() => {
+    const savedMode = localStorage.getItem('aura-femme-authmode')
+    if (savedMode === 'guest') return addUtcDays(utcTodayIso(), -12)
+    return userProfile?.lastPeriodDate || addUtcDays(utcTodayIso(), -12)
+  })
+  
+  const [cycleLength, setCycleLength] = useState<number>(() => {
+    const savedMode = localStorage.getItem('aura-femme-authmode')
+    if (savedMode === 'guest') return 28
+    return userProfile?.cycleLength || 28
+  })
+  
+  const [bleedingDuration, setBleedingDuration] = useState<number>(() => {
+    const savedMode = localStorage.getItem('aura-femme-authmode')
+    if (savedMode === 'guest') return 5
+    return userProfile?.bleedingDuration || 5
+  })
   const [lutealPhaseLength, setLutealPhaseLength] = useState(14)
   const [goal, setGoal] = useState<CycleGoal>('track')
 
@@ -242,7 +324,27 @@ function App() {
 
   function handleDatePartsChange(nextIso: string) {
     setLastPeriodDate(nextIso)
+    if (userProfile && authMode === 'authenticated') {
+      const nextProfile = { ...userProfile, lastPeriodDate: nextIso }
+      setUserProfile(nextProfile)
+      localStorage.setItem('aura-femme-profile', JSON.stringify(nextProfile))
+    }
   }
+
+  if (authMode === 'unauthenticated') {
+    if (userProfile) {
+      return <LoginScreen 
+        profile={userProfile} 
+        onLogin={handleLogin} 
+        onGuest={handleGuestLogin} 
+        onDeleteProfile={handleDeleteProfile}
+      />
+    }
+    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} />
+  }
+
+  // Hide logs if we are in guest mode
+  const activeLogs = authMode === 'guest' ? {} : logs;
 
   if (!ready) {
     return (
@@ -401,13 +503,37 @@ function App() {
             </div>
 
             <div className="glass-card panel">
-              <div className="phase-summary highlight" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                <div style={{ marginTop: '0.125rem' }}>{advisory.icon}</div>
-                <div>
-                  <p className="panel-label">Goal advisory</p>
-                  <h3 className="panel-title" style={{ fontSize: '1.125rem', marginTop: '0.5rem' }}>{advisory.title}</h3>
-                  <p className="metric-helper" style={{ marginTop: '0.5rem' }}>{advisory.body}</p>
+              <div className="sidebar-section">
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                  <div style={{ marginTop: '0.125rem' }}>{advisory.icon}</div>
+                  <div>
+                    <p className="panel-label">Goal advisory</p>
+                    <h3 className="panel-title" style={{ fontSize: '1.125rem', marginTop: '0.5rem' }}>{advisory.title}</h3>
+                    <p className="metric-helper" style={{ marginTop: '0.5rem' }}>{advisory.body}</p>
+                  </div>
                 </div>
+              </div>
+
+              <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '1.125rem' }}>
+                    {authMode === 'guest' ? 'G' : userProfile?.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Patient Profile' : 'Managed Profile')}
+                    </p>
+                    <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: 0 }}>
+                      {authMode === 'guest' ? 'Guest User' : userProfile?.name}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => handleSetAuthMode('unauthenticated')}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.875rem', padding: '0.5rem 0', transition: 'color 0.2s', marginTop: '0.5rem' }}
+                >
+                  <LogOut size={16} /> Sign Out
+                </button>
               </div>
             </div>
           </motion.aside>
@@ -419,6 +545,14 @@ function App() {
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
             <motion.section layout className="glass-card panel">
+              <div style={{ marginBottom: '1.5rem' }}>
+                <p className="panel-label">Clinical dashboard</p>
+                <h3 className="panel-title" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>
+                  {authMode === 'guest' 
+                    ? 'Welcome, Guest'
+                    : (userProfile?.managementType === 'self' ? `Welcome back, ${userProfile?.name}` : `${userProfile?.name}'s Dashboard`)}
+                </h3>
+              </div>
               <div className="metrics-grid">
                 <MetricCard
                   label="Current status"
@@ -531,9 +665,10 @@ function App() {
 
                             <DailyLogEditor 
                               dateIso={activeDay.dateIso} 
-                              existingLog={logs[activeDay.dateIso] || null} 
+                              existingLog={activeLogs[activeDay.dateIso] || null} 
                               onSave={handleSaveLog} 
                               onDelete={() => handleDeleteLog(activeDay.dateIso)}
+                              isGuest={authMode === 'guest'}
                               onClose={() => setSelectedDay(null)} 
                             />
 
@@ -575,11 +710,12 @@ function App() {
                       style={{ display: activeTab === 'history' ? 'block' : 'none' }}
                     >
                       <HistoryDashboard 
-                        logs={logs} 
-                        currentCycleStartIso={metrics.cycleStartIso} 
+                        logs={activeLogs} 
+                        currentCycleStartIso={metrics.cycleStartIso}
                         onDeleteLog={handleDeleteLog}
                         onExportData={handleExportData}
                         onImportData={handleImportData}
+                        isGuest={authMode === 'guest'}
                       />
                     </motion.div>
 
@@ -604,6 +740,7 @@ function App() {
                                 metrics={metrics} 
                                 cycleLength={cycleLength} 
                                 lutealPhaseLength={lutealPhaseLength} 
+                                userName={userProfile?.name || 'Guest User'}
                                 caseStudy={sharedCaseStudy}
                               />
                             </div>

@@ -11,11 +11,12 @@ interface HistoryDashboardProps {
   onDeleteLog?: (dateIso: string) => void
   onExportData?: () => void
   onImportData?: (file: File) => void
+  isGuest?: boolean
 }
 
 type FilterOption = 'all' | 'this_cycle' | 'last_7_days'
 
-export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onExportData, onImportData }: HistoryDashboardProps) {
+export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onExportData, onImportData, isGuest }: HistoryDashboardProps) {
   const [filter, setFilter] = useState<FilterOption>('this_cycle')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -84,13 +85,25 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
           
           <div style={{ display: 'flex', gap: '0.5rem', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '1rem' }}>
             {onExportData && (
-              <button className="btn btn-outline" onClick={onExportData} title="Export JSON" style={{ padding: '0.4rem 0.75rem' }}>
+              <button 
+                className="btn btn-outline" 
+                onClick={onExportData} 
+                title={isGuest ? 'Guests cannot export data' : 'Export JSON'}
+                style={{ padding: '0.4rem 0.75rem' }}
+                disabled={isGuest}
+              >
                 <Download size={16} />
               </button>
             )}
             {onImportData && (
               <>
-                <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} title="Import JSON" style={{ padding: '0.4rem 0.75rem' }}>
+                <button 
+                  className="btn btn-outline" 
+                  onClick={() => fileInputRef.current?.click()} 
+                  title={isGuest ? 'Guests cannot import data' : 'Import JSON'}
+                  style={{ padding: '0.4rem 0.75rem' }}
+                  disabled={isGuest}
+                >
                   <Upload size={16} />
                 </button>
                 <input 

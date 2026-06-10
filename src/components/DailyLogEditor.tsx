@@ -1,4 +1,4 @@
-import { CalendarPlus, Check, Trash2, X } from 'lucide-react'
+import { CalendarPlus, Trash2, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
@@ -10,12 +10,13 @@ interface DailyLogEditorProps {
   onSave: (log: DailyLog) => void
   onDelete?: () => void
   onClose: () => void
+  isGuest?: boolean
 }
 
 const SYMPTOMS = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Spotting', 'Tender Breasts', 'Acne', 'Nausea']
 const MOODS = ['Calm', 'Happy', 'Energetic', 'Anxious', 'Sad', 'Irritable', 'Sensitive']
 
-export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose }: DailyLogEditorProps) {
+export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest }: DailyLogEditorProps) {
   const [symptoms, setSymptoms] = useState<string[]>(existingLog?.symptoms || [])
   const [mood, setMood] = useState<string | null>(existingLog?.mood || null)
   const [notes, setNotes] = useState(existingLog?.notes || '')
@@ -38,15 +39,6 @@ export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose
       notes,
     })
     onClose()
-  }
-
-  const handleDelete = () => {
-    if (onDelete) {
-      if (window.confirm('Are you sure you want to delete this log?')) {
-        onDelete()
-        onClose()
-      }
-    }
   }
 
   return (
@@ -106,16 +98,27 @@ export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose
         />
       </div>
 
-      <div className="log-actions" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-        {existingLog && onDelete && (
-          <button type="button" className="btn btn-outline" onClick={handleDelete} style={{ color: 'var(--tone-danger)', borderColor: 'var(--tone-danger)' }}>
-            <Trash2 size={16} /> Delete
+        <div className="log-editor-actions" style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
+          {existingLog && onDelete && (
+            <button 
+              className="btn btn-outline" 
+              style={{ color: 'var(--tone-danger)', borderColor: 'rgba(197, 34, 51, 0.3)' }}
+              onClick={() => {
+                if (window.confirm("Are you sure you want to delete this log?")) {
+                  onDelete()
+                  onClose()
+                }
+              }}
+              disabled={isGuest}
+            >
+              <Trash2 size={16} />
+              Delete Log
+            </button>
+          )}
+          <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleSave} disabled={isGuest}>
+            {isGuest ? 'Guest Users Cannot Save' : 'Save Log'}
           </button>
-        )}
-        <button type="button" className="btn btn-primary" onClick={handleSave}>
-          <Check size={16} /> Save Log
-        </button>
-      </div>
+        </div>
     </div>
   )
 }

@@ -1,0 +1,142 @@
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-body);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-modal {
+  width: 100%;
+  max-width: 450px;
+  padding: 3.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-radius: var(--radius-xl);
+}
+
+.login-icon-wrap {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-logo {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 4px 12px rgba(197, 34, 51, 0.4));
+}
+
+.login-title {
+  font-size: 2.25rem !important;
+  margin-bottom: 0.75rem;
+}
+
+.login-desc {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin-bottom: 2.5rem;
+}
+
+.login-profile-card {
+  width: 100%;
+  background: rgba(20, 20, 25, 0.4);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-medium);
+  margin-bottom: 2.5rem;
+}
+
+.login-profile-card:hover {
+  border-color: rgba(197, 34, 51, 0.4);
+  background: rgba(197, 34, 51, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(197, 34, 51, 0.15);
+}
+
+.login-profile-card:hover .login-arrow {
+  color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.profile-info {
+  flex: 1;
+  text-align: left;
+}
+
+.profile-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: var(--text-strong);
+}
+
+.profile-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.login-arrow {
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+}
+
+.login-actions-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.btn-guest {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.btn-danger-text {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.btn-danger-text:hover {
+  color: var(--tone-danger);
+}

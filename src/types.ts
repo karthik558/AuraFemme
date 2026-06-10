@@ -74,3 +74,11 @@ export interface DailyLog {
   mood: string | null
   notes: string
 }
+
+export interface UserProfile {
+  name: string
+  managementType: 'self' | 'other'
+  lastPeriodDate: string
+  cycleLength: number
+  bleedingDuration: number
+}
