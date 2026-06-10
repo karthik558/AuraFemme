@@ -1,6 +1,5 @@
 <div align="center">
-  <img src="https://api.iconify.design/mdi:water-drop.svg?color=%23c52233" width="90" height="90" alt="Aura Femme Logo" />
-  <h1>Aura Femme</h1>
+  <img src="./public/icon-color.png" height="90" alt="Logo" />
   <p><strong>Clinical Cycle Intelligence & Sexual Health Dashboard</strong></p>
   
   <p>
@@ -10,11 +9,11 @@
 
 <br />
 
-## Why Aura Femme Matters
+## Why It Matters
 
-Navigating reproductive health should not require compromising personal data or dealing with convoluted, infantilizing interfaces. **Aura Femme** was built to provide clinical-grade cycle intelligence with absolute mathematical precision.
+Navigating reproductive health should not require compromising personal data or dealing with convoluted, infantilizing interfaces. **This platform** was built to provide clinical-grade cycle intelligence with absolute mathematical precision.
 
-Whether the goal is to carefully track ovulation, optimize for conception, or manage natural contraception, individuals deserve a tool that is highly rigorous, unequivocally private, and aesthetically brilliant. Aura Femme leverages strict UTC-based chronobiology algorithms to ensure geographical locale drift never corrupts your fertile window analysis.
+Whether the goal is to carefully track ovulation, optimize for conception, or manage natural contraception, individuals deserve a tool that is highly rigorous, unequivocally private, and aesthetically brilliant. It leverages strict UTC-based chronobiology algorithms to ensure geographical locale drift never corrupts your fertile window analysis.
 
 ---
 
@@ -29,4 +28,5 @@ Whether the goal is to carefully track ovulation, optimize for conception, or ma
 
 <div align="center">
   <p><i>Empowering reproductive autonomy through beautiful, precise software.</i></p>
+  <p><small>&copy; 2026 Karthik Lal. All rights reserved</small></p>
 </div>
