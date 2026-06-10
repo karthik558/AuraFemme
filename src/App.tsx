@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import {
   Activity,
   CalendarDays,
@@ -14,6 +14,7 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
+import { ReportExport } from './components/ReportExport'
 import {
   addUtcDays,
   buildCalendarDays,
@@ -340,8 +341,8 @@ function App() {
               </div>
             </motion.section>
 
-            <AnimatePresence mode="wait">
-              <motion.div key={activeTab} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.35 }}>
+            <div>
+              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
                 <div className="glass-card panel">
                   <div className="panel-header" style={{ alignItems: 'center' }}>
                     <div>
@@ -356,112 +357,107 @@ function App() {
                   </div>
 
                   <div style={{ marginTop: '1.5rem' }}>
-                    {activeTab === 'overview' && (
-                      <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                        <div className="phase-summary highlight">
-                          <p className="panel-label">Phase summary</p>
-                          <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
-                          <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-                            <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
-                            <span className="badge">Ovulation day {metrics.ovulationDay}</span>
-                            <span className="badge">Cycle length {metrics.cycleLength}</span>
-                          </div>
-                        </div>
-
-                        <div className="phase-summary">
-                          <p className="panel-label">Phase split</p>
-                          <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem' }}>
-                            {reportPhaseSplit.map((segment) => (
-                              <div key={segment.label}>
-                                <div className="progress-header">
-                                  <span className="field-label">{segment.label}</span>
-                                  <span className="field-helper">{segment.value} days</span>
-                                </div>
-                                <div className="progress-track" style={{ marginTop: '0.25rem' }}>
-                                  <div className={`progress-bar ${segment.tone}`} style={{ width: `${Math.max(8, (segment.value / cycleLength) * 100)}%` }} />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                    <div style={{ display: activeTab === 'overview' ? 'grid' : 'none', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }} className="dashboard-content">
+                      <div className="phase-summary highlight">
+                        <p className="panel-label">Phase summary</p>
+                        <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
+                        <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+                          <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
+                          <span className="badge">Ovulation day {metrics.ovulationDay}</span>
+                          <span className="badge">Cycle length {metrics.cycleLength}</span>
                         </div>
                       </div>
-                    )}
 
-                    {activeTab === 'calendar' && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
-                        {activeDay && (
-                          <section className="phase-summary">
-                            <div className="panel-header">
-                              <div>
-                                <p className="panel-label">Chronology terminal</p>
-                                <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
-                                <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
+                      <div className="phase-summary">
+                        <p className="panel-label">Phase split</p>
+                        <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem' }}>
+                          {reportPhaseSplit.map((segment) => (
+                            <div key={segment.label}>
+                              <div className="progress-header">
+                                <span className="field-label">{segment.label}</span>
+                                <span className="field-helper">{segment.value} days</span>
                               </div>
-                              <div className="badge">{activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable'}</div>
+                              <div className="progress-track" style={{ marginTop: '0.25rem' }}>
+                                <div className={`progress-bar ${segment.tone}`} style={{ width: `${Math.max(8, (segment.value / cycleLength) * 100)}%` }} />
+                              </div>
                             </div>
-                            
-                            <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
-                              <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
-                              <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
-                              <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
-                            </div>
-
-                            <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
-                              <label className="field-group">
-                                <span className="field-label">Symptom note</span>
-                                <textarea
-                                  value={selectedDayNote}
-                                  onChange={(e) => setSymptomNotes(curr => ({ ...curr, [activeDay.cycleDay]: e.target.value }))}
-                                  placeholder="Log mood shifts, cramps, discharge, etc."
-                                  style={{ minHeight: '8rem', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', color: 'var(--text-strong)', outline: 'none' }}
-                                />
-                              </label>
-                            </div>
-                          </section>
-                        )}
+                          ))}
+                        </div>
                       </div>
-                    )}
+                    </div>
 
-                    {activeTab === 'safety' && (
+                    <div style={{ display: activeTab === 'calendar' ? 'flex' : 'none', flexDirection: 'column', gap: '1.5rem' }}>
+                      <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
+                      {activeDay && (
+                        <section className="phase-summary">
+                          <div className="panel-header">
+                            <div>
+                              <p className="panel-label">Chronology terminal</p>
+                              <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
+                              <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
+                            </div>
+                            <div className="badge">{activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable'}</div>
+                          </div>
+                          
+                          <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
+                            <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
+                            <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
+                            <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                          </div>
+
+                          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
+                            <label className="field-group">
+                              <span className="field-label">Symptom note</span>
+                              <textarea
+                                value={selectedDayNote}
+                                onChange={(e) => setSymptomNotes(curr => ({ ...curr, [activeDay.cycleDay]: e.target.value }))}
+                                placeholder="Log mood shifts, cramps, discharge, etc."
+                                style={{ minHeight: '8rem', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', color: 'var(--text-strong)', outline: 'none' }}
+                              />
+                            </label>
+                          </div>
+                        </section>
+                      )}
+                    </div>
+
+                    <div style={{ display: activeTab === 'safety' ? 'block' : 'none' }}>
                       <SafetyAnalyzer initialCycleLength={cycleLength} initialLutealPhaseLength={lutealPhaseLength} onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} />
-                    )}
+                    </div>
 
-                    {activeTab === 'reports' && (
-                      <div className="dashboard-content">
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                          <div className="phase-summary">
-                            <p className="panel-label">Reports</p>
-                            <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Executive summary</h3>
-                            <p className="metric-helper" style={{ marginTop: '0.75rem' }}>Consolidates cycle info, advisories, and exports.</p>
-                            <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
-                              <ReportStat label="Cycle phase" value={metrics.currentPhaseLabel} />
-                              <ReportStat label="Fertile window" value={`${metrics.fertileWindowStart} - ${metrics.fertileWindowEnd}`} />
-                              <ReportStat label="Next period" value={metrics.isOverdue ? 'Due' : `${metrics.nextPeriodCountdown} days`} />
-                            </div>
-                          </div>
-                        </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                          <div className="phase-summary">
-                            <p className="panel-label">Exported case study</p>
-                            {sharedCaseStudy ? (
-                              <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <div className="badge">{sharedCaseStudy.riskLabel} Risk</div>
-                                <div className="metric-helper">{sharedCaseStudy.summary}</div>
-                              </div>
-                            ) : (
-                              <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
-                            )}
-                          </div>
+                    <div style={{ display: activeTab === 'reports' ? 'block' : 'none' }} className="dashboard-content">
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        <div className="phase-summary">
+                          <p className="panel-label">Reports</p>
+                          <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Executive summary</h3>
+                          <p className="metric-helper" style={{ marginTop: '0.75rem' }}>Consolidates cycle info, advisories, and exports.</p>
+                          <ReportExport 
+                            metrics={metrics} 
+                            cycleLength={cycleLength} 
+                            lutealPhaseLength={lutealPhaseLength} 
+                            caseStudy={sharedCaseStudy}
+                          />
                         </div>
                       </div>
-                    )}
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
+                        <div className="phase-summary">
+                          <p className="panel-label">Exported case study</p>
+                          {sharedCaseStudy ? (
+                            <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                              <div className="badge">{sharedCaseStudy.riskLabel} Risk</div>
+                              <div className="metric-helper">{sharedCaseStudy.summary}</div>
+                            </div>
+                          ) : (
+                            <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
-            </AnimatePresence>
+            </div>
           </main>
 
           {/* Footer */}
@@ -485,15 +481,6 @@ function MetricCard({ label, value, helper, icon }: { label: string; value: stri
         <p className="metric-helper">{helper}</p>
       </div>
       <div className="metric-icon">{icon}</div>
-    </div>
-  )
-}
-
-function ReportStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="snapshot-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
-      <p className="metric-label">{label}</p>
-      <p className="metric-value" style={{ marginTop: 0 }}>{value}</p>
     </div>
   )
 }
