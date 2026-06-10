@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ChevronDown, ArrowLeft } from 'lucide-react';
+import { BookOpen, ChevronDown, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area } from 'recharts';
+import ReactMarkdown from 'react-markdown';
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
+import { extendedPregnancyData } from '../data/extendedPregnancyData';
 import './KnowledgeBase.css';
 
 export function KnowledgeBase() {
   const [openTopic, setOpenTopic] = useState<string | null>('pregnancy');
   const [activeArticle, setActiveArticle] = useState<string | null>(null);
+  const [activeExtendedArticle, setActiveExtendedArticle] = useState<{ url: string; title: string } | null>(null);
 
   const toggleTopic = (id: string) => {
     setOpenTopic(openTopic === id ? null : id);
@@ -26,6 +29,35 @@ export function KnowledgeBase() {
       BasalTemp: parseFloat(basalTemp.toFixed(2))
     };
   });
+
+  if (activeExtendedArticle) {
+    const markdownContent = extendedPregnancyData[activeExtendedArticle.url];
+    return (
+      <motion.div 
+        className="article-view"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
+      >
+        <button className="article-back-btn" onClick={() => setActiveExtendedArticle(null)}>
+          <ArrowLeft className="w-4 h-4" />
+          Back to {activeTopicData?.title || 'Library'}
+        </button>
+
+        <div className="article-hero" style={{ paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+          <h2 className="article-hero-title">{activeExtendedArticle.title}</h2>
+        </div>
+
+        <div className="article-body extended-markdown">
+          {markdownContent ? (
+            <ReactMarkdown>{markdownContent}</ReactMarkdown>
+          ) : (
+            <p>Content not available offline. <a href={activeExtendedArticle.url} target="_blank" rel="noopener noreferrer">Read on womenshealth.gov</a></p>
+          )}
+        </div>
+      </motion.div>
+    );
+  }
 
   if (activeTopicData) {
     return (
@@ -110,6 +142,43 @@ export function KnowledgeBase() {
               );
             })}
           </ul>
+
+          {activeTopicData.articleContent?.externalLinks && activeTopicData.articleContent.externalLinks.length > 0 && (
+            <div style={{ marginTop: '3rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+              <h3>In-Depth Reading</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1rem' }}>
+                Explore these extended articles pulled directly from the clinical source.
+              </p>
+              <ul style={{ listStyleType: 'none', padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' }}>
+                {activeTopicData.articleContent.externalLinks.map((link: any, idx: number) => (
+                  <li key={idx}>
+                    <button 
+                      onClick={() => setActiveExtendedArticle({ url: link.url, title: link.title })}
+                      className="glass-card"
+                      style={{ 
+                        width: '100%', 
+                        textAlign: 'left', 
+                        padding: '1rem', 
+                        background: 'rgba(255, 255, 255, 0.03)', 
+                        border: '1px solid rgba(255, 255, 255, 0.1)', 
+                        borderRadius: '8px', 
+                        color: 'var(--text-strong)', 
+                        cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>{link.title}</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        Read full text <ExternalLink className="w-3 h-3" />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       </motion.div>
     );

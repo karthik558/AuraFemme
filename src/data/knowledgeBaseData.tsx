@@ -29,6 +29,9 @@ export const KNOWLEDGE_TOPICS = [
         'Initiate a daily regimen of prenatal vitamins containing at least 400mcg of folic acid (Source: ACOG).',
         'Schedule your first obstetric ultrasound between 8 and 10 weeks gestation to verify viability and date the pregnancy.',
         'Monitor and report any sudden spotting or severe cramping to your clinical provider immediately.'
+      ],
+      externalLinks: [
+        { title: 'Pregnancy', url: 'https://womenshealth.gov/pregnancy' }
       ]
     }
   },
@@ -60,6 +63,14 @@ export const KNOWLEDGE_TOPICS = [
         'Discontinue hormonal contraceptives and track at least two natural cycles to establish your baseline luteal phase.',
         'Schedule a preconception screening panel, including rubella immunity, varicella, and thyroid function (TSH).',
         'Begin tracking cervical mucus consistency, noting the transition to a "raw egg white" texture which signals peak fertility.'
+      ],
+      externalLinks: [
+        { title: 'Creating a reproductive life plan', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant' },
+        { title: 'Why birth control is important', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant' },
+        { title: 'Preconception health', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant/preconception-health' },
+        { title: 'Trying to conceive', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant/trying-conceive' },
+        { title: 'Knowing if you are pregnant', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant/knowing-if-you-are-pregnant' },
+        { title: 'Unplanned pregnancy', url: 'https://womenshealth.gov/pregnancy/you-get-pregnant' }
       ]
     }
   },
@@ -91,6 +102,29 @@ export const KNOWLEDGE_TOPICS = [
         'Select an Obstetrician or Certified Nurse Midwife (CNM) and schedule your intake appointment.',
         'Audit your current medications with a pharmacist or OBGYN to ensure they are safe for fetal development.',
         'Limit caffeine intake to less than 200mg per day (roughly one 12oz cup of coffee).'
+      ],
+      externalLinks: [
+        { title: 'Stages of pregnancy', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'First trimester', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Second trimester', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Third trimester', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Prenatal care and tests', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Prenatal checkups', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Common prenatal tests', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Twins, triplets, and other multiples', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'How twins are formed', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Pregnancy with multiples', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Staying healthy and safe', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what/staying-healthy-and-safe' },
+        { title: 'Eating for two', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Using medicine and herbs', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Pregnancy complications', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Health problems during pregnancy', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Health problems before pregnancy', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Body changes and discomforts', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Breast changes', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Morning sickness', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Pregnancy loss', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' },
+        { title: 'Know your pregnancy rights', url: 'https://womenshealth.gov/pregnancy/youre-pregnant-now-what' }
       ]
     }
   },
@@ -122,6 +156,12 @@ export const KNOWLEDGE_TOPICS = [
         'Finalize your birth plan and review it with your attending clinical team to align expectations.',
         'Install and inspect the infant car seat (consult local certified technicians if necessary; hospitals require this before discharge).',
         'Prepare a postpartum recovery kit including perineal ice packs, witch hazel, and high-absorbency pads.'
+      ],
+      externalLinks: [
+        { title: 'Health care for baby', url: 'https://womenshealth.gov/pregnancy/getting-ready-baby/health-care-baby' },
+        { title: 'Making your home safe for baby', url: 'https://womenshealth.gov/pregnancy/getting-ready-baby/making-your-home-safe-baby' },
+        { title: 'Birthing, breastfeeding, and parenting classes', url: 'https://womenshealth.gov/pregnancy/getting-ready-baby/birthing-breastfeeding-and-parenting-classes' },
+        { title: 'Last-minute to-dos', url: 'https://womenshealth.gov/pregnancy/getting-ready-baby/last-minute-dos' }
       ]
     }
   },
@@ -153,6 +193,14 @@ export const KNOWLEDGE_TOPICS = [
         'Monitor lochia (postpartum bleeding) volume; saturation of a pad in under an hour requires immediate medical attention.',
         'Familiarize yourself with the Edinburgh Postnatal Depression Scale (EPDS) to self-monitor for PPD symptoms.',
         'Utilize board-certified lactation consultants early if experiencing latch difficulties or nipple trauma.'
+      ],
+      externalLinks: [
+        { title: 'Labor and birth', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/labor-and-birth' },
+        { title: 'Your baby\'s first hours of life', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/your-babys-first-hours-life' },
+        { title: 'Recovering from birth', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/recovering-birth' },
+        { title: 'Newborn care and safety', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/newborn-care-and-safety' },
+        { title: 'Getting pregnant again', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/getting-pregnant-again' },
+        { title: 'Babysitters and child care', url: 'https://womenshealth.gov/pregnancy/childbirth-and-beyond/babysitters-and-child-care' }
       ]
     }
   },
@@ -184,6 +232,9 @@ export const KNOWLEDGE_TOPICS = [
         'Cross-reference your logged symptom data with our clinical condition markers.',
         'Export your cycle history as a PDF to provide your endocrinologist with hard longitudinal data.',
         'Maintain a consistent logging streak to improve the algorithmic accuracy of anomaly detection.'
+      ],
+      externalLinks: [
+        { title: 'Features and fact sheets', url: 'https://womenshealth.gov/pregnancy/fact-sheets' }
       ]
     }
   },
@@ -215,6 +266,9 @@ export const KNOWLEDGE_TOPICS = [
         'Track daily biometrics: Consistent data entry yields the highest precision in predictive modeling.',
         'Monitor physical symptoms: Objective changes in cervical mucus and resting heart rate are strong secondary indicators.',
         'Synthesize insights: Always use algorithmic predictions in conjunction with physical ovulation predictor kits (OPKs) for maximum accuracy.'
+      ],
+      externalLinks: [
+        { title: 'Ovulation calculator', url: 'https://womenshealth.gov/ovulation-calculator' }
       ]
     }
   },
@@ -246,6 +300,9 @@ export const KNOWLEDGE_TOPICS = [
         'Use this glossary to locate specific pathologies mentioned by your healthcare provider.',
         'Always ask your clinical team for clarification if diagnostic terminology is confusing.',
         'Bookmark complex topics for quick reference during your next clinical visit.'
+      ],
+      externalLinks: [
+        { title: 'View A-Z health topics', url: 'https://womenshealth.gov/a-z-topics' }
       ]
     }
   }
