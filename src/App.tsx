@@ -1,4 +1,5 @@
 import auraLogo from './assets/icon-color.png'
+import faviconGradient from './assets/favicon-gradient.png'
 import { motion } from 'framer-motion'
 import {
   Activity,
@@ -184,49 +185,68 @@ function App() {
     return (
       <div className="loading-screen" style={{ flexDirection: 'column' }}>
         <div className="app-bg-glow" />
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10, height: '120px' }}>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10, height: '140px' }}>
           
-          {/* Highly Stable Main Logo with Subtle Glow */}
+          {/* Main Logo */}
           <div style={{ position: 'relative', zIndex: 10 }}>
             <motion.img 
-              src="/favicon.svg" 
+              src={faviconGradient} 
               alt="Loading" 
               animate={{ 
                 opacity: [0.8, 1, 0.8], 
                 filter: [
-                  'drop-shadow(0 2px 4px rgba(197, 34, 51, 0.2))', 
-                  'drop-shadow(0 8px 16px rgba(197, 34, 51, 0.6))', 
-                  'drop-shadow(0 2px 4px rgba(197, 34, 51, 0.2))'
+                  'drop-shadow(0 4px 12px rgba(197, 34, 51, 0.3))', 
+                  'drop-shadow(0 12px 24px rgba(197, 34, 51, 0.7))', 
+                  'drop-shadow(0 4px 12px rgba(197, 34, 51, 0.3))'
                 ] 
               }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              style={{ width: '4.5rem', height: '4.5rem', display: 'block' }}
+              style={{ width: '7.5rem', height: 'auto', display: 'block', margin: '0 auto' }}
             />
           </div>
           
-          {/* Pure Minimalist Liquid Drip */}
+          {/* Enhanced Blood Dripping Effect */}
           <motion.div
             style={{ 
               position: 'absolute', 
               top: '65%', 
               left: '50%', 
-              marginLeft: '-0.2rem', 
-              width: '0.4rem', 
-              height: '0.4rem', 
-              borderRadius: '50%', 
-              background: '#c52233',
-              boxShadow: '0 2px 8px rgba(197, 34, 51, 0.8)',
+              marginLeft: '-0.3rem', 
+              width: '0.6rem', 
+              height: '0.6rem', 
+              borderRadius: '0 50% 50% 50%', 
+              background: 'linear-gradient(135deg, #e02443, #8a0c1c)',
+              boxShadow: '0 4px 12px rgba(197, 34, 51, 0.9), inset -1px -1px 2px rgba(0,0,0,0.3)',
               zIndex: 5
             }}
             animate={{ 
-              y: [0, 50], 
-              scaleY: [0.5, 2.5], 
-              scaleX: [1.5, 0.6],
-              opacity: [0, 1, 0] 
+              y: [0, 80], 
+              scale: [0.3, 1, 0.8],
+              opacity: [0, 1, 0],
+              rotate: [45, 45, 45]
             }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeIn", times: [0, 0.5, 1], delay: 0.5 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeIn", times: [0, 0.6, 1], delay: 0.2 }}
           />
-
+          <motion.div
+            style={{ 
+              position: 'absolute', 
+              top: '65%', 
+              left: '50%', 
+              marginLeft: '-0.15rem', 
+              width: '0.3rem', 
+              height: '0.3rem', 
+              borderRadius: '0 50% 50% 50%', 
+              background: '#e02443',
+              zIndex: 5
+            }}
+            animate={{ 
+              y: [0, 60], 
+              scale: [0.2, 1, 0],
+              opacity: [0, 0.8, 0],
+              rotate: [45, 45, 45]
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeIn", times: [0, 0.7, 1], delay: 0.4 }}
+          />
         </div>
       </div>
     )
@@ -238,8 +258,8 @@ function App() {
       <div className="app-container">
         <motion.header 
           className="glass-card app-header"
-          initial={{ y: -20, opacity: 0, filter: 'blur(10px)' }}
-          animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
         >
           <div className="header-content">
@@ -273,8 +293,8 @@ function App() {
         <section className="main-layout">
           <motion.aside 
             className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''}`}
-            initial={{ x: -30, opacity: 0, filter: 'blur(10px)' }}
-            animate={{ x: 0, opacity: 1, filter: 'blur(0px)' }}
+            initial={{ x: -30, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
           >
             <div className="glass-card panel">
@@ -350,8 +370,8 @@ function App() {
 
           <motion.main 
             className="main-content"
-            initial={{ y: 30, opacity: 0, filter: 'blur(10px)' }}
-            animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
             <motion.section layout className="glass-card panel">
@@ -379,7 +399,7 @@ function App() {
             </motion.section>
 
             <div>
-              <motion.div initial={{ opacity: 0, scale: 0.98, filter: 'blur(8px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
+              <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
                 <div className="glass-card panel">
                   <div className="panel-header" style={{ alignItems: 'center' }}>
                     <div>
