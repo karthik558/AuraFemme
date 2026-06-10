@@ -181,27 +181,47 @@ function App() {
     return (
       <div className="loading-screen" style={{ flexDirection: 'column' }}>
         <div className="app-bg-glow" />
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10, height: '120px' }}>
           
-          {/* Main Blood Droplet */}
-          <motion.img 
-            src="/favicon.svg" 
-            alt="Loading Aura Femme" 
-            animate={{ scale: [1, 1.03, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            style={{ width: '5rem', height: '5rem', filter: 'drop-shadow(0 8px 16px rgba(197, 34, 51, 0.5))', zIndex: 10 }}
-          />
+          {/* Highly Stable Main Logo with Subtle Glow */}
+          <div style={{ position: 'relative', zIndex: 10 }}>
+            <motion.img 
+              src="/favicon.svg" 
+              alt="Loading" 
+              animate={{ 
+                opacity: [0.8, 1, 0.8], 
+                filter: [
+                  'drop-shadow(0 2px 4px rgba(197, 34, 51, 0.2))', 
+                  'drop-shadow(0 8px 16px rgba(197, 34, 51, 0.6))', 
+                  'drop-shadow(0 2px 4px rgba(197, 34, 51, 0.2))'
+                ] 
+              }}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              style={{ width: '4.5rem', height: '4.5rem', display: 'block' }}
+            />
+          </div>
           
-          {/* Slow Elegant Drip */}
+          {/* Pure Minimalist Liquid Drip */}
           <motion.div
-            style={{ position: 'absolute', top: '80%', left: '50%', marginLeft: '-0.35rem', width: '0.7rem', height: '0.7rem', borderRadius: '50%', background: '#c52233', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.4))' }}
-            animate={{ 
-              y: [0, 30, 120], 
-              opacity: [0, 1, 0], 
-              scaleY: [1, 2.5, 1], 
-              scaleX: [1, 0.7, 1] 
+            style={{ 
+              position: 'absolute', 
+              top: '65%', 
+              left: '50%', 
+              marginLeft: '-0.2rem', 
+              width: '0.4rem', 
+              height: '0.4rem', 
+              borderRadius: '50%', 
+              background: '#c52233',
+              boxShadow: '0 2px 8px rgba(197, 34, 51, 0.8)',
+              zIndex: 5
             }}
-            transition={{ duration: 3.5, repeat: Infinity, times: [0, 0.4, 1], ease: "easeInOut" }}
+            animate={{ 
+              y: [0, 50], 
+              scaleY: [0.5, 2.5], 
+              scaleX: [1.5, 0.6],
+              opacity: [0, 1, 0] 
+            }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeIn", times: [0, 0.5, 1], delay: 0.5 }}
           />
 
         </div>
