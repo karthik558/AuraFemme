@@ -1,5 +1,6 @@
 import auraLogo from './assets/icon-color.png'
 import faviconGradient from './assets/favicon-gradient.png'
+import mobileLogo from './assets/favicon.png'
 import { motion } from 'framer-motion'
 import {
   Activity,
@@ -265,7 +266,10 @@ function App() {
         >
           <div className="header-content">
             <div className="header-brand">
-              <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
+              <picture>
+                <source media="(max-width: 768px)" srcSet={mobileLogo} />
+                <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
+              </picture>
             </div>
             <div className="header-actions">
               <div className="today-badge">
