@@ -178,36 +178,32 @@ function App() {
 
   if (!ready) {
     return (
-      <div className="loading-screen">
+      <div className="loading-screen" style={{ flexDirection: 'column' }}>
         <div className="app-bg-glow" />
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.75, ease: 'easeOut' }}
-          className="glass-card loading-card"
-        >
-          <div className="loading-icon">
-            <Activity className="w-10 h-10" />
-          </div>
-          <p className="brand-text-sm" style={{ marginTop: '1.5rem' }}>Aura Femme</p>
-          <h1 className="loading-title text-gradient">Clinical cycle intelligence</h1>
-          <p className="loading-desc">
-            Loading the phase model, calendar engine, and safety logic before the dashboard reveals the active cycle.
-          </p>
-          <div className="loading-steps">
-            {['Cycle math', 'Phase overlay', 'Risk timeline'].map((label, index) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.35 + index * 0.08 }}
-                className="loading-step"
-              >
-                {label}
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
+          
+          {/* Main Blood Droplet */}
+          <motion.img 
+            src="/favicon.svg" 
+            alt="Loading Aura Femme" 
+            animate={{ scale: [1, 1.03, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            style={{ width: '5rem', height: '5rem', filter: 'drop-shadow(0 8px 16px rgba(197, 34, 51, 0.5))', zIndex: 10 }}
+          />
+          
+          {/* Slow Elegant Drip */}
+          <motion.div
+            style={{ position: 'absolute', top: '80%', left: '50%', marginLeft: '-0.35rem', width: '0.7rem', height: '0.7rem', borderRadius: '50%', background: '#c52233', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.4))' }}
+            animate={{ 
+              y: [0, 30, 120], 
+              opacity: [0, 1, 0], 
+              scaleY: [1, 2.5, 1], 
+              scaleX: [1, 0.7, 1] 
+            }}
+            transition={{ duration: 3.5, repeat: Infinity, times: [0, 0.4, 1], ease: "easeInOut" }}
+          />
+
+        </div>
       </div>
     )
   }
@@ -219,7 +215,8 @@ function App() {
         <header className="glass-card app-header">
           <div className="header-content">
             <div className="header-brand">
-              <h1 className="brand-title text-gradient">Aura Femme</h1>
+              <img src="/favicon.svg" alt="Aura Femme Logo" className="brand-logo-img" />
+              <h1 className="brand-title">Aura Femme</h1>
             </div>
             <div className="header-actions">
               <div className="today-badge">
@@ -466,6 +463,13 @@ function App() {
               </motion.div>
             </AnimatePresence>
           </main>
+
+          {/* Footer */}
+          <footer className="app-footer">
+            <p className="footer-text">
+              &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
+            </p>
+          </footer>
         </section>
       </div>
     </div>

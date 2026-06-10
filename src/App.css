@@ -57,58 +57,25 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
-.brand-icon-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-icon-glow {
-  position: absolute;
-  inset: -0.5rem;
-  background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
-  opacity: 0.3;
-  filter: blur(12px);
-  border-radius: 50%;
-  animation: pulseSoft 3s ease-in-out infinite;
-}
-
-.brand-icon {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent-primary), #ff4d6d);
-  color: white;
-  box-shadow: 0 8px 32px rgba(197, 34, 51, 0.4), inset 0 2px 8px rgba(255, 255, 255, 0.3);
-  z-index: 1;
-}
-
-.brand-text-sm {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.45em;
-  color: var(--text-muted);
+.brand-logo-img {
+  width: 2.25rem;
+  height: 2.25rem;
+  filter: drop-shadow(0 4px 12px rgba(197, 34, 51, 0.4));
 }
 
 .brand-title {
-  font-size: 2rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-strong);
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
 @media (min-width: 640px) {
   .brand-title {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
   }
 }
 
@@ -154,36 +121,43 @@
 /* Navigation */
 .app-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 1rem;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: 0.35rem;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  backdrop-filter: blur(8px);
 }
 
 .nav-item {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
   transition: all var(--transition-fast);
-  border: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-main);
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .nav-item.active {
   background: var(--accent-primary);
   color: white;
-  border-color: transparent;
-  box-shadow: 0 10px 25px rgba(197, 34, 51, 0.24);
+  box-shadow: 0 4px 12px rgba(197, 34, 51, 0.24);
 }
 
 /* Layout */
@@ -606,64 +580,25 @@
   padding: 1.5rem;
 }
 
-.loading-card {
-  position: relative;
-  width: 100%;
-  max-width: 42rem;
+/* Footer */
+.app-footer {
+  margin-top: 1rem;
+  padding: 1.5rem;
   text-align: center;
-  padding: 2rem;
-  z-index: 10;
 }
 
-.loading-icon {
-  margin: 0 auto;
-  display: flex;
-  height: 5rem;
-  width: 5rem;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-lg);
-  background: var(--accent-soft);
-  color: var(--accent-primary);
-}
-
-.loading-title {
-  margin-top: 1.5rem;
-  font-size: 2.25rem;
-  font-weight: 600;
-  color: var(--text-strong);
-}
-
-.loading-desc {
-  margin: 1rem auto 0;
-  max-width: 36rem;
+.footer-text {
   font-size: 0.875rem;
-  line-height: 1.75;
   color: var(--text-muted);
 }
 
-.loading-steps {
-  margin-top: 2rem;
-  display: grid;
-  gap: 0.75rem;
-}
-
-@media (min-width: 640px) {
-  .loading-steps {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.loading-step {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  background: rgba(255, 255, 255, 0.4);
-  padding: 0.75rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
+.footer-link {
   color: var(--text-strong);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
 }
 
-:root[data-theme='dark'] .loading-step {
-  background: rgba(255, 255, 255, 0.05);
+.footer-link:hover {
+  color: var(--accent-primary);
 }
