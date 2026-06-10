@@ -1,0 +1,122 @@
+.log-editor-panel {
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.log-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  margin-bottom: 0.25rem;
+}
+
+.log-icon {
+  color: var(--accent-primary);
+  width: 20px;
+  height: 20px;
+}
+
+.log-date {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.log-close-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.log-close-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent-primary);
+}
+
+.log-section {
+  margin-bottom: 1.5rem;
+}
+
+.log-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chip:hover {
+  border-color: var(--accent-primary);
+  background: var(--accent-soft);
+}
+
+.chip-active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(197, 34, 51, 0.2);
+}
+:root[data-phase='follicular'] .chip-active {
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+:root[data-phase='ovulation'] .chip-active {
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+}
+:root[data-phase='luteal'] .chip-active {
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+}
+
+.log-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.log-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.log-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}

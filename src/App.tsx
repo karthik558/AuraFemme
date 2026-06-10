@@ -21,6 +21,8 @@ import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
 import { KnowledgeBase } from './components/KnowledgeBase'
 import { DateTriplet } from './components/DateTriplet'
+import { DailyLogEditor } from './components/DailyLogEditor'
+import { HistoryDashboard } from './components/HistoryDashboard'
 import {
   addUtcDays,
   buildCalendarDays,
@@ -29,10 +31,10 @@ import {
   formatUtcDateLabel,
   utcTodayIso,
 } from './utils/calculator'
-import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode } from './types'
+import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode, DailyLog } from './types'
 import './App.css'
 
-type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'reference'
+type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'reference'
 
 const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
   overview: {
@@ -48,12 +50,16 @@ const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
     subtitle: 'A structured timeline that assesses theoretical overlap risk.',
   },
   reports: {
-    title: 'Reports section',
-    subtitle: 'Exports, summaries, and an executive view of the cycle data.',
+    title: 'Executive reports',
+    subtitle: 'Generate and export clean, analytical clinical summaries.',
+  },
+  history: {
+    title: 'Symptom history',
+    subtitle: 'A chronological feed of all logged physical and emotional data.',
   },
   reference: {
-    title: 'Reference Library',
-    subtitle: 'Educational resources and clinical knowledge.',
+    title: 'Clinical reference',
+    subtitle: 'Peer-reviewed articles, guidelines, and extended learning.',
   },
 }
 
@@ -86,6 +92,32 @@ function App() {
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
 
   const [sharedCaseStudy, setSharedCaseStudy] = useState<CaseStudyResult | null>(null)
+  
+  const [logs, setLogs] = useState<Record<string, DailyLog>>(() => {
+    try {
+      const savedLogs = localStorage.getItem('aura-femme-logs')
+      return savedLogs ? JSON.parse(savedLogs) : {}
+    } catch {
+      return {}
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem('aura-femme-logs', JSON.stringify(logs))
+  }, [logs])
+
+  const handleSaveLog = (log: DailyLog) => {
+    setLogs(prev => ({ ...prev, [log.dateIso]: log }))
+  }
+
+  const handleDeleteLog = (dateIso: string) => {
+    setLogs(prev => {
+      const nextLogs = { ...prev }
+      delete nextLogs[dateIso]
+      return nextLogs
+    })
+  }
+
   const [lastPeriodDate, setLastPeriodDate] = useState(() => addUtcDays(utcTodayIso(), -12))
   const [cycleLength, setCycleLength] = useState(28)
   const [bleedingDuration, setBleedingDuration] = useState(5)
@@ -468,6 +500,14 @@ function App() {
                               <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
                             </div>
 
+                            <DailyLogEditor 
+                              dateIso={activeDay.dateIso} 
+                              existingLog={logs[activeDay.dateIso] || null} 
+                              onSave={handleSaveLog} 
+                              onDelete={() => handleDeleteLog(activeDay.dateIso)}
+                              onClose={() => setSelectedDay(null)} 
+                            />
+
 
                           </section>
                         )}
@@ -492,6 +532,23 @@ function App() {
                         lutealPhaseLength={lutealPhaseLength}
                         onLutealPhaseLengthChange={setLutealPhaseLength}
                         onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
+                      />
+                    </motion.div>
+
+                    {/* History Section */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ 
+                        opacity: activeTab === 'history' ? 1 : 0, 
+                        x: activeTab === 'history' ? 0 : 30 
+                      }}
+                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      style={{ display: activeTab === 'history' ? 'block' : 'none' }}
+                    >
+                      <HistoryDashboard 
+                        logs={logs} 
+                        currentCycleStartIso={metrics.cycleStartIso} 
+                        onDeleteLog={handleDeleteLog} 
                       />
                     </motion.div>
 

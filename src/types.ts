@@ -67,3 +67,10 @@ export interface CaseStudyResult {
   timeline: CaseStudyTimelineItem[]
   confidence: number
 }
+
+export interface DailyLog {
+  dateIso: string
+  symptoms: string[]
+  mood: string | null
+  notes: string
+}
