@@ -1,73 +1,32 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="https://api.iconify.design/mdi:water-drop.svg?color=%23c52233" width="90" height="90" alt="Aura Femme Logo" />
+  <h1>Aura Femme</h1>
+  <p><strong>Clinical Cycle Intelligence & Sexual Health Dashboard</strong></p>
+  
+  <p>
+    <a href="https://aura-femme.vercel.app/"><img src="https://img.shields.io/badge/Launch_Dashboard-%23c52233?style=for-the-badge" alt="Launch Dashboard" /></a>
+  </p>
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<br />
 
-Currently, two official plugins are available:
+## Why Aura Femme Matters
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Navigating reproductive health should not require compromising personal data or dealing with convoluted, infantilizing interfaces. **Aura Femme** was built to provide clinical-grade cycle intelligence with absolute mathematical precision.
 
-## React Compiler
+Whether the goal is to carefully track ovulation, optimize for conception, or manage natural contraception, individuals deserve a tool that is highly rigorous, unequivocally private, and aesthetically brilliant. Aura Femme leverages strict UTC-based chronobiology algorithms to ensure geographical locale drift never corrupts your fertile window analysis.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Uncompromising Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- 🩸 **Clinical Precision**: Advanced algorithms built on proven ovulatory logic to perfectly pinpoint fertile windows and phase transitions.
+- 🛡️ **Total Privacy**: 100% local execution. Your highly sensitive cycle data never touches a server or tracking pixel.
+- 🎨 **Premium Aesthetic**: Fluid glassmorphism, vibrant red-accented dark-mode gradients, and meticulous micro-animations.
+- 🌍 **Locale-Agnostic Math**: Uses pure UTC date modeling to ensure travel and timezone changes don't artificially shift your cycle boundaries.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+<br />
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+<div align="center">
+  <p><i>Empowering reproductive autonomy through beautiful, precise software.</i></p>
+</div>
