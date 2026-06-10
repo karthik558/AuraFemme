@@ -207,3 +207,33 @@ input[type="range"]::-webkit-slider-runnable-track {
   background: var(--border-subtle);
   border-radius: 2px;
 }
+
+input[type="range"]::-moz-range-track {
+  background: var(--border-subtle);
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-subtle);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--accent-soft);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-subtle) transparent;
+}
