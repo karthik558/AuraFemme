@@ -612,7 +612,7 @@ function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: T
   return (
     <div className="theme-switcher">
       {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
-        <button key={option} type="button" onClick={() => onChange(option)} className={`theme-btn ${mode === option ? 'active' : ''}`}>
+        <button key={option} type="button" onClick={() => onChange(option)} className={`theme-btn ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
           {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
           <span className="theme-btn-text">{themeModeLabels[option]}</span>
         </button>
