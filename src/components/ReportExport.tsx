@@ -22,9 +22,18 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
     
     try {
       const canvas = await html2canvas(reportRef.current, {
-        scale: 2, // Restored high resolution
+        scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        windowWidth: 1024,
+        onclone: (clonedDoc) => {
+          const el = clonedDoc.getElementById('pdf-report-container');
+          if (el) {
+            el.style.width = '800px';
+            el.style.minWidth = '800px';
+            el.style.maxWidth = '800px';
+          }
+        }
       });
       
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -80,8 +89,8 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
   });
 
   return (
-    <div className="report-container">
-      <div className="panel-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="report-container" style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}>
+      <div className="panel-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <p className="panel-label">Export</p>
           <h2 className="panel-title">Clinical Report</h2>
@@ -105,6 +114,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
 
       {/* The Printable Document */}
       <div 
+        id="pdf-report-container"
         ref={reportRef} 
         style={{
           background: '#ffffff',
@@ -137,7 +147,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         </div>
 
         {/* Patient/Filter Details */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '30px' }}>
+        <div className="report-grid-3">
           <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
             <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cycle Length Filter</p>
             <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{activeCycleLength} days</p>
@@ -165,7 +175,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
            </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '40px' }}>
+        <div className="report-grid-2">
           <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
             <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#c52233' }}>{caseStudy ? 'Intercourse Date' : 'Safe Dates / Fertile Window'}</h3>
             <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
