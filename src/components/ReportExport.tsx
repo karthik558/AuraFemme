@@ -4,6 +4,7 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { CaseStudyResult } from '../types';
+import faviconGradient from '../assets/favicon-gradient.png';
 
 interface ReportExportProps {
   metrics: any;
@@ -134,10 +135,9 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, caseStud
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img src="/favicon.svg" alt="Logo" style={{ width: '48px', height: '48px', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
+            <img src={faviconGradient} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
             <div>
-              <h1 style={{ margin: 0, fontSize: '24px', color: '#c52233', fontWeight: 800 }}>Aura Femme</h1>
-              <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>Clinical Cycle Intelligence Report</p>
+              <p style={{ margin: 0, fontSize: '14px', color: '#666', fontWeight: 600 }}>Clinical Cycle Intelligence Report</p>
             </div>
           </div>
           <div style={{ textAlign: 'right' }}>
