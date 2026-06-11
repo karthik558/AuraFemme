@@ -454,7 +454,7 @@ function App() {
           <div className="header-content">
             <div className="header-brand">
               <picture>
-                <source media="(max-width: 768px)" srcSet={mobileLogo} />
+                <source media="(max-width: 768px)" srcSet="/icon-color.png" />
                 <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
               </picture>
             </div>
