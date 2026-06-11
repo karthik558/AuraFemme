@@ -565,14 +565,10 @@ function App() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
         >
-          <div className="header-content">
-            <div className="header-brand">
-              <picture>
-                <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
-                <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
-              </picture>
-            </div>
-            <div className="header-actions">
+          <div className="header-content" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            
+            {/* Mobile Left: AppModeSwitcher */}
+            <div className="mobile-only" style={{ flex: 1, justifyContent: 'flex-start' }}>
               <AppModeSwitcher 
                 mode={userProfile?.appMode || 'cycle'} 
                 onChange={(newMode) => {
@@ -592,7 +588,40 @@ function App() {
                   }
                 }} 
               />
-              <div className="today-badge">
+            </div>
+
+            {/* Center Logo */}
+            <div className="header-brand" style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+              <picture>
+                <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
+                <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
+              </picture>
+            </div>
+            
+            {/* Right: Actions */}
+            <div className="header-actions" style={{ flex: 1, justifyContent: 'flex-end' }}>
+              <div className="desktop-only">
+                <AppModeSwitcher 
+                  mode={userProfile?.appMode || 'cycle'} 
+                  onChange={(newMode) => {
+                    if (userProfile) {
+                      const nextProfile = { ...userProfile, appMode: newMode }
+                      setUserProfile(nextProfile)
+                      localStorage.setItem('aura-femme-profile', JSON.stringify(nextProfile))
+                    } else {
+                      setUserProfile({
+                        name: 'Guest User',
+                        managementType: 'self',
+                        lastPeriodDate: addUtcDays(utcTodayIso(), -12),
+                        cycleLength: 28,
+                        bleedingDuration: 5,
+                        appMode: newMode
+                      })
+                    }
+                  }} 
+                />
+              </div>
+              <div className="today-badge desktop-only">
                 <CalendarDays className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
                 <p className="today-label">Today</p>
                 <div className="today-divider" />
@@ -1046,28 +1075,45 @@ function SliderField({ label, helper, value, min, max, onChange }: { label: stri
 }
 
 function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: ThemeMode) => void }) {
+  const toggleMode = () => {
+    if (mode === 'auto') onChange('light')
+    else if (mode === 'light') onChange('dark')
+    else onChange('auto')
+  }
+
   return (
     <div className="theme-switcher">
       {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
-        <button key={option} type="button" onClick={() => onChange(option)} className={`theme-btn ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
+        <button key={option} type="button" onClick={() => onChange(option)} className={`theme-btn desktop-only ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
           {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
           <span className="theme-btn-text">{themeModeLabels[option]}</span>
         </button>
       ))}
+      <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Theme: ${themeModeLabels[mode]}`}>
+        {mode === 'light' ? <SunMedium className="w-4 h-4" /> : mode === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
+      </button>
     </div>
   )
 }
 
 function AppModeSwitcher({ mode, onChange }: { mode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: 'cycle' | 'pregnancy' | 'postpartum') => void }) {
+  const toggleMode = () => {
+    if (mode === 'cycle') onChange('pregnancy')
+    else onChange('cycle')
+  }
+
   return (
-    <div className="theme-switcher" style={{ marginRight: '1rem' }}>
-      <button className={`theme-btn ${mode === 'cycle' ? 'active' : ''}`} onClick={() => onChange('cycle')} title="Cycle Tracking">
+    <div className="theme-switcher">
+      <button className={`theme-btn desktop-only ${mode === 'cycle' ? 'active' : ''}`} onClick={() => onChange('cycle')} title="Cycle Tracking">
         <Activity className="w-4 h-4" />
         <span className="theme-btn-text hide-on-mobile">Cycle</span>
       </button>
-      <button className={`theme-btn ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => onChange('pregnancy')} title="Pregnancy Tracking">
+      <button className={`theme-btn desktop-only ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => onChange('pregnancy')} title="Pregnancy Tracking">
         <Sparkles className="w-4 h-4" />
         <span className="theme-btn-text hide-on-mobile">Pregnancy</span>
+      </button>
+      <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Mode: ${mode === 'cycle' ? 'Cycle' : 'Pregnancy'}`}>
+        {mode === 'cycle' ? <Activity className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
       </button>
     </div>
   )
