@@ -374,70 +374,97 @@ function App() {
 
   if (!ready) {
     return (
-      <div className="loading-screen" style={{ flexDirection: 'column' }}>
+      <div className="loading-screen" style={{ flexDirection: 'column', background: 'radial-gradient(circle at center, var(--bg-gradient-start), var(--bg-gradient-end))' }}>
         <div className="app-bg-glow" />
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 10, height: '140px' }}>
+        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10, height: '220px' }}>
           
-          {/* Main Logo */}
+          {/* Main Logo Pulsing like a heart */}
           <div style={{ position: 'relative', zIndex: 10 }}>
             <motion.img 
               src={faviconGradient} 
               alt="Loading" 
               animate={{ 
-                opacity: [0.8, 1, 0.8], 
+                scale: [1, 1.08, 1, 1.15, 1],
                 filter: [
-                  'drop-shadow(0 4px 12px rgba(197, 34, 51, 0.3))', 
-                  'drop-shadow(0 12px 24px rgba(197, 34, 51, 0.7))', 
-                  'drop-shadow(0 4px 12px rgba(197, 34, 51, 0.3))'
+                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))', 
+                  'drop-shadow(0 0px 25px rgba(197, 34, 51, 0.9))', 
+                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))',
+                  'drop-shadow(0 0px 35px rgba(197, 34, 51, 1))',
+                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))'
                 ] 
               }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-              style={{ width: '7.5rem', height: 'auto', display: 'block', margin: '0 auto' }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              style={{ width: '8rem', height: 'auto', display: 'block', margin: '0 auto' }}
             />
           </div>
           
-          {/* Enhanced Blood Dripping Effect */}
+          {/* Main Heavy Viscous Blood Drop */}
           <motion.div
             style={{ 
               position: 'absolute', 
-              top: '65%', 
+              top: '40%', 
               left: '50%', 
-              marginLeft: '-0.3rem', 
-              width: '0.6rem', 
-              height: '0.6rem', 
+              marginLeft: '-0.35rem', 
+              width: '0.7rem', 
+              height: '0.7rem', 
               borderRadius: '0 50% 50% 50%', 
-              background: 'linear-gradient(135deg, #e02443, #8a0c1c)',
-              boxShadow: '0 4px 12px rgba(197, 34, 51, 0.9), inset -1px -1px 2px rgba(0,0,0,0.3)',
+              background: 'linear-gradient(135deg, #ff1744, #900018)',
+              boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.4), 0 5px 15px rgba(220, 20, 60, 0.8)',
               zIndex: 5
             }}
             animate={{ 
-              y: [0, 80], 
-              scale: [0.3, 1, 0.8],
+              y: [0, 95], 
+              scaleY: [0.5, 1.8, 0.5],
+              scaleX: [0.5, 0.7, 1.5],
               opacity: [0, 1, 0],
               rotate: [45, 45, 45]
             }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeIn", times: [0, 0.6, 1], delay: 0.2 }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: "easeIn", times: [0, 0.7, 1] }}
           />
+
+          {/* Secondary Drop */}
           <motion.div
             style={{ 
               position: 'absolute', 
-              top: '65%', 
+              top: '45%', 
               left: '50%', 
               marginLeft: '-0.15rem', 
               width: '0.3rem', 
               height: '0.3rem', 
               borderRadius: '0 50% 50% 50%', 
-              background: '#e02443',
+              background: 'linear-gradient(135deg, #d50000, #7f0000)',
               zIndex: 5
             }}
             animate={{ 
-              y: [0, 60], 
+              y: [0, 75], 
               scale: [0.2, 1, 0],
-              opacity: [0, 0.8, 0],
+              opacity: [0, 0.9, 0],
               rotate: [45, 45, 45]
             }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeIn", times: [0, 0.7, 1], delay: 0.4 }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: "easeIn", times: [0, 0.8, 1], delay: 0.2 }}
           />
+
+          {/* Blood Puddle Ripple */}
+          <motion.div
+            style={{
+              position: 'absolute',
+              top: '160px',
+              left: '50%',
+              marginLeft: '-2rem',
+              width: '4rem',
+              height: '0.8rem',
+              borderRadius: '50%',
+              background: 'radial-gradient(ellipse at center, rgba(200, 10, 30, 0.8) 0%, rgba(160, 0, 20, 0) 70%)',
+              zIndex: 4
+            }}
+            animate={{
+              scale: [0.2, 3],
+              opacity: [0, 0.8, 0]
+            }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut", delay: 0.84 }}
+          />
+
+          {/* Text Removed */}
         </div>
       </div>
     )
