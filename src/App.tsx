@@ -1023,11 +1023,13 @@ function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: T
 function AppModeSwitcher({ mode, onChange }: { mode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: 'cycle' | 'pregnancy' | 'postpartum') => void }) {
   return (
     <div className="theme-switcher" style={{ marginRight: '1rem' }}>
-      <button type="button" onClick={() => onChange('cycle')} className={`theme-btn ${mode === 'cycle' ? 'active' : ''}`}>
-        <span className="theme-btn-text">Cycle Tracker</span>
+      <button className={`theme-btn ${mode === 'cycle' ? 'active' : ''}`} onClick={() => onChange('cycle')} title="Cycle Tracking">
+        <Activity className="w-4 h-4" />
+        <span className="theme-btn-text hide-on-mobile">Cycle</span>
       </button>
-      <button type="button" onClick={() => onChange('pregnancy')} className={`theme-btn ${mode === 'pregnancy' ? 'active' : ''}`}>
-        <span className="theme-btn-text">Pregnancy Mode</span>
+      <button className={`theme-btn ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => onChange('pregnancy')} title="Pregnancy Tracking">
+        <Sparkles className="w-4 h-4" />
+        <span className="theme-btn-text hide-on-mobile">Pregnancy</span>
       </button>
     </div>
   )
