@@ -52,59 +52,32 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
   return (
     <section className="history-dashboard animate-fade-in">
       <div className="history-header">
-        <div className="history-title-wrap">
-          <CalendarClock className="history-icon" />
-          <h2 className="heading-primary" style={{ fontSize: '1.75rem', margin: 0 }}>Symptom History</h2>
-        </div>
-        
-        <div className="history-filters" style={{ flexWrap: 'wrap', gap: '1rem' }}>
-          <div className="filter-buttons">
-            <Filter className="w-4 h-4 text-muted" style={{ marginRight: '0.5rem' }} />
-            <button 
-              className={`btn ${filter === 'last_7_days' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('last_7_days')}
-              style={{ padding: '0.4rem 1rem' }}
-            >
-              7 Days
-            </button>
-            <button 
-              className={`btn ${filter === 'this_cycle' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('this_cycle')}
-              style={{ padding: '0.4rem 1rem' }}
-            >
-              This Cycle
-            </button>
-            <button 
-              className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
-              onClick={() => setFilter('all')}
-              style={{ padding: '0.4rem 1rem' }}
-            >
-              All Time
-            </button>
+        <div className="history-title-row">
+          <div className="history-title-wrap">
+            <CalendarClock className="history-icon" />
+            <h2 className="heading-primary" style={{ fontSize: '1.75rem', margin: 0 }}>Symptom History</h2>
           </div>
           
-          <div style={{ display: 'flex', gap: '0.5rem', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '1rem' }}>
+          <div className="history-actions">
             {onExportData && (
               <button 
-                className="btn btn-outline" 
+                className="btn-icon" 
                 onClick={onExportData} 
                 title={isGuest ? 'Guests cannot export data' : 'Export JSON'}
-                style={{ padding: '0.4rem 0.75rem' }}
                 disabled={isGuest}
               >
-                <Download size={16} />
+                <Download size={18} />
               </button>
             )}
             {onImportData && (
               <>
                 <button 
-                  className="btn btn-outline" 
+                  className="btn-icon" 
                   onClick={() => fileInputRef.current?.click()} 
                   title={isGuest ? 'Guests cannot import data' : 'Import JSON'}
-                  style={{ padding: '0.4rem 0.75rem' }}
                   disabled={isGuest}
                 >
-                  <Upload size={16} />
+                  <Upload size={18} />
                 </button>
                 <input 
                   type="file" 
@@ -116,6 +89,27 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
               </>
             )}
           </div>
+        </div>
+        
+        <div className="history-segmented-control">
+          <button 
+            className={`segment-btn ${filter === 'last_7_days' ? 'active' : ''}`}
+            onClick={() => setFilter('last_7_days')}
+          >
+            7 Days
+          </button>
+          <button 
+            className={`segment-btn ${filter === 'this_cycle' ? 'active' : ''}`}
+            onClick={() => setFilter('this_cycle')}
+          >
+            This Cycle
+          </button>
+          <button 
+            className={`segment-btn ${filter === 'all' ? 'active' : ''}`}
+            onClick={() => setFilter('all')}
+          >
+            All Time
+          </button>
         </div>
       </div>
 
