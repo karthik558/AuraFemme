@@ -1,6 +1,6 @@
 import auraLogo from './assets/icon-color.png'
 import faviconGradient from './assets/favicon-gradient.png'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Activity,
   CalendarDays,
@@ -825,17 +825,54 @@ function App() {
       </div>
 
       <nav className="mobile-bottom-nav">
-        {(Object.keys(tabCopy) as TabKey[]).map((tab) => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(tab)}
-            className={`mobile-nav-item ${activeTab === tab ? 'active' : ''}`}
-          >
-            {getMobileNavIcon(tab)}
-            <span className="mobile-nav-label">{getMobileNavTitle(tab)}</span>
-          </button>
-        ))}
+        {(Object.keys(tabCopy) as TabKey[]).map((tab) => {
+          const isActive = activeTab === tab;
+          return (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`mobile-nav-item ${isActive ? 'active' : ''}`}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              {isActive && (
+                <motion.div
+                  layoutId="active-capsule"
+                  className="active-capsule-bg"
+                  transition={{ type: 'spring', stiffness: 300, damping: 24, mass: 0.8 }}
+                />
+              )}
+              <motion.div
+                initial={false}
+                animate={{ y: isActive ? -4 : 0 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                className="icon-label-wrapper"
+              >
+                <motion.div
+                  initial={false}
+                  animate={{ scale: isActive ? 1.15 : 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  className="icon-container"
+                >
+                  {getMobileNavIcon(tab)}
+                </motion.div>
+                <AnimatePresence mode="popLayout">
+                  {isActive && (
+                    <motion.span
+                      initial={{ opacity: 0, y: 6, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.8 }}
+                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                      className="mobile-nav-label"
+                    >
+                      {getMobileNavTitle(tab)}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </button>
+          )
+        })}
       </nav>
     </div>
   )

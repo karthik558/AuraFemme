@@ -227,32 +227,38 @@
   .mobile-bottom-nav {
     display: flex;
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 1.5rem);
+    max-width: 400px;
     background: var(--panel-bg);
-    border-top: 1px solid var(--border-subtle);
-    padding: 0.5rem 0.5rem calc(0.5rem + env(safe-area-inset-bottom, 0px));
-    justify-content: space-around;
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-xl);
+    padding: 0.5rem 0.25rem;
+    justify-content: space-between;
     align-items: center;
     z-index: 50;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(48px) saturate(200%);
+    -webkit-backdrop-filter: blur(48px) saturate(200%);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.1);
   }
 
   .mobile-nav-item {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
     flex: 1;
+    height: 3.5rem;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    padding: 0.5rem 0;
-    transition: all var(--transition-fast);
+    padding: 0;
     cursor: pointer;
+    outline: none;
+    touch-action: manipulation;
   }
 
   .mobile-nav-item:hover {
@@ -263,9 +269,44 @@
     color: var(--accent-primary);
   }
 
+  .active-capsule-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--accent-soft);
+    border-radius: var(--radius-sm);
+    z-index: 0;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  }
+
+  .icon-label-wrapper {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+  }
+
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .icon-container svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
   .mobile-nav-label {
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
   
   .report-grid-3, .report-grid-2 {
