@@ -117,9 +117,7 @@ export function buildCycleMetrics(input: CycleInput, todayIso = utcTodayIso()): 
   const ovulationDay = clampNumber(cycleLength - lutealPhaseLength, bleedingDuration + 1, cycleLength - 1)
   const fertileWindowStart = Math.max(1, ovulationDay - 5)
   const fertileWindowEnd = Math.min(cycleLength, ovulationDay + 1)
-  const daysSinceStart = Math.max(0, diffUtcDays(todayIso, input.lastPeriodDate))
-  const cycleIndex = Math.floor(daysSinceStart / cycleLength)
-  const cycleStartIso = addUtcDays(input.lastPeriodDate, cycleIndex * cycleLength)
+  const cycleStartIso = input.lastPeriodDate
   const cycleDay = diffUtcDays(todayIso, cycleStartIso) + 1
   const currentPhase = getPhase(cycleDay, bleedingDuration, fertileWindowStart, ovulationDay)
   const nextPeriodIso = addUtcDays(cycleStartIso, cycleLength)
@@ -146,15 +144,18 @@ export function buildCycleMetrics(input: CycleInput, todayIso = utcTodayIso()): 
   }
 }
 
-export function buildCalendarDays(cycleStartIso: string, input: CycleInput): CycleDayInfo[] {
+export function buildCalendarDays(cycleStartIso: string, input: CycleInput, todayIso = utcTodayIso()): CycleDayInfo[] {
   const cycleLength = clampNumber(input.cycleLength, 21, 40)
   const bleedingDuration = clampNumber(input.bleedingDuration, 2, Math.min(10, cycleLength - 2))
   const lutealPhaseLength = clampNumber(input.lutealPhaseLength, 10, Math.min(18, cycleLength - bleedingDuration - 1))
   const ovulationDay = clampNumber(cycleLength - lutealPhaseLength, bleedingDuration + 1, cycleLength - 1)
   const fertileWindowStart = Math.max(1, ovulationDay - 5)
   const fertileWindowEnd = Math.min(cycleLength, ovulationDay + 1)
+  
+  const daysSinceStart = Math.max(0, diffUtcDays(todayIso, cycleStartIso))
+  const displayLength = Math.max(cycleLength, daysSinceStart + 7)
 
-  return Array.from({ length: cycleLength }, (_, index) => {
+  return Array.from({ length: displayLength }, (_, index) => {
     const cycleDay = index + 1
     const dateIso = addUtcDays(cycleStartIso, index)
     const phase = getPhase(cycleDay, bleedingDuration, fertileWindowStart, ovulationDay)
