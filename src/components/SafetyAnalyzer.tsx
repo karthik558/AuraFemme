@@ -56,12 +56,7 @@ export function SafetyAnalyzer({
     <section className="analyzer-grid">
 
       <div className="glass-card analyzer-panel">
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-          <div className={`risk-badge ${riskStyles[result.riskLevel]}`}>
-            <p className="risk-label">Risk</p>
-            <p className="risk-value">{result.riskLabel}</p>
-          </div>
-        </div>
+
         <div className="controls-grid" style={{ marginTop: '0' }}>
           <DateTriplet
             label="Last period date"
@@ -91,6 +86,11 @@ export function SafetyAnalyzer({
             onChange={onLutealPhaseLengthChange}
             unit="days"
           />
+        </div>
+
+        <div className={`risk-badge-pill ${riskStyles[result.riskLevel]}`}>
+          <span className="risk-pill-label">Safety Risk Assessment:</span>
+          <span className="risk-pill-value">{result.riskLabel}</span>
         </div>
 
         <div className="summary-box">
