@@ -17,7 +17,7 @@ import {
   FileText,
   BookOpen,
 } from 'lucide-react'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
@@ -25,6 +25,7 @@ import { KnowledgeBase } from './components/KnowledgeBase'
 import { DateTriplet } from './components/DateTriplet'
 import { DailyLogEditor } from './components/DailyLogEditor'
 import { HistoryDashboard } from './components/HistoryDashboard'
+import { PersonalDashboard } from './components/PersonalDashboard'
 import { OnboardingModal } from './components/OnboardingModal'
 import { LoginScreen } from './components/LoginScreen'
 import {
@@ -334,17 +335,6 @@ function App() {
   }, [calendarDays, selectedDay])
 
 
-  const currentPhaseSentence = metrics.currentPhase === 'menstruation' ? 'Bleeding window'
-      : metrics.currentPhase === 'follicular' ? 'Follicular build'
-      : metrics.currentPhase === 'ovulation' ? 'Peak fertility window' : 'Luteal stabilization'
-
-  const reportPhaseSplit = useMemo(() => [
-      { label: 'Menstruation', value: bleedingDuration, tone: 'bg-red' },
-      { label: 'Follicular', value: Math.max(0, metrics.fertileWindowStart - bleedingDuration - 1), tone: 'bg-cyan' },
-      { label: 'Ovulation', value: Math.max(1, metrics.ovulationDay - metrics.fertileWindowStart + 1), tone: 'bg-amber' },
-      { label: 'Luteal', value: Math.max(0, cycleLength - metrics.ovulationDay), tone: 'bg-fuchsia' },
-    ], [bleedingDuration, cycleLength, metrics.fertileWindowStart, metrics.ovulationDay])
-
   function handleDatePartsChange(nextIso: string) {
     setLastPeriodDate(nextIso)
     if (userProfile && authMode === 'authenticated') {
@@ -569,44 +559,10 @@ function App() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
-            {activeTab === 'overview' && (
-              <motion.section layout className="glass-card panel">
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <p className="panel-label">Clinical dashboard</p>
-                  <h3 className="panel-title" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>
-                    {authMode === 'guest' 
-                      ? 'Welcome, Guest'
-                      : (userProfile?.managementType === 'self' ? `Welcome back, ${userProfile?.name}` : `${userProfile?.name}'s Dashboard`)}
-                  </h3>
-                </div>
-                <div className="metrics-grid">
-                  <MetricCard
-                    label="Current status"
-                    value={`Day ${metrics.cycleDay} of ${metrics.cycleLength}`}
-                    helper={metrics.cycleStartIso === metrics.lastPeriodDate ? 'Current cycle anchor' : 'Rolled forward from baseline'}
-                    icon={<Clock3 className="w-5 h-5" />}
-                  />
-                  <MetricCard label="Active phase" value={metrics.currentPhaseLabel} helper={currentPhaseSentence} icon={<CalendarDays className="w-5 h-5" />} />
-                  <MetricCard
-                    label="Ovulation countdown"
-                    value={metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}
-                    helper={`Peak release near day ${metrics.ovulationDay}`}
-                    icon={<Sparkles className="w-5 h-5" />}
-                  />
-                  <MetricCard
-                    label="Next expected period"
-                    value={metrics.isOverdue ? 'Due now' : `${metrics.nextPeriodCountdown} days`}
-                    helper={metrics.isOverdue ? 'Cycle window should be closing' : formatUtcDateLabel(metrics.nextPeriodIso)}
-                    icon={<MoonStar className="w-5 h-5" />}
-                  />
-                </div>
-              </motion.section>
-            )}
-
             <div>
               <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
                 <div className="glass-card panel">
-                  <div className="panel-header" style={{ alignItems: 'center' }}>
+                  <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
                     <div>
                       <p className="panel-label">Dashboard</p>
                       <h2 className="panel-title">{tabCopy[activeTab].title}</h2>
@@ -630,35 +586,11 @@ function App() {
                       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                       style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
                     >
-                      <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
-                        <div className="phase-summary highlight">
-                          <p className="panel-label">Phase summary</p>
-                          <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
-                          <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-                            <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
-                            <span className="badge">Ovulation day {metrics.ovulationDay}</span>
-                            <span className="badge">Cycle length {metrics.cycleLength}</span>
-                          </div>
-                        </div>
-
-                        <div className="phase-summary">
-                          <p className="panel-label">Phase split</p>
-                          <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem' }}>
-                            {reportPhaseSplit.map((segment) => (
-                              <div key={segment.label}>
-                                <div className="progress-header">
-                                  <span className="field-label">{segment.label}</span>
-                                  <span className="field-helper">{segment.value} days</span>
-                                </div>
-                                <div className="progress-track" style={{ marginTop: '0.25rem' }}>
-                                  <div className={`progress-bar ${segment.tone}`} style={{ width: `${Math.max(8, (segment.value / cycleLength) * 100)}%` }} />
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                      <PersonalDashboard 
+                        userProfile={userProfile} 
+                        metrics={metrics} 
+                        authMode={authMode} 
+                      />
                     </motion.div>
 
                     {/* Calendar Terminal */}
@@ -877,19 +809,6 @@ function App() {
           )
         })}
       </nav>
-    </div>
-  )
-}
-
-function MetricCard({ label, value, helper, icon }: { label: string; value: string; helper: string; icon: ReactNode }) {
-  return (
-    <div className="metric-card">
-      <div>
-        <p className="metric-label">{label}</p>
-        <p className="metric-value">{value}</p>
-        <p className="metric-helper">{helper}</p>
-      </div>
-      <div className="metric-icon">{icon}</div>
     </div>
   )
 }
