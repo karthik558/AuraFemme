@@ -883,10 +883,10 @@
 }
 
 .desktop-only {
-  display: flex;
+  display: flex !important;
 }
 .mobile-only {
-  display: none;
+  display: none !important;
 }
 
 @media (max-width: 768px) {
@@ -895,5 +895,34 @@
   }
   .mobile-only {
     display: flex !important;
+  }
+}
+
+/* Responsive Header Utilities */
+.header-content-responsive {
+  width: 100%;
+}
+.header-left {
+  display: flex;
+}
+
+@media (max-width: 1023px) {
+  .header-content-responsive {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-content-responsive .header-left {
+    flex: 1;
+    justify-content: flex-start;
+  }
+  .header-content-responsive .header-brand {
+    flex: 1;
+    justify-content: center;
+  }
+  .header-content-responsive .header-actions {
+    flex: 1;
+    justify-content: flex-end;
   }
 }

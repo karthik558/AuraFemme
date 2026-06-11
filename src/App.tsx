@@ -565,10 +565,10 @@ function App() {
           animate={{ y: 0, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
         >
-          <div className="header-content" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+          <div className="header-content header-content-responsive">
             
             {/* Mobile Left: AppModeSwitcher */}
-            <div className="mobile-only" style={{ flex: 1, justifyContent: 'flex-start' }}>
+            <div className="mobile-only header-left">
               <AppModeSwitcher 
                 mode={userProfile?.appMode || 'cycle'} 
                 onChange={(newMode) => {
@@ -591,7 +591,7 @@ function App() {
             </div>
 
             {/* Center Logo */}
-            <div className="header-brand" style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
+            <div className="header-brand" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('overview')}>
               <picture>
                 <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
                 <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
@@ -599,7 +599,7 @@ function App() {
             </div>
             
             {/* Right: Actions */}
-            <div className="header-actions" style={{ flex: 1, justifyContent: 'flex-end' }}>
+            <div className="header-actions">
               <div className="desktop-only">
                 <AppModeSwitcher 
                   mode={userProfile?.appMode || 'cycle'} 
