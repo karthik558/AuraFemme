@@ -1,4 +1,4 @@
-export type ThemeMode = 'auto' | 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark'
 
 export type CycleGoal = 'track' | 'conceive' | 'avoid'
 

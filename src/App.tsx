@@ -118,16 +118,15 @@ const goalOptions: Array<{ value: CycleGoal; label: string; tone: string }> = [
 ]
 
 const themeModeLabels: Record<ThemeMode, string> = {
-  auto: 'Auto',
   light: 'Light',
   dark: 'Dark',
 }
 
 function App() {
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'auto'
+    if (typeof window === 'undefined') return 'light'
     const stored = window.localStorage.getItem('aura-femme-theme') as ThemeMode | null
-    return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'auto'
+    return stored === 'light' || stored === 'dark' ? stored : 'light'
   })
   
   const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(() => {
@@ -362,12 +361,12 @@ function App() {
   }, [])
 
   useEffect(() => {
-    const resolvedTheme = themeMode === 'auto' ? systemTheme : themeMode
+    const resolvedTheme = themeMode
     const root = document.documentElement
     root.dataset.theme = resolvedTheme
     root.style.colorScheme = resolvedTheme
     window.localStorage.setItem('aura-femme-theme', themeMode)
-  }, [systemTheme, themeMode])
+  }, [themeMode])
 
 
   const cycleInput = useMemo<CycleInput>(
@@ -1004,10 +1003,7 @@ function ThemeSwitcher({ mode, appMode, onChange }: { mode: ThemeMode; appMode: 
   };
 
   const toggleMode = () => {
-    let targetMode: ThemeMode = 'auto';
-    if (mode === 'auto') targetMode = 'light';
-    else if (mode === 'light') targetMode = 'dark';
-    else targetMode = 'auto';
+    const targetMode: ThemeMode = mode === 'light' ? 'dark' : 'light';
     handleThemeChange(targetMode);
   };
 
@@ -1024,7 +1020,7 @@ function ThemeSwitcher({ mode, appMode, onChange }: { mode: ThemeMode; appMode: 
       )}
       <div className="theme-switcher">
         {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
-          <button key={option} type="button" onClick={() => handleThemeChange(option)} className={`theme-btn desktop-only ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
+          <button key={option} type="button" onClick={() => handleThemeChange(option)} className={`theme-btn desktop-only ${mode === option ? 'active' : ''}`}>
             {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
             <span className="theme-btn-text">{themeModeLabels[option]}</span>
           </button>

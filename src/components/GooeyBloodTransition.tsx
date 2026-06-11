@@ -15,7 +15,7 @@ interface Props {
 export function GooeyBloodTransition({ isActive, targetTheme, targetAppMode, onSwitch, onComplete }: Props) {
   const [phase, setPhase] = useState<'idle' | 'animating'>('idle');
 
-  const isDark = targetTheme === 'dark' || (targetTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const isDark = targetTheme === 'dark';
   
   let liquidColor = '#c52233'; // default blood red
   if (targetAppMode === 'pregnancy') {
