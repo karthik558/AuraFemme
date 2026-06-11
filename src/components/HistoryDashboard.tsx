@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { Trash2, Download, Upload } from 'lucide-react'
-import { useMemo, useState, useRef } from 'react'
+import { Trash2 } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './HistoryDashboard.css'
@@ -9,16 +9,12 @@ interface HistoryDashboardProps {
   logs: Record<string, DailyLog>
   currentCycleStartIso: string
   onDeleteLog?: (dateIso: string) => void
-  onExportData?: () => void
-  onImportData?: (file: File) => void
-  isGuest?: boolean
 }
 
 type FilterOption = 'all' | 'this_cycle' | 'last_7_days'
 
-export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onExportData, onImportData, isGuest }: HistoryDashboardProps) {
+export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: HistoryDashboardProps) {
   const [filter, setFilter] = useState<FilterOption>('this_cycle')
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const filteredLogs = useMemo(() => {
     const allLogs = Object.values(logs).sort((a, b) => b.dateIso.localeCompare(a.dateIso))
@@ -38,16 +34,6 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
 
     return allLogs
   }, [logs, filter, currentCycleStartIso])
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file && onImportData) {
-      onImportData(file)
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
-    }
-  }
 
   return (
     <section className="history-dashboard animate-fade-in">
@@ -73,38 +59,6 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
           >
             All Time
           </button>
-        </div>
-        
-        <div className="history-actions" style={{ display: 'flex', gap: '0.5rem' }}>
-          {onExportData && (
-            <button 
-              className="btn-icon" 
-              onClick={onExportData} 
-              title={isGuest ? 'Guests cannot export data' : 'Export JSON'}
-              disabled={isGuest}
-            >
-              <Download size={18} />
-            </button>
-          )}
-          {onImportData && (
-            <>
-              <button 
-                className="btn-icon" 
-                onClick={() => fileInputRef.current?.click()} 
-                title={isGuest ? 'Guests cannot import data' : 'Import JSON'}
-                disabled={isGuest}
-              >
-                <Upload size={18} />
-              </button>
-              <input 
-                type="file" 
-                accept=".json" 
-                ref={fileInputRef} 
-                style={{ display: 'none' }} 
-                onChange={handleFileChange}
-              />
-            </>
-          )}
         </div>
       </div>
 

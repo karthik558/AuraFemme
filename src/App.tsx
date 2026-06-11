@@ -16,8 +16,10 @@ import {
   Target,
   FileText,
   BookOpen,
+  Download,
+  Upload,
 } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
@@ -236,6 +238,17 @@ function App() {
     } catch (err) {
       console.error(err)
       alert('Failed to parse file.')
+    }
+  }
+
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      handleImportData(file)
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -549,6 +562,34 @@ function App() {
                 >
                   <LogOut size={14} /> Sign Out
                 </button>
+                
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+                  <button 
+                    className="btn btn-outline" 
+                    onClick={handleExportData} 
+                    title={authMode === 'guest' ? 'Guests cannot export data' : 'Export Profile Data'}
+                    disabled={authMode === 'guest'}
+                    style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem' }}
+                  >
+                    <Download size={14} /> Export
+                  </button>
+                  <button 
+                    className="btn btn-outline" 
+                    onClick={() => fileInputRef.current?.click()} 
+                    title={authMode === 'guest' ? 'Guests cannot import data' : 'Import Profile Data'}
+                    disabled={authMode === 'guest'}
+                    style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem' }}
+                  >
+                    <Upload size={14} /> Import
+                  </button>
+                  <input 
+                    type="file" 
+                    accept=".json" 
+                    ref={fileInputRef} 
+                    style={{ display: 'none' }} 
+                    onChange={handleFileChange}
+                  />
+                </div>
               </div>
             </div>
           </motion.aside>
@@ -672,9 +713,6 @@ function App() {
                         logs={activeLogs} 
                         currentCycleStartIso={metrics.cycleStartIso}
                         onDeleteLog={handleDeleteLog}
-                        onExportData={handleExportData}
-                        onImportData={handleImportData}
-                        isGuest={authMode === 'guest'}
                       />
                     </motion.div>
 
