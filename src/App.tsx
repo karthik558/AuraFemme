@@ -494,7 +494,6 @@ function App() {
             <div className="glass-card panel">
               <div className="panel-header">
                 <div>
-                  <p className="panel-label">Biometric controller</p>
                   <h2 className="panel-title" style={{ fontSize: '1.25rem' }}>Baseline parameters</h2>
                 </div>
                 <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
