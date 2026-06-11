@@ -100,9 +100,11 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <div className="dashboard-header">
-        <h2 className="dashboard-greeting">{greeting}</h2>
-        <p className="dashboard-subtitle">Here is your personalized cycle intelligence report.</p>
+      <div className="dashboard-header-premium">
+        <h2 className="dashboard-greeting-premium">
+          {greeting}
+        </h2>
+        <p className="dashboard-subtitle-premium">Here is your personalized cycle intelligence report.</p>
       </div>
 
       <div className="dashboard-kpi-row">
