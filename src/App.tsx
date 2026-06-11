@@ -129,10 +129,7 @@ function App() {
     return stored === 'light' || stored === 'dark' ? stored : 'light'
   })
   
-  const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window === 'undefined') return 'light'
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  })
+
 
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [ready, setReady] = useState(false)
@@ -348,17 +345,6 @@ function App() {
   const [lutealPhaseLength, setLutealPhaseLength] = useState(14)
   const [goal, setGoal] = useState<CycleGoal>('track')
 
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const handleChange = () => setSystemTheme(media.matches ? 'dark' : 'light')
-    handleChange()
-    if (media.addEventListener) {
-      media.addEventListener('change', handleChange)
-      return () => media.removeEventListener('change', handleChange)
-    }
-    media.addListener(handleChange)
-    return () => media.removeListener(handleChange)
-  }, [])
 
   useEffect(() => {
     const resolvedTheme = themeMode
