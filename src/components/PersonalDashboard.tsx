@@ -72,7 +72,12 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
     displayName = userProfile.name;
   }
   
-  const greeting = authMode === 'guest' ? 'Guest Dashboard' : `${displayName}'s Dashboard`;
+  const hour = new Date().getHours();
+  let timeGreeting = 'Good morning';
+  if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
+  else if (hour >= 17) timeGreeting = 'Good evening';
+
+  const greeting = authMode === 'guest' ? 'Welcome to Aura' : `${timeGreeting}, ${displayName}`;
 
   const historyData = mockCycleHistory.map((item, index) => {
     if (index === mockCycleHistory.length - 1) {
@@ -104,7 +109,7 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
         <h2 className="dashboard-greeting-premium">
           {greeting}
         </h2>
-        <p className="dashboard-subtitle-premium">Here is your personalized cycle intelligence report.</p>
+        <p className="dashboard-subtitle-premium">Here's a look at your cycle insights today.</p>
       </div>
 
       <div className="dashboard-kpi-row">
