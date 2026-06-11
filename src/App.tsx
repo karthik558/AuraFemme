@@ -49,27 +49,27 @@ type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'refe
 
 const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
   overview: {
-    title: 'Clinical dashboard',
+    title: 'Dashboard',
     subtitle: 'Cycle intelligence, advisory signals, and the live metric stack.',
   },
   calendar: {
-    title: 'Calendar terminal',
+    title: 'Calendar',
     subtitle: 'Detailed phase map with day-level chronology and symptom logging.',
   },
   safety: {
-    title: 'Safety analyzer',
+    title: 'Safety',
     subtitle: 'A structured timeline that assesses theoretical overlap risk.',
   },
   reports: {
-    title: 'Clinical reports',
+    title: 'Reports',
     subtitle: 'Exportable data packages for review.',
   },
   history: {
-    title: 'Cycle history',
+    title: 'History',
     subtitle: 'Retrospective metrics and trend analysis over recorded cycles.',
   },
   reference: {
-    title: 'Clinical reference',
+    title: 'Reference',
     subtitle: 'Peer-reviewed articles, guidelines, and extended learning.',
   },
 }
@@ -78,10 +78,10 @@ const getTabCopy = (tab: TabKey, appMode: 'cycle' | 'pregnancy' | 'postpartum' |
   const base = { ...tabCopy[tab] }
   if (appMode === 'pregnancy') {
     if (tab === 'overview') {
-      base.title = 'Pregnancy dashboard'
+      base.title = 'Dashboard'
       base.subtitle = 'Trimester intelligence and maternal signals.'
     } else if (tab === 'reports') {
-      base.title = 'Pregnancy reports'
+      base.title = 'Reports'
       base.subtitle = 'Generate clinical maternal exports.'
     }
   }
