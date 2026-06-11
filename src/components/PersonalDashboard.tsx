@@ -67,9 +67,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDashboardProps) {
   // Determine name to display
-  let displayName = "Ayana E";
+  let displayName = "Ayana";
   if (userProfile?.name && userProfile.name.trim() !== '') {
-    displayName = userProfile.name;
+    displayName = userProfile.name.trim().split(' ')[0];
   }
   
   const hour = new Date().getHours();
