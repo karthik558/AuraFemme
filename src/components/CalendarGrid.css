@@ -27,7 +27,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.8rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--panel-bg);
   border: 1px solid var(--border-subtle);
   border-radius: 9999px;
   font-size: 0.75rem;
@@ -62,7 +62,7 @@
 /* Squircle Day Card */
 .calendar-day-card {
   position: relative;
-  background: var(--ring-bg, rgba(20, 20, 20, 0.4));
+  background: var(--ring-bg, linear-gradient(transparent, transparent)), var(--panel-bg);
   border-radius: 1.5rem;
   padding: 1.5rem 1rem;
   display: flex;
@@ -72,8 +72,8 @@
   gap: 1rem;
   cursor: pointer;
   outline: none;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--panel-shadow);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   text-align: center;
@@ -86,7 +86,7 @@
   inset: 0;
   border-radius: 1.5rem;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(135deg, var(--panel-border), transparent);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -96,20 +96,20 @@
 
 .calendar-day-card:hover {
   transform: translateY(-4px) scale(1.02);
-  background: var(--ring-bg-hover, rgba(30, 30, 30, 0.6));
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
+  background: var(--ring-bg-hover, linear-gradient(transparent, transparent)), var(--panel-bg);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day-card.active {
-  background: var(--ring-bg);
-  border-color: transparent;
+  background: var(--ring-bg, linear-gradient(transparent, transparent)), var(--panel-bg);
+  border-color: var(--ring-color);
   transform: scale(1.05);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 30px var(--ring-glow);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 0 20px var(--ring-glow);
   z-index: 10;
 }
 
 .calendar-day-card.active::before {
-  background: linear-gradient(135deg, #fff, var(--ring-color));
+  background: linear-gradient(135deg, var(--panel-border), var(--ring-color));
   opacity: 0.8;
 }
 
@@ -125,17 +125,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+  background: var(--panel-bg);
+  border: 1px solid var(--border-subtle);
   position: relative;
   z-index: 2;
   transition: all 0.3s ease;
 }
 
 .calendar-day-card.active .day-circle {
-  background: rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: var(--bg-gradient-start);
+  border-color: var(--ring-color);
   transform: scale(1.1);
 }
 
@@ -180,13 +179,12 @@
 .day-phase-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-main);
   margin: 0;
 }
 
 .calendar-day-card.active .day-phase-title {
-  color: white;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  color: var(--text-strong);
 }
 
 .day-icons {
@@ -250,41 +248,4 @@
   --ring-glow: rgba(217, 70, 239, 0.25);
 }
 
-/* Light Mode Overrides */
-:root[data-theme='light'] .calendar-grid-section {
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
-}
 
-:root[data-theme='light'] .legend-badge {
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.05);
-}
-
-:root[data-theme='light'] .calendar-day-card {
-  background: var(--ring-bg, rgba(255, 255, 255, 0.8));
-  border-color: rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 2px 10px rgba(255, 255, 255, 1), 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-:root[data-theme='light'] .calendar-day-card:hover {
-  background: var(--ring-bg-hover, rgba(255, 255, 255, 1));
-}
-
-:root[data-theme='light'] .day-circle {
-  background: rgba(255, 255, 255, 0.8);
-  border-color: rgba(0, 0, 0, 0.05);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-:root[data-theme='light'] .calendar-day-card.active .day-circle {
-  background: white;
-}
-
-:root[data-theme='light'] .day-phase-title {
-  color: var(--text-strong);
-}
-
-:root[data-theme='light'] .day-icon-empty {
-  background: rgba(0, 0, 0, 0.1);
-}
