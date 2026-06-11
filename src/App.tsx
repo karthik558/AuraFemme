@@ -645,6 +645,15 @@ function App() {
                       style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
                     >
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
+                          <button 
+                            className="btn btn-primary" 
+                            style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.85rem', padding: '0.6rem 1rem' }}
+                            onClick={() => setActiveTab('reports')}
+                          >
+                            <Download size={16} /> Generate Clinical Report
+                          </button>
+                        </div>
                         <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
                         {activeDay && (
                           <section className="phase-summary">
@@ -738,6 +747,7 @@ function App() {
                                 lutealPhaseLength={lutealPhaseLength} 
                                 userName={userProfile?.name || 'Guest User'}
                                 caseStudy={sharedCaseStudy}
+                                logs={activeLogs}
                               />
                             </div>
                           </div>

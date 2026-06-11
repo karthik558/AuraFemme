@@ -105,7 +105,7 @@ export function SafetyAnalyzer({
               className="btn btn-primary"
             >
               <ArrowRightLeft className="w-4 h-4" />
-              Export to dashboard
+              Generate Clinical Safety Report
             </button>
           </div>
         </div>

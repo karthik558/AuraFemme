@@ -13,7 +13,7 @@ interface DailyLogEditorProps {
   isGuest?: boolean
 }
 
-const SYMPTOMS = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Spotting', 'Tender Breasts', 'Acne', 'Nausea']
+const SYMPTOMS = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Spotting', 'Tender Breasts', 'Acne', 'Nausea', 'Unprotected Intercourse', 'Protected Intercourse']
 const MOODS = ['Calm', 'Happy', 'Energetic', 'Anxious', 'Sad', 'Irritable', 'Sensitive']
 
 export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest }: DailyLogEditorProps) {
