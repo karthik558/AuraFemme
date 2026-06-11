@@ -22,6 +22,7 @@ import {
   Upload,
 } from 'lucide-react'
 import { useEffect, useMemo, useState, useRef } from 'react'
+import { GooeyBloodTransition } from './components/GooeyBloodTransition'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
@@ -571,6 +572,7 @@ function App() {
             <div className="mobile-only header-left">
               <AppModeSwitcher 
                 mode={userProfile?.appMode || 'cycle'} 
+                themeMode={themeMode}
                 onChange={(newMode) => {
                   if (userProfile) {
                     const nextProfile = { ...userProfile, appMode: newMode }
@@ -603,6 +605,7 @@ function App() {
               <div className="desktop-only">
                 <AppModeSwitcher 
                   mode={userProfile?.appMode || 'cycle'} 
+                  themeMode={themeMode}
                   onChange={(newMode) => {
                     if (userProfile) {
                       const nextProfile = { ...userProfile, appMode: newMode }
@@ -627,7 +630,7 @@ function App() {
                 <div className="today-divider" />
                 <p className="today-date">{formatUtcDateLabel(utcTodayIso())}</p>
               </div>
-              <ThemeSwitcher mode={themeMode} onChange={setThemeMode} />
+              <ThemeSwitcher mode={themeMode} appMode={userProfile?.appMode || 'cycle'} onChange={setThemeMode} />
             </div>
           </div>
           <nav className="app-nav">
@@ -1085,41 +1088,89 @@ function SliderField({ label, helper, value, min, max, onChange }: { label: stri
   )
 }
 
-function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: ThemeMode) => void }) {
+function ThemeSwitcher({ mode, appMode, onChange }: { mode: ThemeMode; appMode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: ThemeMode) => void }) {
+  const [transitionState, setTransitionState] = useState<{
+    isActive: boolean;
+    targetTheme: ThemeMode;
+  }>({ isActive: false, targetTheme: mode });
+
+  const handleThemeChange = (targetMode: ThemeMode) => {
+    if (mode === targetMode || transitionState.isActive) return;
+    setTransitionState({
+      isActive: true,
+      targetTheme: targetMode
+    });
+  };
+
   const toggleMode = () => {
-    if (mode === 'auto') onChange('light')
-    else if (mode === 'light') onChange('dark')
-    else onChange('auto')
-  }
+    let targetMode: ThemeMode = 'auto';
+    if (mode === 'auto') targetMode = 'light';
+    else if (mode === 'light') targetMode = 'dark';
+    else targetMode = 'auto';
+    handleThemeChange(targetMode);
+  };
 
   return (
-    <div className="theme-switcher">
-      {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
-        <button key={option} type="button" onClick={() => onChange(option)} className={`theme-btn desktop-only ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
-          {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
-          <span className="theme-btn-text">{themeModeLabels[option]}</span>
+    <>
+      {transitionState.isActive && (
+        <GooeyBloodTransition
+          isActive={transitionState.isActive}
+          targetTheme={transitionState.targetTheme}
+          targetAppMode={appMode}
+          onSwitch={() => onChange(transitionState.targetTheme)}
+          onComplete={() => setTransitionState(prev => ({ ...prev, isActive: false }))}
+        />
+      )}
+      <div className="theme-switcher">
+        {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
+          <button key={option} type="button" onClick={() => handleThemeChange(option)} className={`theme-btn desktop-only ${option === 'auto' ? 'theme-btn-auto' : ''} ${mode === option ? 'active' : ''}`}>
+            {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
+            <span className="theme-btn-text">{themeModeLabels[option]}</span>
+          </button>
+        ))}
+        <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Theme: ${themeModeLabels[mode]}`}>
+          {mode === 'light' ? <SunMedium className="w-4 h-4" /> : mode === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
         </button>
-      ))}
-      <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Theme: ${themeModeLabels[mode]}`}>
-        {mode === 'light' ? <SunMedium className="w-4 h-4" /> : mode === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
-      </button>
-    </div>
+      </div>
+    </>
   )
 }
 
-function AppModeSwitcher({ mode, onChange }: { mode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: 'cycle' | 'pregnancy' | 'postpartum') => void }) {
+function AppModeSwitcher({ mode, themeMode, onChange }: { mode: 'cycle' | 'pregnancy' | 'postpartum'; themeMode: ThemeMode; onChange: (mode: 'cycle' | 'pregnancy' | 'postpartum') => void }) {
+  const [transitionState, setTransitionState] = useState<{
+    isActive: boolean;
+    targetAppMode: 'cycle' | 'pregnancy' | 'postpartum';
+  }>({ isActive: false, targetAppMode: mode });
+
+  const handleModeChange = (targetMode: 'cycle' | 'pregnancy' | 'postpartum') => {
+    if (mode === targetMode || transitionState.isActive) return;
+    setTransitionState({
+      isActive: true,
+      targetAppMode: targetMode
+    });
+  };
+
   const toggleMode = () => {
-    if (mode === 'cycle') onChange('pregnancy')
-    else onChange('cycle')
+    handleModeChange(mode === 'cycle' ? 'pregnancy' : 'cycle');
   }
 
   return (
-    <div className="theme-switcher">
-      <button className={`theme-btn desktop-only ${mode === 'cycle' ? 'active' : ''}`} onClick={() => onChange('cycle')} title="Cycle Tracking">
+    <>
+      {transitionState.isActive && (
+        <GooeyBloodTransition
+          isActive={transitionState.isActive}
+          targetTheme={themeMode}
+          targetAppMode={transitionState.targetAppMode}
+          onSwitch={() => onChange(transitionState.targetAppMode)}
+          onComplete={() => setTransitionState(prev => ({ ...prev, isActive: false }))}
+        />
+      )}
+      <div className="theme-switcher">
+        <button className={`theme-btn desktop-only ${mode === 'cycle' ? 'active' : ''}`} onClick={() => handleModeChange('cycle')} title="Cycle Tracking">
         <Activity className="w-4 h-4" />
         <span className="theme-btn-text hide-on-mobile">Cycle</span>
       </button>
-      <button className={`theme-btn desktop-only ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => onChange('pregnancy')} title="Pregnancy Tracking">
+      <button className={`theme-btn desktop-only ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => handleModeChange('pregnancy')} title="Pregnancy Tracking">
         <Sparkles className="w-4 h-4" />
         <span className="theme-btn-text hide-on-mobile">Pregnancy</span>
       </button>
@@ -1127,6 +1178,7 @@ function AppModeSwitcher({ mode, onChange }: { mode: 'cycle' | 'pregnancy' | 'po
         {mode === 'cycle' ? <Activity className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
       </button>
     </div>
+    </>
   )
 }
 

@@ -1,0 +1,37 @@
+.gooey-transition-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gooey-filter-container {
+  width: 100%;
+  height: 100%;
+  filter: url('#blood-goo');
+  /* Ensure hardware acceleration for the filter container */
+  transform: translateZ(0);
+}
+
+.blood-wipe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* We use 120vh so it covers fully before the drips hit the bottom */
+  height: 120vh;
+}
+
+.blood-solid-block {
+  width: 100%;
+  height: 100%;
+}
+
+.blood-drip {
+  position: absolute;
+  bottom: 0;
+  /* Shift down so half of it hangs out of the solid block */
+  transform: translateY(50%);
+  border-radius: 50%;
+}
