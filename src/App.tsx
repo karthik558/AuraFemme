@@ -1,5 +1,7 @@
 import auraLogo from './assets/icon-color.png'
 import faviconGradient from './assets/favicon-gradient.png'
+import pregnancyLogo from './assets/icon-color-purple.png'
+import pregnancyMobileLogo from './assets/favicon-gradient-blue.png'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Activity,
@@ -37,6 +39,8 @@ import {
   clampNumber,
   formatUtcDateLabel,
   utcTodayIso,
+  diffUtcDays,
+  buildPregnancyMetrics,
 } from './utils/calculator'
 import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode, DailyLog, UserProfile } from './types'
 import './App.css'
@@ -57,18 +61,33 @@ const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
     subtitle: 'A structured timeline that assesses theoretical overlap risk.',
   },
   reports: {
-    title: 'Executive reports',
-    subtitle: 'Generate and export clean, analytical clinical summaries.',
+    title: 'Clinical reports',
+    subtitle: 'Exportable data packages for review.',
   },
   history: {
-    title: 'Symptom history',
-    subtitle: 'A chronological feed of all logged physical and emotional data.',
+    title: 'Cycle history',
+    subtitle: 'Retrospective metrics and trend analysis over recorded cycles.',
   },
   reference: {
     title: 'Clinical reference',
     subtitle: 'Peer-reviewed articles, guidelines, and extended learning.',
   },
 }
+
+const getTabCopy = (tab: TabKey, appMode: 'cycle' | 'pregnancy' | 'postpartum' | undefined) => {
+  const base = { ...tabCopy[tab] }
+  if (appMode === 'pregnancy') {
+    if (tab === 'overview') {
+      base.title = 'Pregnancy dashboard'
+      base.subtitle = 'Trimester intelligence and maternal signals.'
+    } else if (tab === 'reports') {
+      base.title = 'Pregnancy reports'
+      base.subtitle = 'Generate clinical maternal exports.'
+    }
+  }
+  return base
+}
+
 
 const getMobileNavIcon = (tab: TabKey) => {
   switch (tab) {
@@ -135,6 +154,8 @@ function App() {
     localStorage.setItem('aura-femme-logs', JSON.stringify(logs))
   }, [logs])
 
+
+
   const handleSaveLog = (log: DailyLog) => {
     setLogs(prev => ({ ...prev, [log.dateIso]: log }))
   }
@@ -178,6 +199,16 @@ function App() {
     return null
   })
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-app-mode', userProfile?.appMode || 'cycle')
+  }, [userProfile?.appMode])
+
+  useEffect(() => {
+    if (userProfile?.appMode === 'pregnancy' && activeTab === 'safety') {
+      setActiveTab('overview')
+    }
+  }, [userProfile?.appMode, activeTab])
+
   const handleCompleteOnboarding = (profile: UserProfile) => {
     localStorage.setItem('aura-femme-profile', JSON.stringify(profile))
     localStorage.removeItem('aura-femme-user')
@@ -201,6 +232,14 @@ function App() {
     setLastPeriodDate(addUtcDays(utcTodayIso(), -12))
     setCycleLength(28)
     setBleedingDuration(5)
+    setUserProfile({
+      name: 'Guest User',
+      managementType: 'self',
+      lastPeriodDate: addUtcDays(utcTodayIso(), -12),
+      cycleLength: 28,
+      bleedingDuration: 5,
+      appMode: 'cycle'
+    })
     handleSetAuthMode('guest')
   }
 
@@ -312,6 +351,14 @@ function App() {
   const calendarDays = useMemo(() => buildCalendarDays(metrics.cycleStartIso, cycleInput), [cycleInput, metrics.cycleStartIso])
 
   const advisory = useMemo(() => {
+    if (userProfile?.appMode === 'pregnancy') {
+      return {
+        title: 'Pregnancy Mode Active',
+        body: 'Maternal tracking is currently engaged. Standard cycle parameters and goals are suppressed to focus on gestational progress.',
+        icon: <Activity className="w-5 h-5" />,
+      }
+    }
+
     const fertileCaution = metrics.currentPhase === 'ovulation' || metrics.currentPhase === 'luteal'
     switch (goal) {
       case 'track':
@@ -339,7 +386,7 @@ function App() {
           icon: <ShieldAlert className="w-5 h-5" />,
         }
     }
-  }, [goal, metrics.currentPhase, metrics.ovulationCountdown])
+  }, [goal, metrics.currentPhase, metrics.ovulationCountdown, userProfile?.appMode])
 
   const activeDay = useMemo(() => {
     if (!calendarDays.length) return null
@@ -381,7 +428,7 @@ function App() {
           {/* Main Logo Pulsing like a heart */}
           <div style={{ position: 'relative', zIndex: 10 }}>
             <motion.img 
-              src={faviconGradient} 
+              src={userProfile?.appMode === 'pregnancy' ? pregnancyMobileLogo : faviconGradient} 
               alt="Loading" 
               animate={{ 
                 scale: [1, 1.08, 1, 1.15, 1],
@@ -394,7 +441,7 @@ function App() {
                 ] 
               }}
               transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              style={{ width: '8rem', height: 'auto', display: 'block', margin: '0 auto' }}
+              style={{ width: userProfile?.appMode === 'pregnancy' ? '8.5rem' : '8rem', height: 'auto', display: 'block', margin: '0 auto', maxWidth: '80vw' }}
             />
           </div>
           
@@ -483,11 +530,30 @@ function App() {
           <div className="header-content">
             <div className="header-brand">
               <picture>
-                <source media="(max-width: 768px)" srcSet="/icon-color.png" />
-                <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
+                <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
+                <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
               </picture>
             </div>
             <div className="header-actions">
+              <AppModeSwitcher 
+                mode={userProfile?.appMode || 'cycle'} 
+                onChange={(newMode) => {
+                  if (userProfile) {
+                    const nextProfile = { ...userProfile, appMode: newMode }
+                    setUserProfile(nextProfile)
+                    localStorage.setItem('aura-femme-profile', JSON.stringify(nextProfile))
+                  } else {
+                    setUserProfile({
+                      name: 'Guest User',
+                      managementType: 'self',
+                      lastPeriodDate: addUtcDays(utcTodayIso(), -12),
+                      cycleLength: 28,
+                      bleedingDuration: 5,
+                      appMode: newMode
+                    })
+                  }
+                }} 
+              />
               <div className="today-badge">
                 <CalendarDays className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
                 <p className="today-label">Today</p>
@@ -498,14 +564,14 @@ function App() {
             </div>
           </div>
           <nav className="app-nav">
-            {(Object.keys(tabCopy) as TabKey[]).map((tab) => (
+            {(Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')).map((tab) => (
               <button
                 key={tab}
                 type="button"
                 onClick={() => setActiveTab(tab)}
                 className={`nav-item ${activeTab === tab ? 'active' : ''}`}
               >
-                {tabCopy[tab].title}
+                {getTabCopy(tab, userProfile?.appMode).title}
               </button>
             ))}
           </nav>
@@ -527,30 +593,36 @@ function App() {
               </div>
 
               <div className="panel-body">
-                <DateTriplet label="Last period start date" value={lastPeriodDate} onChange={handleDatePartsChange} />
+                {userProfile?.appMode === 'pregnancy' ? (
+                  <DateTriplet label="Last period (LMP)" value={lastPeriodDate} onChange={handleDatePartsChange} />
+                ) : (
+                  <>
+                    <DateTriplet label="Last period start date" value={lastPeriodDate} onChange={handleDatePartsChange} />
 
-                <SliderField label="Cycle duration" helper="21 to 40 days" value={cycleLength} min={21} max={40} onChange={setCycleLength} />
-                <SliderField label="Bleeding duration" helper="Menstruation length" value={bleedingDuration} min={2} max={10} onChange={setBleedingDuration} />
-                <SliderField label="Luteal phase" helper="Default 14 days" value={lutealPhaseLength} min={10} max={18} onChange={setLutealPhaseLength} />
+                    <SliderField label="Cycle duration" helper="21 to 40 days" value={cycleLength} min={21} max={40} onChange={setCycleLength} />
+                    <SliderField label="Bleeding duration" helper="Menstruation length" value={bleedingDuration} min={2} max={10} onChange={setBleedingDuration} />
+                    <SliderField label="Luteal phase" helper="Default 14 days" value={lutealPhaseLength} min={10} max={18} onChange={setLutealPhaseLength} />
 
-                <div className="field-group">
-                  <p className="field-label">Primary goal</p>
-                  <div className="goal-options">
-                    {goalOptions.map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        onClick={() => setGoal(option.value)}
-                        className={`goal-btn ${goal === option.value ? 'active' : ''}`}
-                      >
-                        <span className="goal-btn-title">{option.label}</span>
-                        <span className="goal-btn-desc">
-                          {option.value === 'track' ? 'Neutral logging' : option.value === 'conceive' ? 'Optimize fertile timing' : 'Higher caution mode'}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                    <div className="field-group">
+                      <p className="field-label">Primary goal</p>
+                      <div className="goal-options">
+                        {goalOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            type="button"
+                            onClick={() => setGoal(option.value)}
+                            className={`goal-btn ${goal === option.value ? 'active' : ''}`}
+                          >
+                            <span className="goal-btn-title">{option.label}</span>
+                            <span className="goal-btn-desc">
+                              {option.value === 'track' ? 'Neutral logging' : option.value === 'conceive' ? 'Optimize fertile timing' : 'Higher caution mode'}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
@@ -580,7 +652,8 @@ function App() {
                     </p>
                   </div>
                 </div>
-                
+
+                {/* App Tracking Mode was moved to the header */}
                 <button 
                   onClick={() => handleSetAuthMode('unauthenticated')}
                   className="btn btn-outline"
@@ -632,8 +705,8 @@ function App() {
                   <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
                     <div>
                       <p className="panel-label">Dashboard</p>
-                      <h2 className="panel-title">{tabCopy[activeTab].title}</h2>
-                      <p className="metric-helper" style={{ maxWidth: '42rem' }}>{tabCopy[activeTab].subtitle}</p>
+                      <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
+                      <p className="metric-helper" style={{ maxWidth: '42rem' }}>{getTabCopy(activeTab, userProfile?.appMode).subtitle}</p>
                     </div>
                     <div className="nav-item">
                       <CheckCircle2 className="w-4 h-4" style={{ color: '#10b981' }} />
@@ -680,32 +753,54 @@ function App() {
                             <Download size={16} /> Generate Clinical Report
                           </button>
                         </div>
-                        <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} />
+                        <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
                         {activeDay && (
                           <section className="phase-summary">
                             <div className="panel-header">
                               <div>
-                                <p className="panel-label">Chronology terminal</p>
-                                <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
+                                <p className="panel-label">{userProfile?.appMode === 'pregnancy' ? 'Pregnancy Timeline' : 'Chronology terminal'}</p>
+                                {userProfile?.appMode === 'pregnancy' ? (
+                                  <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Week {Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7)}</h3>
+                                ) : (
+                                  <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
+                                )}
                                 <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
                               </div>
-                              <div className="badge">{activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable'}</div>
+                              <div className="badge">
+                                {userProfile?.appMode === 'pregnancy' 
+                                  ? `Trimester ${Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 28 ? 3 : Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 13 ? 2 : 1}` 
+                                  : (activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable')}
+                              </div>
                             </div>
                             
                             <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
-                              <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
-                              <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
-                              <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                              {userProfile?.appMode === 'pregnancy' ? (() => {
+                                const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, activeDay.dateIso)
+                                return (
+                                  <>
+                                    <InfoTile label="Gestational age" value={`${pMetrics.gestationalWeeks} weeks, ${pMetrics.gestationalDays % 7} days`} />
+                                    <InfoTile label="Pregnancy progress" value={`Trimester ${pMetrics.trimester}`} />
+                                    <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                                  </>
+                                )
+                              })() : (
+                                <>
+                                  <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
+                                  <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
+                                  <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                                </>
+                              )}
                             </div>
 
-                            <DailyLogEditor 
-                              dateIso={activeDay.dateIso} 
-                              existingLog={activeLogs[activeDay.dateIso] || null} 
-                              onSave={handleSaveLog} 
-                              onDelete={() => handleDeleteLog(activeDay.dateIso)}
-                              isGuest={authMode === 'guest'}
-                              onClose={() => setSelectedDay(null)} 
-                            />
+                              <DailyLogEditor 
+                                dateIso={activeDay.dateIso} 
+                                existingLog={activeLogs[activeDay.dateIso] || null} 
+                                onSave={handleSaveLog} 
+                                onDelete={() => handleDeleteLog(activeDay.dateIso)}
+                                isGuest={authMode === 'guest'}
+                                onClose={() => setSelectedDay(null)}
+                                userProfile={userProfile}
+                              />
 
 
                           </section>
@@ -769,11 +864,12 @@ function App() {
                             <div style={{ width: '100%', overflowX: 'auto', minWidth: 0 }}>
                               <ReportExport 
                                 metrics={metrics} 
-                                cycleLength={cycleLength} 
+                                cycleLength={userProfile?.cycleLength || 28} 
                                 lutealPhaseLength={lutealPhaseLength} 
-                                userName={userProfile?.name || 'Guest User'}
+                                userName={userProfile?.name || 'Ayana'} 
+                                logs={activeLogs} 
+                                userProfile={userProfile} 
                                 caseStudy={sharedCaseStudy}
-                                logs={activeLogs}
                               />
                             </div>
                           </div>
@@ -834,7 +930,7 @@ function App() {
       </div>
 
       <nav className="mobile-bottom-nav">
-        {(Object.keys(tabCopy) as TabKey[]).map((tab) => {
+        {(Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')).map((tab) => {
           const isActive = activeTab === tab;
           return (
             <button
@@ -920,6 +1016,19 @@ function ThemeSwitcher({ mode, onChange }: { mode: ThemeMode; onChange: (mode: T
           <span className="theme-btn-text">{themeModeLabels[option]}</span>
         </button>
       ))}
+    </div>
+  )
+}
+
+function AppModeSwitcher({ mode, onChange }: { mode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: 'cycle' | 'pregnancy' | 'postpartum') => void }) {
+  return (
+    <div className="theme-switcher" style={{ marginRight: '1rem' }}>
+      <button type="button" onClick={() => onChange('cycle')} className={`theme-btn ${mode === 'cycle' ? 'active' : ''}`}>
+        <span className="theme-btn-text">Cycle Tracker</span>
+      </button>
+      <button type="button" onClick={() => onChange('pregnancy')} className={`theme-btn ${mode === 'pregnancy' ? 'active' : ''}`}>
+        <span className="theme-btn-text">Pregnancy Mode</span>
+      </button>
     </div>
   )
 }

@@ -248,4 +248,25 @@
   --ring-glow: rgba(217, 70, 239, 0.25);
 }
 
+.phase-trimester-1 {
+  --ring-color: #f472b6;
+  --ring-bg: linear-gradient(145deg, rgba(244, 114, 182, 0.15), rgba(219, 39, 119, 0.25));
+  --ring-bg-hover: linear-gradient(145deg, rgba(244, 114, 182, 0.2), rgba(219, 39, 119, 0.3));
+  --ring-glow: rgba(244, 114, 182, 0.25);
+}
+
+.phase-trimester-2 {
+  --ring-color: #c084fc;
+  --ring-bg: linear-gradient(145deg, rgba(192, 132, 252, 0.15), rgba(147, 51, 234, 0.25));
+  --ring-bg-hover: linear-gradient(145deg, rgba(192, 132, 252, 0.2), rgba(147, 51, 234, 0.3));
+  --ring-glow: rgba(192, 132, 252, 0.25);
+}
+
+.phase-trimester-3 {
+  --ring-color: #38bdf8;
+  --ring-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(2, 132, 199, 0.25));
+  --ring-bg-hover: linear-gradient(145deg, rgba(56, 189, 248, 0.2), rgba(2, 132, 199, 0.3));
+  --ring-glow: rgba(56, 189, 248, 0.25);
+}
+
 

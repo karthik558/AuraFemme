@@ -11,12 +11,14 @@ interface DailyLogEditorProps {
   onDelete?: () => void
   onClose: () => void
   isGuest?: boolean
+  userProfile?: import('../types').UserProfile | null
 }
 
 const SYMPTOMS = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Spotting', 'Tender Breasts', 'Acne', 'Nausea', 'Unprotected Intercourse', 'Protected Intercourse']
+const PREGNANCY_SYMPTOMS = ['Morning Sickness', 'Fatigue', 'Baby Kicks', 'Cravings', 'Heartburn', 'Backache', 'Frequent Urination', 'Prenatal Vitamins', 'Folic Acid']
 const MOODS = ['Calm', 'Happy', 'Energetic', 'Anxious', 'Sad', 'Irritable', 'Sensitive']
 
-export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest }: DailyLogEditorProps) {
+export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest, userProfile }: DailyLogEditorProps) {
   const [symptoms, setSymptoms] = useState<string[]>(existingLog?.symptoms || [])
   const [mood, setMood] = useState<string | null>(existingLog?.mood || null)
   const [notes, setNotes] = useState(existingLog?.notes || '')
@@ -56,9 +58,9 @@ export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose
       </div>
 
       <div className="log-section">
-        <p className="log-label">Physical Symptoms</p>
+        <p className="log-label">{userProfile?.appMode === 'pregnancy' ? 'Pregnancy Tracking' : 'Physical Symptoms'}</p>
         <div className="chip-group">
-          {SYMPTOMS.map((sym) => (
+          {(userProfile?.appMode === 'pregnancy' ? PREGNANCY_SYMPTOMS : SYMPTOMS).map((sym) => (
             <button
               key={sym}
               type="button"

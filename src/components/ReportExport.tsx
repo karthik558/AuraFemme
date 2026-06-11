@@ -3,8 +3,10 @@ import { Download, Activity, ListChecks, CalendarDays } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import type { CaseStudyResult, DailyLog } from '../types';
+import type { CaseStudyResult, DailyLog, UserProfile } from '../types';
+import { buildPregnancyMetrics, formatUtcDateLabel } from '../utils/calculator';
 import faviconGradient from '../assets/favicon-gradient.png';
+import pregnancyLogo from '../assets/icon-color-purple.png';
 
 interface ReportExportProps {
   metrics: any;
@@ -13,9 +15,10 @@ interface ReportExportProps {
   userName: string;
   caseStudy?: CaseStudyResult | null;
   logs?: Record<string, DailyLog>;
+  userProfile?: UserProfile | null;
 }
 
-export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {} }: ReportExportProps) {
+export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -96,8 +99,22 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
   const activeCycleLength = caseStudy ? caseStudy.input.cycleLength : cycleLength;
   const activeLuteal = caseStudy ? caseStudy.input.lutealPhaseLength : lutealPhaseLength;
 
+  const isPregnancyMode = userProfile?.appMode === 'pregnancy';
+  const pMetrics = isPregnancyMode && userProfile?.lastPeriodDate ? buildPregnancyMetrics(userProfile.lastPeriodDate) : null;
+
   // Generate mock hormone data over the cycle length
-  const hormoneData = Array.from({ length: activeCycleLength }, (_, i) => {
+  const hormoneData = isPregnancyMode ? Array.from({ length: 40 }, (_, i) => {
+    const week = i + 1;
+    const hcg = week < 12 ? Math.pow(week / 10, 2) * 100 : Math.max(10, 100 - (week - 12) * 2);
+    const estrogen = Math.pow(week / 40, 1.5) * 80 + 10;
+    const progesterone = Math.pow(week / 40, 1.2) * 90 + 5;
+    return {
+      day: `Wk ${week}`,
+      Estrogen: Math.round(estrogen),
+      Progesterone: Math.round(progesterone),
+      hCG: Math.round(hcg)
+    };
+  }) : Array.from({ length: activeCycleLength }, (_, i) => {
     const day = i + 1;
     const ovulationDay = activeCycleLength - activeLuteal;
     
@@ -159,9 +176,14 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img src={faviconGradient} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
+            <img src={isPregnancyMode ? pregnancyLogo : faviconGradient} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
             <div>
-              {/* Title removed */}
+              <h1 style={{ margin: 0, fontSize: '24px', color: '#1a1a1a' }}>
+                {isPregnancyMode ? 'Clinical Pregnancy Report' : 'Clinical Cycle Report'}
+              </h1>
+              <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>
+                {isPregnancyMode ? 'Comprehensive maternal timeline and symptoms' : 'Comprehensive cycle mapping and symptoms'}
+              </p>
             </div>
           </div>
           <div style={{ textAlign: 'left' }}>
@@ -173,54 +195,79 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
 
         {/* Patient/Filter Details */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '30px' }}>
-          <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cycle Model</p>
-            <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{activeCycleLength} days</p>
-          </div>
-          <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Luteal Phase</p>
-            <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{activeLuteal} days</p>
-          </div>
-          <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{caseStudy ? 'Risk Assessment' : 'Current Status'}</p>
-            <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600, color: caseStudy ? (caseStudy.riskLevel === 'elevated' ? '#c52233' : '#059669') : '#c52233' }}>
-              {caseStudy ? caseStudy.riskLabel : metrics.currentPhaseLabel}
-            </p>
-          </div>
+          {isPregnancyMode && pMetrics ? (
+            <>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Gestational Age</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>Week {pMetrics.gestationalWeeks}</p>
+              </div>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Trimester</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{pMetrics.trimester}</p>
+              </div>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Estimated Due Date</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600, color: '#8b5cf6' }}>
+                  {formatUtcDateLabel(pMetrics.estimatedDueDate)}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cycle Model</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{activeCycleLength} days</p>
+              </div>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Luteal Phase</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600 }}>{activeLuteal} days</p>
+              </div>
+              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{caseStudy ? 'Risk Assessment' : 'Current Status'}</p>
+                <p style={{ margin: '8px 0 0', fontSize: '18px', fontWeight: 600, color: caseStudy ? (caseStudy.riskLevel === 'elevated' ? '#c52233' : '#059669') : '#c52233' }}>
+                  {caseStudy ? caseStudy.riskLabel : metrics.currentPhaseLabel}
+                </p>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Cycle Analysis */}
-        <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Activity size={18} style={{ color: '#c52233' }} />
-          {caseStudy ? 'Safety Case Study Analysis' : 'Active Cycle Analysis'}
-        </h2>
-        
-        {caseStudy && (
-           <div style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid #c52233', wordBreak: 'break-word' }}>
-              <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}><strong>Summary:</strong> {caseStudy.summary}</p>
-           </div>
-        )}
+        {!isPregnancyMode && (
+          <>
+            <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Activity size={18} style={{ color: '#c52233' }} />
+              {caseStudy ? 'Safety Case Study Analysis' : 'Active Cycle Analysis'}
+            </h2>
+            
+            {caseStudy && (
+               <div style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid #c52233', wordBreak: 'break-word' }}>
+                  <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}><strong>Summary:</strong> {caseStudy.summary}</p>
+               </div>
+            )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px', marginBottom: '40px' }}>
-          <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#c52233' }}>{caseStudy ? 'Intercourse Date' : 'Safe Dates / Fertile Window'}</h3>
-            <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
-               {caseStudy ? new Date(caseStudy.input.intercourseDate).toLocaleDateString() : `${metrics.fertileWindowStart} - ${metrics.fertileWindowEnd}`}
-            </p>
-            <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
-               {caseStudy ? `Cycle Day ${caseStudy.intercourseCycleDay}` : 'This represents the high-probability risk period. Unlisted dates are statistically safer.'}
-            </p>
-          </div>
-          <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
-            <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#059669' }}>{caseStudy ? 'Ovulation Day' : 'Next Period Prediction'}</h3>
-            <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
-              {caseStudy ? `Cycle Day ${caseStudy.ovulationDay}` : (metrics.isOverdue ? 'Overdue' : `Expected in ${metrics.nextPeriodCountdown} days`)}
-            </p>
-            <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
-              {caseStudy ? `Fertile window spans days ${caseStudy.fertileWindowStart} - ${caseStudy.fertileWindowEnd}` : `Based on a ${activeCycleLength}-day cycle model.`}
-            </p>
-          </div>
-        </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px', marginBottom: '40px' }}>
+              <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#c52233' }}>{caseStudy ? 'Intercourse Date' : 'Safe Dates / Fertile Window'}</h3>
+                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
+                   {caseStudy ? new Date(caseStudy.input.intercourseDate).toLocaleDateString() : `${metrics.fertileWindowStart} - ${metrics.fertileWindowEnd}`}
+                </p>
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
+                   {caseStudy ? `Cycle Day ${caseStudy.intercourseCycleDay}` : 'This represents the high-probability risk period. Unlisted dates are statistically safer.'}
+                </p>
+              </div>
+              <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#059669' }}>{caseStudy ? 'Ovulation Day' : 'Next Period Prediction'}</h3>
+                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
+                  {caseStudy ? `Cycle Day ${caseStudy.ovulationDay}` : (metrics.isOverdue ? 'Overdue' : `Expected in ${metrics.nextPeriodCountdown} days`)}
+                </p>
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
+                  {caseStudy ? `Fertile window spans days ${caseStudy.fertileWindowStart} - ${caseStudy.fertileWindowEnd}` : `Based on a ${activeCycleLength}-day cycle model.`}
+                </p>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Aggregated Symptom Analytics */}
         <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -282,11 +329,13 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
 
         {/* Clinical Graph */}
         <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px' }}>Endocrine Hormone Profile Model</h2>
-        <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px' }}>Standardized endocrine tracking based on the active {activeCycleLength}-day model with a {activeLuteal}-day luteal phase.</p>
+        <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px' }}>
+          {isPregnancyMode ? 'Standardized endocrine tracking based on a 40-week gestation timeline.' : `Standardized endocrine tracking based on the active ${activeCycleLength}-day model with a ${activeLuteal}-day luteal phase.`}
+        </p>
         
         <div style={{ width: '100%', height: '350px', marginBottom: '40px', background: '#fcfcfc', borderRadius: '12px', padding: '15px' }}>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={hormoneData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+            <LineChart data={hormoneData as any[]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
@@ -296,8 +345,12 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               />
               <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
               <Line type="monotone" dataKey="Estrogen" stroke="#06b6d4" strokeWidth={3} dot={false} />
-              <Line type="monotone" dataKey="LH" stroke="#f59e0b" strokeWidth={3} dot={false} />
               <Line type="monotone" dataKey="Progesterone" stroke="#d946ef" strokeWidth={3} dot={false} />
+              {isPregnancyMode ? (
+                <Line type="monotone" dataKey="hCG" stroke="#8b5cf6" strokeWidth={3} dot={false} />
+              ) : (
+                <Line type="monotone" dataKey="LH" stroke="#f59e0b" strokeWidth={3} dot={false} />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>

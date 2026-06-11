@@ -6,6 +6,7 @@ import type {
   CycleInput,
   CycleMetrics,
   CyclePhase,
+  PregnancyMetrics,
   RiskLevel,
 } from '../types'
 
@@ -141,6 +142,27 @@ export function buildCycleMetrics(input: CycleInput, todayIso = utcTodayIso()): 
     nextPeriodCountdown,
     ovulationCountdown,
     isOverdue: nextPeriodCountdown <= 0,
+  }
+}
+
+export function buildPregnancyMetrics(lmpIso: string, todayIso = utcTodayIso()): PregnancyMetrics {
+  const gestationalDays = diffUtcDays(todayIso, lmpIso)
+  const gestationalWeeks = Math.floor(gestationalDays / 7)
+  const remainingDays = 280 - gestationalDays
+  const estimatedDueDate = addUtcDays(lmpIso, 280)
+  
+  let trimester: 1 | 2 | 3 = 1
+  if (gestationalWeeks >= 28) trimester = 3
+  else if (gestationalWeeks >= 13) trimester = 2
+
+  return {
+    lmpIso,
+    todayIso,
+    gestationalDays,
+    gestationalWeeks,
+    remainingDays,
+    trimester,
+    estimatedDueDate
   }
 }
 

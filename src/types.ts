@@ -81,4 +81,15 @@ export interface UserProfile {
   lastPeriodDate: string
   cycleLength: number
   bleedingDuration: number
+  appMode?: 'cycle' | 'pregnancy' | 'postpartum'
+}
+
+export interface PregnancyMetrics {
+  lmpIso: string
+  todayIso: string
+  gestationalDays: number
+  gestationalWeeks: number
+  remainingDays: number
+  trimester: 1 | 2 | 3
+  estimatedDueDate: string
 }
