@@ -637,8 +637,19 @@ function App() {
                 type="button"
                 onClick={() => setActiveTab(tab)}
                 className={`nav-item ${activeTab === tab ? 'active' : ''}`}
+                style={{ position: 'relative' }}
               >
-                {getTabCopy(tab, userProfile?.appMode).title}
+                {activeTab === tab && (
+                  <motion.div
+                    layoutId="desktopNavActiveBg"
+                    className="nav-active-bg"
+                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                  />
+                )}
+                <span className="nav-item-content">
+                  {getMobileNavIcon(tab)}
+                  <span className="nav-item-text">{getTabCopy(tab, userProfile?.appMode).title}</span>
+                </span>
               </button>
             ))}
           </nav>
