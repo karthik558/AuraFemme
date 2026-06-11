@@ -1,7 +1,5 @@
 import auraLogo from './assets/icon-color.png'
-import faviconGradient from './assets/favicon-gradient.png'
 import pregnancyLogo from './assets/icon-color-purple.png'
-import pregnancyMobileLogo from './assets/favicon-gradient-blue.png'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Activity,
@@ -23,6 +21,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
+import { CinematicPreloader } from './components/CinematicPreloader'
 import { CalendarGrid } from './components/CalendarGrid'
 import { SafetyAnalyzer } from './components/SafetyAnalyzer'
 import { ReportExport } from './components/ReportExport'
@@ -370,10 +369,6 @@ function App() {
     window.localStorage.setItem('aura-femme-theme', themeMode)
   }, [systemTheme, themeMode])
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => setReady(true), 1300)
-    return () => window.clearTimeout(timer)
-  }, [])
 
   const cycleInput = useMemo<CycleInput>(
     () => ({
@@ -459,101 +454,7 @@ function App() {
   const activeLogs = authMode === 'guest' ? {} : logs;
 
   if (!ready) {
-    return (
-      <div className="loading-screen" style={{ flexDirection: 'column', background: 'radial-gradient(circle at center, var(--bg-gradient-start), var(--bg-gradient-end))' }}>
-        <div className="app-bg-glow" />
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 10, height: '220px' }}>
-          
-          {/* Main Logo Pulsing like a heart */}
-          <div style={{ position: 'relative', zIndex: 10 }}>
-            <motion.img 
-              src={userProfile?.appMode === 'pregnancy' ? pregnancyMobileLogo : faviconGradient} 
-              alt="Loading" 
-              animate={{ 
-                scale: [1, 1.08, 1, 1.15, 1],
-                filter: [
-                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))', 
-                  'drop-shadow(0 0px 25px rgba(197, 34, 51, 0.9))', 
-                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))',
-                  'drop-shadow(0 0px 35px rgba(197, 34, 51, 1))',
-                  'drop-shadow(0 0px 10px rgba(197, 34, 51, 0.4))'
-                ] 
-              }}
-              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              style={{ width: userProfile?.appMode === 'pregnancy' ? '8.5rem' : '8rem', height: 'auto', display: 'block', margin: '0 auto', maxWidth: '80vw' }}
-            />
-          </div>
-          
-          {/* Main Heavy Viscous Blood Drop */}
-          <motion.div
-            style={{ 
-              position: 'absolute', 
-              top: '40%', 
-              left: '50%', 
-              marginLeft: '-0.35rem', 
-              width: '0.7rem', 
-              height: '0.7rem', 
-              borderRadius: '0 50% 50% 50%', 
-              background: 'linear-gradient(135deg, #ff1744, #900018)',
-              boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.5), inset 2px 2px 4px rgba(255,255,255,0.4), 0 5px 15px rgba(220, 20, 60, 0.8)',
-              zIndex: 5
-            }}
-            animate={{ 
-              y: [0, 95], 
-              scaleY: [0.5, 1.8, 0.5],
-              scaleX: [0.5, 0.7, 1.5],
-              opacity: [0, 1, 0],
-              rotate: [45, 45, 45]
-            }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: "easeIn", times: [0, 0.7, 1] }}
-          />
-
-          {/* Secondary Drop */}
-          <motion.div
-            style={{ 
-              position: 'absolute', 
-              top: '45%', 
-              left: '50%', 
-              marginLeft: '-0.15rem', 
-              width: '0.3rem', 
-              height: '0.3rem', 
-              borderRadius: '0 50% 50% 50%', 
-              background: 'linear-gradient(135deg, #d50000, #7f0000)',
-              zIndex: 5
-            }}
-            animate={{ 
-              y: [0, 75], 
-              scale: [0.2, 1, 0],
-              opacity: [0, 0.9, 0],
-              rotate: [45, 45, 45]
-            }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: "easeIn", times: [0, 0.8, 1], delay: 0.2 }}
-          />
-
-          {/* Blood Puddle Ripple */}
-          <motion.div
-            style={{
-              position: 'absolute',
-              top: '160px',
-              left: '50%',
-              marginLeft: '-2rem',
-              width: '4rem',
-              height: '0.8rem',
-              borderRadius: '50%',
-              background: 'radial-gradient(ellipse at center, rgba(200, 10, 30, 0.8) 0%, rgba(160, 0, 20, 0) 70%)',
-              zIndex: 4
-            }}
-            animate={{
-              scale: [0.2, 3],
-              opacity: [0, 0.8, 0]
-            }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: "easeOut", delay: 0.84 }}
-          />
-
-          {/* Text Removed */}
-        </div>
-      </div>
-    )
+    return <CinematicPreloader onComplete={() => setReady(true)} appMode={userProfile?.appMode || 'cycle'} />
   }
 
   return (
