@@ -4,7 +4,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'pregnancy',
     title: 'Pregnancy',
-    icon: <Heart className="w-5 h-5" />,
+    icon: <Heart className="w-7 h-7" />,
     content: 'Comprehensive clinical insights into the trimesters of pregnancy. Monitor physiological shifts, hormonal baselines, and essential nutritional requirements as the body adapts to gestation.',
     articleContent: {
       intro: 'Pregnancy encompasses three distinct trimesters, each defined by unique fetal developmental milestones and corresponding maternal physiological adaptations. Early awareness of these changes promotes optimal maternal-fetal outcomes.',
@@ -38,7 +38,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'before-pregnant',
     title: 'Before you get pregnant',
-    icon: <Sparkles className="w-5 h-5" />,
+    icon: <Sparkles className="w-7 h-7" />,
     content: 'Preconception health involves optimizing your biometric baselines. Learn about ovulation tracking, basal body temperature, folic acid supplementation, and evaluating lifestyle factors to build a healthy foundation.',
     articleContent: {
       intro: 'Preconception care focuses on identifying and modifying biomedical, behavioral, and social risks to a woman’s health or pregnancy outcome through prevention and management. The American College of Obstetricians and Gynecologists (ACOG) recommends developing a Reproductive Life Plan.',
@@ -77,7 +77,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'now-what',
     title: "You're pregnant: Now what?",
-    icon: <Stethoscope className="w-5 h-5" />,
+    icon: <Stethoscope className="w-7 h-7" />,
     content: 'The first trimester initiates rapid endocrine changes. Schedule your initial obstetric consultation, transition to prenatal vitamins, and familiarize yourself with early pregnancy symptoms such as morning sickness and fatigue.',
     articleContent: {
       intro: 'Confirming a pregnancy triggers a cascade of necessary medical and lifestyle adjustments. The first 12 weeks are a critical period for embryonic organogenesis, requiring immediate protective measures.',
@@ -131,7 +131,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'getting-ready',
     title: 'Getting ready for baby',
-    icon: <Baby className="w-5 h-5" />,
+    icon: <Baby className="w-7 h-7" />,
     content: 'Practical preparation for childbirth. This includes drafting a birth plan, establishing a clinical support network, setting up the nursery environment, and understanding the physical demands of labor and postpartum recovery.',
     articleContent: {
       intro: 'The third trimester requires transitioning from pregnancy maintenance to labor preparation. This involves both physical readiness and logistical planning for the immediate postpartum period.',
@@ -168,7 +168,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'childbirth',
     title: 'Childbirth and beyond',
-    icon: <Activity className="w-5 h-5" />,
+    icon: <Activity className="w-7 h-7" />,
     content: 'An overview of the stages of labor, pain management protocols, and postpartum physiological rehabilitation (the "fourth trimester"). Focuses on pelvic floor health, lactation consultation, and hormonal recalibration.',
     articleContent: {
       intro: 'Labor is divided into three clinical stages: cervical dilation, fetal expulsion, and placental delivery. The subsequent "fourth trimester" is a profound period of physical healing and psychological transition.',
@@ -207,7 +207,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'fact-sheets',
     title: 'Features and fact sheets',
-    icon: <Info className="w-5 h-5" />,
+    icon: <Info className="w-7 h-7" />,
     content: 'Aura Femme integrates deeply with clinical data. Review our peer-reviewed fact sheets on topics like polycystic ovary syndrome (PCOS), endometriosis, thyroid function, and irregular menstrual cycles.',
     articleContent: {
       intro: 'Clinical data integrity is the foundation of Aura Femme. Our fact sheets synthesize current peer-reviewed literature into actionable, digestible insights for managing chronic reproductive conditions.',
@@ -241,7 +241,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'calculator',
     title: 'Ovulation calculator',
-    icon: <BookOpen className="w-5 h-5" />,
+    icon: <BookOpen className="w-7 h-7" />,
     content: 'Aura Femme features a predictive algorithm that identifies your most fertile days. By combining cycle length, luteal phase constants, and historical data, the safety analyzer minimizes risk and maximizes conception probability.',
     articleContent: {
       intro: 'Our proprietary algorithm extends beyond simple calendar counting. It utilizes a dynamically adjusting Luteal Phase constant and historical cycle variance to isolate the precise 6-day fertile window.',
@@ -275,7 +275,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'a-z',
     title: 'View A-Z health topics',
-    icon: <List className="w-5 h-5" />,
+    icon: <List className="w-7 h-7" />,
     content: 'Browse our complete directory of gynecological and obstetric health topics. From Adenomyosis to Zygote development, access evidence-based literature and clinical glossaries.',
     articleContent: {
       intro: 'Access our comprehensive medical glossary. We define complex obstetric and gynecological terminology to empower you during clinical consultations, ensuring you can advocate for your own care effectively.',
