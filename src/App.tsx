@@ -150,6 +150,44 @@ function App() {
     }
   })
 
+  // Swipe navigation logic
+  const touchStartRef = useRef<number | null>(null)
+  const touchEndRef = useRef<number | null>(null)
+  const touchStartYRef = useRef<number | null>(null)
+  const touchEndYRef = useRef<number | null>(null)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchEndRef.current = null
+    touchEndYRef.current = null
+    touchStartRef.current = e.targetTouches[0].clientX
+    touchStartYRef.current = e.targetTouches[0].clientY
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndRef.current = e.targetTouches[0].clientX
+    touchEndYRef.current = e.targetTouches[0].clientY
+  }
+
+  const handleTouchEnd = () => {
+    if (touchStartRef.current === null || touchEndRef.current === null || touchStartYRef.current === null || touchEndYRef.current === null) return
+    
+    const distanceX = touchStartRef.current - touchEndRef.current
+    const distanceY = touchStartYRef.current - touchEndYRef.current
+    
+    // Determine if the swipe is mostly horizontal and meets a distance threshold (e.g. 50px)
+    if (Math.abs(distanceX) > 50 && Math.abs(distanceX) > Math.abs(distanceY)) {
+      const availableTabs = (Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety'))
+      const currentIndex = availableTabs.indexOf(activeTab)
+      
+      if (distanceX > 0 && currentIndex < availableTabs.length - 1) { // Swipe left -> next tab
+        setActiveTab(availableTabs[currentIndex + 1])
+      }
+      if (distanceX < 0 && currentIndex > 0) { // Swipe right -> previous tab
+        setActiveTab(availableTabs[currentIndex - 1])
+      }
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem('aura-femme-logs', JSON.stringify(logs))
   }, [logs])
@@ -518,7 +556,7 @@ function App() {
   }
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       <div className="app-bg-glow" />
       <div className="app-container">
         <motion.header 
