@@ -744,19 +744,19 @@ function App() {
               </motion.div>
             </div>
           </motion.main>
-
-          {/* Footer */}
-          <motion.footer 
-            className="app-footer"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 }}
-          >
-            <p className="footer-text">
-              &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
-            </p>
-          </motion.footer>
         </section>
+
+        {/* Footer */}
+        <motion.footer 
+          className="app-footer"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 }}
+        >
+          <p className="footer-text">
+            &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
+          </p>
+        </motion.footer>
       </div>
 
       <nav className="mobile-bottom-nav">
