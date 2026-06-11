@@ -525,37 +525,39 @@ function App() {
               </div>
             </div>
 
-            <div className="glass-card panel">
-              <div className="sidebar-section">
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                  <div style={{ marginTop: '0.125rem' }}>{advisory.icon}</div>
-                  <div>
-                    <p className="panel-label">Goal advisory</p>
-                    <h3 className="panel-title" style={{ fontSize: '1.125rem', marginTop: '0.5rem' }}>{advisory.title}</h3>
-                    <p className="metric-helper" style={{ marginTop: '0.5rem' }}>{advisory.body}</p>
-                  </div>
+            <div className="glass-card panel" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', justifyContent: 'space-between', height: '100%' }}>
+              <div className="sidebar-section" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <div style={{ marginTop: '0.125rem', padding: '0.65rem', background: 'var(--accent-soft)', borderRadius: '0.85rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {advisory.icon}
+                </div>
+                <div>
+                  <p className="panel-label" style={{ marginBottom: '0.35rem' }}>Goal advisory</p>
+                  <h3 className="panel-title" style={{ fontSize: '1.15rem', lineHeight: 1.3, marginBottom: '0.5rem' }}>{advisory.title}</h3>
+                  <p className="metric-helper" style={{ lineHeight: 1.6 }}>{advisory.body}</p>
                 </div>
               </div>
 
-              <div style={{ marginTop: 'auto', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--accent-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 'bold', fontSize: '1.125rem' }}>
+              <div style={{ padding: '1.15rem', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '1rem', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.125rem', boxShadow: '0 4px 12px rgba(197, 34, 51, 0.25)' }}>
                     {authMode === 'guest' ? 'G' : userProfile?.name.charAt(0).toUpperCase()}
                   </div>
-                  <div>
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
                       {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Patient Profile' : 'Managed Profile')}
                     </p>
-                    <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: 0 }}>
+                    <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: '0.15rem 0 0 0', fontSize: '0.95rem' }}>
                       {authMode === 'guest' ? 'Guest User' : userProfile?.name}
                     </p>
                   </div>
                 </div>
+                
                 <button 
                   onClick={() => handleSetAuthMode('unauthenticated')}
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.875rem', padding: '0.5rem 0', transition: 'color 0.2s', marginTop: '0.5rem' }}
+                  className="btn btn-outline"
+                  style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem', marginTop: '0.25rem' }}
                 >
-                  <LogOut size={16} /> Sign Out
+                  <LogOut size={14} /> Sign Out
                 </button>
               </div>
             </div>
