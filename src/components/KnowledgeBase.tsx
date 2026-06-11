@@ -186,15 +186,6 @@ export function KnowledgeBase() {
 
   return (
     <div className="knowledge-base-container">
-      <div className="phase-summary highlight">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-          <BookOpen className="w-6 h-6" style={{ color: 'var(--accent-primary)' }} />
-          <h2 className="panel-title" style={{ fontSize: '1.5rem', margin: 0 }}>Reference Library</h2>
-        </div>
-        <p className="metric-helper" style={{ fontSize: '1rem', lineHeight: '1.6' }}>
-          Explore our clinical knowledge base. This repository provides foundational insights into fertility, prenatal care, and reproductive health designed to support the Aura Femme tracking models.
-        </p>
-      </div>
 
       <div className="accordion-wrapper" style={{ marginTop: '2rem' }}>
         {KNOWLEDGE_TOPICS.map((topic) => (

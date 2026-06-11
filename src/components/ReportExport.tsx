@@ -97,21 +97,13 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
 
   return (
     <div className="report-container" style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}>
-      <div className="panel-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-        <div>
-          <p className="panel-label">Export</p>
-          <h2 className="panel-title">Clinical Report</h2>
-        </div>
+      <div style={{ maxWidth: '800px', margin: '0 auto 1.5rem auto', display: 'flex', justifyContent: 'flex-end' }}>
         <button 
           onClick={generatePDF} 
           disabled={isExporting}
-          className="theme-btn"
+          className="btn btn-primary"
           style={{
-            background: 'var(--accent-primary)',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
             opacity: isExporting ? 0.7 : 1,
-            boxShadow: '0 4px 12px rgba(197, 34, 51, 0.3)'
           }}
         >
           <Download size={18} />

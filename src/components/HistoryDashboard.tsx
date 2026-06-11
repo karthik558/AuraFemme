@@ -51,47 +51,10 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
 
   return (
     <section className="history-dashboard animate-fade-in">
-      <div className="history-header">
-        <div className="history-title-row">
-          <div className="history-title-wrap">
-            <CalendarClock className="history-icon" />
-            <h2 className="heading-primary" style={{ fontSize: '1.75rem', margin: 0 }}>Symptom History</h2>
-          </div>
-          
-          <div className="history-actions">
-            {onExportData && (
-              <button 
-                className="btn-icon" 
-                onClick={onExportData} 
-                title={isGuest ? 'Guests cannot export data' : 'Export JSON'}
-                disabled={isGuest}
-              >
-                <Download size={18} />
-              </button>
-            )}
-            {onImportData && (
-              <>
-                <button 
-                  className="btn-icon" 
-                  onClick={() => fileInputRef.current?.click()} 
-                  title={isGuest ? 'Guests cannot import data' : 'Import JSON'}
-                  disabled={isGuest}
-                >
-                  <Upload size={18} />
-                </button>
-                <input 
-                  type="file" 
-                  accept=".json" 
-                  ref={fileInputRef} 
-                  style={{ display: 'none' }} 
-                  onChange={handleFileChange}
-                />
-              </>
-            )}
-          </div>
-        </div>
+
         
-        <div className="history-segmented-control">
+      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+        <div className="history-segmented-control" style={{ flex: 1, minWidth: '250px' }}>
           <button 
             className={`segment-btn ${filter === 'last_7_days' ? 'active' : ''}`}
             onClick={() => setFilter('last_7_days')}
@@ -110,6 +73,38 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog, onEx
           >
             All Time
           </button>
+        </div>
+        
+        <div className="history-actions" style={{ display: 'flex', gap: '0.5rem' }}>
+          {onExportData && (
+            <button 
+              className="btn-icon" 
+              onClick={onExportData} 
+              title={isGuest ? 'Guests cannot export data' : 'Export JSON'}
+              disabled={isGuest}
+            >
+              <Download size={18} />
+            </button>
+          )}
+          {onImportData && (
+            <>
+              <button 
+                className="btn-icon" 
+                onClick={() => fileInputRef.current?.click()} 
+                title={isGuest ? 'Guests cannot import data' : 'Import JSON'}
+                disabled={isGuest}
+              >
+                <Upload size={18} />
+              </button>
+              <input 
+                type="file" 
+                accept=".json" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                onChange={handleFileChange}
+              />
+            </>
+          )}
         </div>
       </div>
 

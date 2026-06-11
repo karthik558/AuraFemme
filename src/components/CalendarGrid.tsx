@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { CalendarDays, Star } from 'lucide-react'
+import { CalendarDays, Star, Droplet } from 'lucide-react'
 import type { CycleDayInfo } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './CalendarGrid.css'
@@ -27,20 +27,12 @@ const phaseLabel: Record<CycleDayInfo['phase'], string> = {
 export function CalendarGrid({ days, selectedDay, onSelectDay }: CalendarGridProps) {
   return (
     <section className="glass-card calendar-grid-section">
-      <div className="calendar-header">
-        <div className="calendar-title-wrap">
-          <p className="calendar-subtitle">
-            <CalendarDays className="calendar-icon" />
-            Interactive medical calendar
-          </p>
-          <h2 className="calendar-title">Cycle phase grid</h2>
-        </div>
-        <div className="calendar-legend">
-          <LegendDot label="Bleeding" color="#f43f5e" />
-          <LegendDot label="Follicular" color="#06b6d4" />
-          <LegendDot label="Fertile" color="#f59e0b" />
-          <LegendDot label="Luteal" color="#d946ef" />
-        </div>
+
+      <div className="calendar-legend-glass" style={{ marginBottom: '1.5rem', justifyContent: 'center' }}>
+        <LegendDot label="Bleeding" color="#f43f5e" />
+        <LegendDot label="Follicular" color="#06b6d4" />
+        <LegendDot label="Fertile" color="#f59e0b" />
+        <LegendDot label="Luteal" color="#d946ef" />
       </div>
 
       <div className="calendar-grid">
@@ -52,16 +44,19 @@ export function CalendarGrid({ days, selectedDay, onSelectDay }: CalendarGridPro
               key={day.cycleDay}
               type="button"
               onClick={() => onSelectDay(day)}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20, delay: index * 0.015 }}
-              className={`calendar-day-btn ${phaseClasses[day.phase]} ${active ? 'active' : ''}`}
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: index * 0.02 }}
+              className={`calendar-day-card ${phaseClasses[day.phase]} ${active ? 'active' : ''}`}
             >
-              <div className="day-circle">
-                <span className="day-number">{day.cycleDay}</span>
+              <div className="day-circle-wrap">
+                <div className="day-circle">
+                  <span className="day-number">{day.cycleDay}</span>
+                </div>
+                {active && <div className="day-circle-glow"></div>}
               </div>
               
-              <div>
+              <div className="day-info-wrap">
                 <p className="day-date">{formatUtcDateLabel(day.dateIso)}</p>
                 <h3 className="day-phase-title">{phaseLabel[day.phase]}</h3>
                 
@@ -69,10 +64,12 @@ export function CalendarGrid({ days, selectedDay, onSelectDay }: CalendarGridPro
                   {day.isPeak ? (
                     <Star className="day-icon-star" fill="currentColor" />
                   ) : day.isFertile ? (
-                    <div className="day-icon-dot" style={{ color: '#f59e0b' }} />
+                    <div className="day-icon-dot" style={{ background: '#f59e0b', boxShadow: '0 0 8px #f59e0b' }} />
                   ) : day.isBleeding ? (
-                    <div className="day-icon-dot" style={{ color: '#f43f5e' }} />
-                  ) : null}
+                    <Droplet className="day-icon-drop" fill="currentColor" />
+                  ) : (
+                    <div className="day-icon-empty" />
+                  )}
                 </div>
               </div>
             </motion.button>
@@ -85,9 +82,9 @@ export function CalendarGrid({ days, selectedDay, onSelectDay }: CalendarGridPro
 
 function LegendDot({ label, color }: { label: string; color: string }) {
   return (
-    <span className="legend-dot-wrap">
-      <span className="legend-color-dot" style={{ color }} />
-      {label}
-    </span>
+    <div className="legend-badge">
+      <div className="legend-badge-dot" style={{ background: color, boxShadow: `0 0 10px ${color}` }} />
+      <span>{label}</span>
+    </div>
   )
 }

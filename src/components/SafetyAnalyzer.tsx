@@ -54,26 +54,15 @@ export function SafetyAnalyzer({
 
   return (
     <section className="analyzer-grid">
+
       <div className="glass-card analyzer-panel">
-        <div className="analyzer-header">
-          <div className="analyzer-title-wrap">
-            <p className="analyzer-subtitle">
-              <FlaskConical className="analyzer-icon" />
-              Safety analyzer
-            </p>
-            <h2 className="analyzer-title">Case study investigator</h2>
-            <p className="analyzer-desc">
-              Model a theoretical timeline against sperm survivability and egg lifespan to estimate whether the event
-              lands inside the fertile overlap.
-            </p>
-          </div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
           <div className={`risk-badge ${riskStyles[result.riskLevel]}`}>
             <p className="risk-label">Risk</p>
             <p className="risk-value">{result.riskLabel}</p>
           </div>
         </div>
-
-        <div className="controls-grid">
+        <div className="controls-grid" style={{ marginTop: '0' }}>
           <DateTriplet
             label="Last period date"
             value={lastPeriodDate}
