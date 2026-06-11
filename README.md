@@ -3,7 +3,7 @@
   <p><strong>Clinical Cycle Intelligence & Sexual Health Dashboard</strong></p>
   
   <p>
-    <a href="https://aura-femme.vercel.app/"><img src="https://img.shields.io/badge/Launch_Dashboard-%23c52233?style=for-the-badge" alt="Launch Dashboard" /></a>
+    <a href="https://afemme.samsproject.in/"><img src="https://img.shields.io/badge/Launch_Dashboard-%23c52233?style=for-the-badge" alt="Launch Dashboard" /></a>
   </p>
 </div>
 

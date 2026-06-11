@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://aura-femme.vercel.app/sitemap.xml
+Sitemap: https://afemme.samsproject.in/sitemap.xml
