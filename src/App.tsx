@@ -15,6 +15,8 @@ import {
   Sparkles,
   SunMedium,
   Target,
+  FileText,
+  BookOpen,
 } from 'lucide-react'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { CalendarGrid } from './components/CalendarGrid'
@@ -64,6 +66,28 @@ const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
     title: 'Clinical reference',
     subtitle: 'Peer-reviewed articles, guidelines, and extended learning.',
   },
+}
+
+const getMobileNavIcon = (tab: TabKey) => {
+  switch (tab) {
+    case 'overview': return <Activity className="w-5 h-5" />
+    case 'calendar': return <CalendarDays className="w-5 h-5" />
+    case 'safety': return <ShieldCheck className="w-5 h-5" />
+    case 'reports': return <FileText className="w-5 h-5" />
+    case 'history': return <Clock3 className="w-5 h-5" />
+    case 'reference': return <BookOpen className="w-5 h-5" />
+  }
+}
+
+const getMobileNavTitle = (tab: TabKey) => {
+  switch (tab) {
+    case 'overview': return 'Overview'
+    case 'calendar': return 'Calendar'
+    case 'safety': return 'Safety'
+    case 'reports': return 'Reports'
+    case 'history': return 'History'
+    case 'reference': return 'Reference'
+  }
 }
 
 const goalOptions: Array<{ value: CycleGoal; label: string; tone: string }> = [
@@ -800,6 +824,20 @@ function App() {
           </motion.footer>
         </section>
       </div>
+
+      <nav className="mobile-bottom-nav">
+        {(Object.keys(tabCopy) as TabKey[]).map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            className={`mobile-nav-item ${activeTab === tab ? 'active' : ''}`}
+          >
+            {getMobileNavIcon(tab)}
+            <span className="mobile-nav-label">{getMobileNavTitle(tab)}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   )
 }
