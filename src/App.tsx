@@ -567,37 +567,39 @@ function App() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
-            <motion.section layout className="glass-card panel">
-              <div style={{ marginBottom: '1.5rem' }}>
-                <p className="panel-label">Clinical dashboard</p>
-                <h3 className="panel-title" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>
-                  {authMode === 'guest' 
-                    ? 'Welcome, Guest'
-                    : (userProfile?.managementType === 'self' ? `Welcome back, ${userProfile?.name}` : `${userProfile?.name}'s Dashboard`)}
-                </h3>
-              </div>
-              <div className="metrics-grid">
-                <MetricCard
-                  label="Current status"
-                  value={`Day ${metrics.cycleDay} of ${metrics.cycleLength}`}
-                  helper={metrics.cycleStartIso === metrics.lastPeriodDate ? 'Current cycle anchor' : 'Rolled forward from baseline'}
-                  icon={<Clock3 className="w-5 h-5" />}
-                />
-                <MetricCard label="Active phase" value={metrics.currentPhaseLabel} helper={currentPhaseSentence} icon={<CalendarDays className="w-5 h-5" />} />
-                <MetricCard
-                  label="Ovulation countdown"
-                  value={metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}
-                  helper={`Peak release near day ${metrics.ovulationDay}`}
-                  icon={<Sparkles className="w-5 h-5" />}
-                />
-                <MetricCard
-                  label="Next expected period"
-                  value={metrics.isOverdue ? 'Due now' : `${metrics.nextPeriodCountdown} days`}
-                  helper={metrics.isOverdue ? 'Cycle window should be closing' : formatUtcDateLabel(metrics.nextPeriodIso)}
-                  icon={<MoonStar className="w-5 h-5" />}
-                />
-              </div>
-            </motion.section>
+            {activeTab === 'overview' && (
+              <motion.section layout className="glass-card panel">
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <p className="panel-label">Clinical dashboard</p>
+                  <h3 className="panel-title" style={{ fontSize: '1.75rem', marginTop: '0.5rem' }}>
+                    {authMode === 'guest' 
+                      ? 'Welcome, Guest'
+                      : (userProfile?.managementType === 'self' ? `Welcome back, ${userProfile?.name}` : `${userProfile?.name}'s Dashboard`)}
+                  </h3>
+                </div>
+                <div className="metrics-grid">
+                  <MetricCard
+                    label="Current status"
+                    value={`Day ${metrics.cycleDay} of ${metrics.cycleLength}`}
+                    helper={metrics.cycleStartIso === metrics.lastPeriodDate ? 'Current cycle anchor' : 'Rolled forward from baseline'}
+                    icon={<Clock3 className="w-5 h-5" />}
+                  />
+                  <MetricCard label="Active phase" value={metrics.currentPhaseLabel} helper={currentPhaseSentence} icon={<CalendarDays className="w-5 h-5" />} />
+                  <MetricCard
+                    label="Ovulation countdown"
+                    value={metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}
+                    helper={`Peak release near day ${metrics.ovulationDay}`}
+                    icon={<Sparkles className="w-5 h-5" />}
+                  />
+                  <MetricCard
+                    label="Next expected period"
+                    value={metrics.isOverdue ? 'Due now' : `${metrics.nextPeriodCountdown} days`}
+                    helper={metrics.isOverdue ? 'Cycle window should be closing' : formatUtcDateLabel(metrics.nextPeriodIso)}
+                    icon={<MoonStar className="w-5 h-5" />}
+                  />
+                </div>
+              </motion.section>
+            )}
 
             <div>
               <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
