@@ -1,6 +1,5 @@
 import auraLogo from './assets/icon-color.png'
 import faviconGradient from './assets/favicon-gradient.png'
-import mobileLogo from './assets/favicon.png'
 import { motion } from 'framer-motion'
 import {
   Activity,
