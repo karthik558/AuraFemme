@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRightLeft, FlaskConical, Radar, Sparkles } from 'lucide-react'
+import { ArrowRightLeft, Radar, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { CaseStudyResult } from '../types'
 import { buildCaseStudyResult, clampNumber, formatUtcDateLabel, utcTodayIso } from '../utils/calculator'

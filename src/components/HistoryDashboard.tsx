@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { CalendarClock, Trash2, Download, Upload } from 'lucide-react'
+import { Trash2, Download, Upload } from 'lucide-react'
 import { useMemo, useState, useRef } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'

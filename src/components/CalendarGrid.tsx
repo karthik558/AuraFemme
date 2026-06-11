@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { CalendarDays, Star, Droplet } from 'lucide-react'
+import { Star, Droplet } from 'lucide-react'
 import type { CycleDayInfo } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './CalendarGrid.css'

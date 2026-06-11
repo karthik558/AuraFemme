@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, ChevronDown, ArrowLeft, ExternalLink } from 'lucide-react';
+import { ChevronDown, ArrowLeft, ExternalLink } from 'lucide-react';
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area } from 'recharts';
 import ReactMarkdown from 'react-markdown';
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
