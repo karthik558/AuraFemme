@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import { CalendarDays, Clock3, MoonStar, Activity, Sparkles } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
@@ -34,37 +35,7 @@ const mockSymptoms = [
   { subject: 'Mood', frequency: 60, fullMark: 100 },
 ];
 
-const generateCycleHormoneData = () => {
-  const data = [];
-  for (let i = 1; i <= 28; i++) {
-    // Smoothed simulated hormone curve approximations
-    const estrogenBase = Math.sin((i / 28) * Math.PI) * 60;
-    const estrogenPeak = i > 10 && i < 16 ? Math.sin(((i - 10) / 6) * Math.PI) * 60 : 0;
-    const estrogen = Math.max(10, estrogenBase + estrogenPeak); 
-    
-    const progesterone = i > 14 ? Math.sin(((i - 14) / 14) * Math.PI) * 90 : 5;
-    data.push({ day: `Day ${i}`, Estrogen: estrogen, Progesterone: progesterone });
-  }
-  return data;
-};
-
-const generatePregnancyHormoneData = () => {
-  const data = [];
-  for (let i = 1; i <= 40; i++) {
-    // hCG peaks around week 10-12
-    const hcg = i < 12 ? Math.pow(i / 10, 2) * 100 : Math.max(10, 100 - (i - 12) * 2);
-    // Estrogen steadily rises
-    const estrogen = Math.pow(i / 40, 1.5) * 80 + 10;
-    // Progesterone steadily rises
-    const progesterone = Math.pow(i / 40, 1.2) * 90 + 5;
-    
-    data.push({ day: `Wk ${i}`, Estrogen: estrogen, Progesterone: progesterone, hCG: hcg });
-  }
-  return data;
-};
-
-const cycleHormoneData = generateCycleHormoneData();
-const pregnancyHormoneData = generatePregnancyHormoneData();
+// The data generation functions will be defined inside the component using useMemo
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -96,7 +67,36 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
 
   const greeting = authMode === 'guest' ? 'Welcome to Aura' : `${timeGreeting}, ${displayName}`;
   const isPregnancyMode = userProfile?.appMode === 'pregnancy';
-  const activeHormoneData = isPregnancyMode ? pregnancyHormoneData : cycleHormoneData;
+  
+  const activeHormoneData = useMemo(() => {
+    if (isPregnancyMode) {
+      const data = [];
+      for (let i = 1; i <= 40; i++) {
+        const hcg = i < 12 ? Math.pow(i / 10, 2) * 100 : Math.max(10, 100 - (i - 12) * 2);
+        const estrogen = Math.pow(i / 40, 1.5) * 80 + 10;
+        const progesterone = Math.pow(i / 40, 1.2) * 90 + 5;
+        data.push({ day: `Wk ${i}`, Estrogen: estrogen, Progesterone: progesterone, hCG: hcg });
+      }
+      return data;
+    } else {
+      const data = [];
+      const cLength = metrics.cycleLength || 28;
+      const oDay = metrics.ovulationDay || 14;
+      for (let i = 1; i <= cLength; i++) {
+        // Estrogen starts building, peaks right before ovulation, drops, and has a smaller secondary peak
+        const estrogenPhase = Math.sin((i / cLength) * Math.PI) * 50;
+        const estrogenOvulationSpike = Math.max(0, Math.exp(-Math.pow((i - (oDay - 1)) / 1.5, 2)) * 70);
+        const estrogenLutealBump = i > oDay ? Math.sin(((i - oDay) / (cLength - oDay)) * Math.PI) * 30 : 0;
+        const estrogen = Math.max(10, estrogenPhase + estrogenOvulationSpike + estrogenLutealBump); 
+        
+        // Progesterone is very low in follicular phase, rises sharply after ovulation, peaks mid-luteal, drops before period
+        const progesterone = i > oDay ? Math.sin(((i - oDay) / (cLength - oDay)) * Math.PI) * 100 + 5 : 5;
+        
+        data.push({ day: `Day ${i}`, Estrogen: estrogen, Progesterone: progesterone });
+      }
+      return data;
+    }
+  }, [isPregnancyMode, metrics.cycleLength, metrics.ovulationDay]);
 
   const historyData = mockCycleHistory.map((item, index) => {
     if (index === mockCycleHistory.length - 1) {
@@ -389,8 +389,13 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
             </div>
             <Sparkles className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
-          <div className="chart-wrapper" style={{ minHeight: '300px', padding: '1rem 0' }}>
-             <HormoneWave3D day={userProfile?.appMode === 'pregnancy' ? buildPregnancyMetrics(userProfile.lastPeriodDate).gestationalDays : metrics.cycleDay} mode={userProfile?.appMode || 'cycle'} />
+          <div className="chart-wrapper" style={{ minHeight: '300px', padding: '1rem 0', background: 'var(--bg-card-raised)', borderRadius: 'var(--radius-xl)', boxShadow: 'inset 0 2px 20px rgba(0,0,0,0.05)' }}>
+             <HormoneWave3D 
+               day={userProfile?.appMode === 'pregnancy' ? buildPregnancyMetrics(userProfile.lastPeriodDate).gestationalDays : metrics.cycleDay} 
+               mode={userProfile?.appMode || 'cycle'} 
+               cycleLength={metrics.cycleLength}
+               ovulationDay={metrics.ovulationDay}
+             />
           </div>
         </div>
 
@@ -407,26 +412,33 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
               <AreaChart data={activeHormoneData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorEstrogen" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.05}/>
                   </linearGradient>
                   <linearGradient id="colorProgesterone" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#d946ef" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#d946ef" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#c026d3" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="#c026d3" stopOpacity={0.05}/>
                   </linearGradient>
                   <linearGradient id="colorHcg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#fbbf24" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.05}/>
                   </linearGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} minTickGap={20} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} />
-                <RechartsTooltip content={<CustomTooltip />} />
-                <Legend verticalAlign="top" height={36} wrapperStyle={{ paddingBottom: '20px' }}/>
-                <Area type="monotone" dataKey="Estrogen" stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorEstrogen)" />
-                <Area type="monotone" dataKey="Progesterone" stroke="#d946ef" strokeWidth={3} fillOpacity={1} fill="url(#colorProgesterone)" />
-                {isPregnancyMode && <Area type="monotone" dataKey="hCG" stroke="#fbbf24" strokeWidth={3} fillOpacity={1} fill="url(#colorHcg)" />}
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--border-subtle)" opacity={0.5} />
+                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 500 }} dy={10} minTickGap={20} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12 }} dx={-10} />
+                <RechartsTooltip content={<CustomTooltip />} cursor={{ stroke: 'var(--accent-primary)', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                <Legend verticalAlign="top" height={40} wrapperStyle={{ paddingBottom: '10px', paddingTop: '10px', fontWeight: 600, fontSize: '0.875rem' }}/>
+                <Area type="monotone" dataKey="Estrogen" stroke="#0ea5e9" strokeWidth={4} fillOpacity={1} fill="url(#colorEstrogen)" activeDot={{ r: 6, strokeWidth: 0, fill: '#0ea5e9' }} style={{ filter: 'url(#glow)' }} />
+                <Area type="monotone" dataKey="Progesterone" stroke="#c026d3" strokeWidth={4} fillOpacity={1} fill="url(#colorProgesterone)" activeDot={{ r: 6, strokeWidth: 0, fill: '#c026d3' }} style={{ filter: 'url(#glow)' }} />
+                {isPregnancyMode && <Area type="monotone" dataKey="hCG" stroke="#f59e0b" strokeWidth={4} fillOpacity={1} fill="url(#colorHcg)" activeDot={{ r: 6, strokeWidth: 0, fill: '#f59e0b' }} style={{ filter: 'url(#glow)' }} />}
               </AreaChart>
             </ResponsiveContainer>
           </div>
