@@ -24,6 +24,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .analyzer-title-wrap {
@@ -94,7 +95,7 @@
 .controls-grid {
   margin-top: 1.5rem;
   display: grid;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 768px) {
@@ -247,6 +248,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .timeline-step {
@@ -343,4 +345,83 @@
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-strong);
+}
+
+/* DateTriplet Controls */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.field-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+.date-triplet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.select-wrapper::after {
+  content: "▼";
+  position: absolute;
+  right: 0.75rem;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.custom-select {
+  width: 100%;
+  appearance: none;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.75rem 1.75rem 0.75rem 0.75rem;
+  color: var(--text-strong);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  outline: none;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.custom-select:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.custom-select:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.custom-select option {
+  background: var(--bg-gradient-start);
+  color: var(--text-strong);
+}
+
+.field-helper {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
