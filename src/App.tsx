@@ -154,6 +154,10 @@ function App() {
   const touchEndYRef = useRef<number | null>(null)
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    // Ignore touches on interactive elements like sliders, buttons, or charts
+    const target = e.target as HTMLElement;
+    if (target.closest('input, button, select, a, .recharts-wrapper')) return;
+
     touchEndRef.current = null
     touchEndYRef.current = null
     touchStartRef.current = e.targetTouches[0].clientX
@@ -161,6 +165,7 @@ function App() {
   }
 
   const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartRef.current === null) return; // Prevent move if start was ignored
     touchEndRef.current = e.targetTouches[0].clientX
     touchEndYRef.current = e.targetTouches[0].clientY
   }
