@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { CalendarDays, Clock3, MoonStar, Activity, Sparkles } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
@@ -53,7 +53,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDashboardProps) {
+export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDashboardProps) {
   // Determine name to display
   let displayName = "Ayana";
   if (userProfile?.name && userProfile.name.trim() !== '') {
@@ -447,4 +447,4 @@ export function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDa
       </div>
     </motion.div>
   );
-}
+});
