@@ -298,7 +298,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               </p>
             </div>
           </div>
-          <div style={{ textAlign: 'left' }}>
+          <div style={{ textAlign: 'right' }}>
             <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>{t(lang, 'user')}: <strong style={{ color: '#1a1a1a' }}>{userName}</strong></p>
             <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>{t(lang, 'generated')}: <strong style={{ color: '#1a1a1a' }}>{new Date().toLocaleString()}</strong></p>
             <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>{t(lang, 'aura_id')}: <strong style={{ color: '#1a1a1a' }}>{auraId}</strong></p>
