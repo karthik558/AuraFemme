@@ -16,6 +16,7 @@ interface PersonalDashboardProps {
   userProfile: UserProfile | null;
   metrics: CycleMetrics;
   authMode: 'guest' | 'authenticated';
+  goal: 'track' | 'conceive' | 'avoid';
 }
 
 const mockCycleHistory = [
@@ -54,7 +55,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
-export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode }: PersonalDashboardProps) {
+export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal }: PersonalDashboardProps) {
   // Determine name to display
   let displayName = "Ayana";
   if (userProfile?.name && userProfile.name.trim() !== '') {
@@ -295,6 +296,61 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           </div>
         )}
       </div>
+
+      {!isPregnancyMode && (
+        <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
+          <div className="phase-summary" style={{ background: 'var(--accent-soft)', borderColor: 'var(--border-subtle)' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
+              <h3 className="panel-title" style={{ fontSize: '1.25rem', margin: 0 }}>Goal Strategy: {goal === 'conceive' ? 'Conception Planning' : goal === 'avoid' ? 'Pregnancy Prevention' : 'Neutral Tracking'}</h3>
+            </div>
+            {goal === 'conceive' && (
+              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Intercourse Timing</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Target intercourse every 1-2 days during the 5-day fertile window leading up to peak ovulation day ({metrics.ovulationDay}) for maximum probability.</p>
+                </div>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Basal Body Temp (BBT)</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Track morning BBT to confirm ovulation. A sustained rise of 0.4°F indicates the egg has been released and the fertile window is closing.</p>
+                </div>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>LH Strips</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Begin using ovulation predictor kits (OPKs) around day {Math.max(1, metrics.fertileWindowStart - 2)}. A positive test means ovulation is likely within 12-36 hours.</p>
+                </div>
+              </div>
+            )}
+            {goal === 'avoid' && (
+              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Strict Abstinence Window</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Sperm can survive up to 5 days in fertile cervical mucus. Use primary barriers or abstain strictly from day {Math.max(1, metrics.fertileWindowStart - 1)} through day {metrics.fertileWindowEnd + 1}.</p>
+                </div>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Peak Risk</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Ovulation day ({metrics.ovulationDay}) represents the absolute highest risk of conception. The egg remains viable for up to 24 hours post-release.</p>
+                </div>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Secondary Tracking</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Relying solely on calendar math is risky. Combine tracking with BBT and cervical mucus observation (Symptothermal method) for highest efficacy.</p>
+                </div>
+              </div>
+            )}
+            {goal === 'track' && (
+              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Baseline Mapping</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Consistent daily logging of symptoms, bleeding, and mood helps the algorithm understand your unique hormonal baseline.</p>
+                </div>
+                <div>
+                  <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Cycle Regularity</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Monitor phase lengths across multiple cycles. Significant variance in follicular phase length may warrant further clinical observation.</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="dashboard-grid">
         {/* Cycle History Chart vs Fetal Growth Chart */}

@@ -666,6 +666,7 @@ function App() {
                           userProfile={userProfile} 
                           metrics={metrics} 
                           authMode={authMode} 
+                          goal={goal}
                         />
                       </div>
 
@@ -718,6 +719,18 @@ function App() {
                                 })() : (
                                   <>
                                     <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
+                                    {goal === 'conceive' && (
+                                      <InfoTile 
+                                        label="Conception Probability" 
+                                        value={activeDay.isPeak ? 'Peak (Egg release expected within 12-24h)' : activeDay.isFertile ? 'High (Sperm survivability overlaps with incoming ovulation)' : 'Low (Outside fertile window)'} 
+                                      />
+                                    )}
+                                    {goal === 'avoid' && (
+                                      <InfoTile 
+                                        label="Contraceptive Requirement" 
+                                        value={activeDay.isPeak ? 'CRITICAL: Peak risk day. Strict abstinence or dual barriers required.' : activeDay.isFertile ? 'HIGH RISK: Sperm can survive up to 5 days. Abstinence or barriers required.' : 'Standard precautions (Outside primary fertile window)'} 
+                                      />
+                                    )}
                                     <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
                                     <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
                                   </>
