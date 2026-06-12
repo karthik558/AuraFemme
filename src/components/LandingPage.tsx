@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import {
   ArrowRight,
   Lock,
@@ -15,6 +15,8 @@ import {
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import HormoneWave3D from './HormoneWave3D';
+import { CinematicPreloader } from './CinematicPreloader';
+import { useAppStore } from '../store';
 import auraLogo from '../assets/icon-color.png';
 import './LandingPage.css';
 
@@ -24,6 +26,9 @@ interface LandingPageProps {
 
 export function LandingPage({ onGoToApp }: LandingPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+  const themeMode = useAppStore(state => state.themeMode);
+  const userProfile = useAppStore(state => state.userProfile);
 
   useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1.1 } });
@@ -66,6 +71,16 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
   const scrollToMission = () => {
     document.getElementById('mission')?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  if (!ready) {
+    return (
+      <CinematicPreloader
+        onComplete={() => setReady(true)}
+        appMode={userProfile?.appMode || 'cycle'}
+        themeMode={themeMode}
+      />
+    );
+  }
 
   return (
     <div className="lp-container" ref={containerRef}>
