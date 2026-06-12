@@ -97,10 +97,10 @@ export function KnowledgeBase() {
 
   return (
     <div className="knowledge-base-container">
-      <div className="panel-header" style={{ alignItems: 'center', display: 'flex', paddingBottom: '1.5rem', marginBottom: '-0.5rem' }}>
+      <div className="panel-header" style={{ alignItems: 'center', display: 'flex', paddingBottom: '1.5rem', marginBottom: '1.5rem', marginTop: '-1.5rem' }}>
         <div>
-          <h2 className="panel-title" style={{ fontSize: '2rem' }}>Clinical Library</h2>
-          <p className="metric-helper" style={{ maxWidth: '42rem', fontSize: '1rem', marginTop: '0.25rem' }}>Evidence-based protocols, peer-reviewed deep dives, and extended health literature.</p>
+          <h2 className="panel-title">Clinical Library</h2>
+          <p className="metric-helper" style={{ maxWidth: '42rem' }}>Evidence-based protocols, peer-reviewed deep dives, and extended health literature.</p>
         </div>
       </div>
       <div className="reference-grid" ref={topicRef}>
