@@ -193,28 +193,28 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
   return (
     <div className="report-container" style={{ width: '100%', maxWidth: '100%', minWidth: 0 }}>
       {/* Configuration Panel */}
-      <div className="report-config-panel" style={{ maxWidth: '850px', margin: '0 auto 1.5rem auto', background: 'var(--panel-bg)', padding: '24px', borderRadius: '16px', border: '1px solid var(--panel-border)', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }}>
+      <div className="report-config-panel" style={{ maxWidth: '850px', margin: '0 auto 1.5rem auto', background: 'var(--panel-bg)', padding: 'clamp(15px, 4vw, 24px)', borderRadius: '16px', border: '1px solid var(--panel-border)', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '20px' }}>
           <h3 style={{ margin: 0, fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-strong)' }}>
             <Activity size={20} style={{ color: 'var(--accent-primary)' }} />
             {t(lang, 'report_config')}
           </h3>
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', background: 'var(--bg-gradient-start)', padding: '4px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+          <div className="report-actions-wrapper">
             <select 
+              className="report-lang-select"
               value={lang} 
               onChange={(e) => setLang(e.target.value as SupportedLanguage)}
-              style={{ padding: '0.6rem 1rem', borderRadius: '8px', border: 'none', background: 'transparent', color: 'var(--text-strong)', outline: 'none', fontWeight: 500, cursor: 'pointer' }}
             >
               {Object.entries(languageNames).map(([key, name]) => (
                 <option key={key} value={key}>{name}</option>
               ))}
             </select>
-            <div style={{ width: '1px', height: '24px', background: 'var(--border-subtle)' }} />
+            <div className="report-actions-divider" />
             <button 
               onClick={generatePDF} 
               disabled={isExporting}
-              className="btn btn-primary"
-              style={{ opacity: isExporting ? 0.7 : 1, padding: '0.6rem 1.2rem', borderRadius: '8px', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}
+              className="btn btn-primary report-download-btn"
+              style={{ opacity: isExporting ? 0.7 : 1 }}
             >
               <Download size={18} />
               Download
@@ -306,7 +306,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         </div>
 
         {/* Patient/Filter Details */}
-        <div style={{ display: 'grid', gridTemplateColumns: isPregnancyMode ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)', gap: '15px', marginBottom: '30px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '15px', marginBottom: '30px' }}>
           {!isPregnancyMode && (
             <>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
@@ -421,7 +421,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                </>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '15px', marginBottom: '40px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '15px', marginBottom: '40px' }}>
               <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
                 <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#c52233' }}>{caseStudy ? t(lang, 'intercourse_date') : t(lang, 'safe_dates')}</h3>
                 <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
@@ -472,7 +472,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               {t(lang, 'symptom_analytics')}
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '30px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '15px', marginBottom: '30px' }}>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
                 <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'total_logs')}</p>
                 <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#1a1a1a' }}>{totalLogs}</p>
