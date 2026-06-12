@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { ArrowRight, User, HeartHandshake, Calendar, Activity, Droplet, CheckCircle } from 'lucide-react'
+import { ArrowRight, User, HeartHandshake, Calendar, Activity, Droplet, CheckCircle, Baby } from 'lucide-react'
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import type { UserProfile } from '../types'
+import type { UserProfile, ThemeMode } from '../types'
 import { utcTodayIso, addUtcDays } from '../utils/calculator'
 import logo from '../assets/favicon.png'
 import './OnboardingModal.css'
@@ -11,10 +11,15 @@ import './OnboardingModal.css'
 interface OnboardingModalProps {
   onComplete: (profile: UserProfile) => void
   onGuest: () => void
+  themeMode: ThemeMode
+  appMode?: 'cycle' | 'pregnancy' | 'postpartum'
 }
 
-export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
+export function OnboardingModal({ onComplete, onGuest, themeMode }: OnboardingModalProps) {
   const [step, setStep] = useState(1)
+  
+  // Profile State
+  const [localAppMode, setLocalAppMode] = useState<'cycle' | 'pregnancy'>('cycle')
   
   // Profile State
   const [managementType, setManagementType] = useState<'self' | 'other' | null>(null)
@@ -22,6 +27,9 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
   const [lastPeriodDate, setLastPeriodDate] = useState(() => addUtcDays(utcTodayIso(), -12))
   const [cycleLength, setCycleLength] = useState(28)
   const [bleedingDuration, setBleedingDuration] = useState(5)
+
+  const isPregnancy = localAppMode === 'pregnancy'
+  const isDark = themeMode === 'dark'
 
   const handleNext = () => {
     if (step < 3) {
@@ -32,7 +40,8 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
         managementType: managementType as 'self' | 'other',
         lastPeriodDate,
         cycleLength,
-        bleedingDuration
+        bleedingDuration,
+        appMode: localAppMode
       })
     }
   }
@@ -43,8 +52,9 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
     }
   }
 
-  // Generate last 45 days for horizontal picker
-  const recentDays = Array.from({ length: 45 }, (_, i) => {
+  // Generate last 45 days for horizontal picker (or longer for pregnancy LMP)
+  const daysToGenerate = isPregnancy ? 90 : 45
+  const recentDays = Array.from({ length: daysToGenerate }, (_, i) => {
     const d = new Date()
     d.setUTCDate(d.getUTCDate() - i)
     return d.toISOString().split('T')[0]
@@ -63,17 +73,43 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
   }, [step]);
 
   return (
-    <div className="onboarding-overlay">
+    <div className={`onboarding-overlay ${isDark ? 'dark-theme-mode' : 'light-theme-mode'} ${isPregnancy ? 'pregnancy-theme-mode' : ''}`}>
         {step === 1 && (
           <div 
             ref={modalRef}
             className="glass-card onboarding-modal"
           >
             <div className="onboarding-icon-wrap" style={{ background: 'transparent' }}>
-              <img src={logo} alt="Aura Femme Logo" style={{ width: '48px', height: '48px' }} />
+              <img src={logo} alt="Aura Femme Logo" style={{ width: '48px', height: '48px', filter: isPregnancy && !isDark ? 'hue-rotate(240deg)' : 'none' }} />
             </div>
             <h1 className="heading-primary onboarding-title">Welcome to Aura Femme</h1>
-            <p className="onboarding-desc">Your private, 100% offline cycle intelligence companion. To get started, tell us how you'll be using the app.</p>
+            <p className="onboarding-desc">
+              {isPregnancy 
+                ? "Your private, 100% offline pregnancy tracking companion. To get started, tell us how you'll be using the app."
+                : "Your private, 100% offline cycle intelligence companion. To get started, tell us how you'll be using the app."}
+            </p>
+
+            <div className="role-selection" style={{ marginBottom: '1.5rem' }}>
+              <button 
+                className={`role-card ${localAppMode === 'cycle' ? 'active' : ''}`}
+                onClick={() => setLocalAppMode('cycle')}
+                style={{ padding: '1rem' }}
+              >
+                {localAppMode === 'cycle' && <CheckCircle size={18} style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', color: 'var(--accent-primary)' }} />}
+                <Activity className="role-icon" style={{ marginBottom: '0.5rem', width: '24px', height: '24px' }} />
+                <h4 style={{ fontSize: '1rem' }}>Cycle Tracking</h4>
+              </button>
+              
+              <button 
+                className={`role-card ${localAppMode === 'pregnancy' ? 'active' : ''}`}
+                onClick={() => setLocalAppMode('pregnancy')}
+                style={{ padding: '1rem' }}
+              >
+                {localAppMode === 'pregnancy' && <CheckCircle size={18} style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', color: 'var(--accent-primary)' }} />}
+                <Baby className="role-icon" style={{ marginBottom: '0.5rem', width: '24px', height: '24px' }} />
+                <h4 style={{ fontSize: '1rem' }}>Pregnancy Mode</h4>
+              </button>
+            </div>
             
             <div className="role-selection">
               <button 
@@ -83,7 +119,7 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
                 {managementType === 'self' && <CheckCircle size={18} style={{ position: 'absolute', top: '1rem', right: '1rem', color: 'var(--accent-primary)' }} />}
                 <User className="role-icon" />
                 <h4>For Myself</h4>
-                <p>I am tracking my own cycle.</p>
+                <p>I am tracking my own {isPregnancy ? 'pregnancy' : 'cycle'}.</p>
               </button>
               
               <button 
@@ -149,16 +185,20 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
             className="glass-card onboarding-modal step-3"
           >
             <div className="onboarding-icon-wrap">
-              <Activity className="onboarding-icon" />
+              {isPregnancy ? <Baby className="onboarding-icon" /> : <Activity className="onboarding-icon" />}
             </div>
-            <h1 className="heading-primary onboarding-title">Baseline Biometrics</h1>
-            <p className="onboarding-desc">Let's calibrate the cycle intelligence algorithms.</p>
+            <h1 className="heading-primary onboarding-title">
+              {isPregnancy ? "Pregnancy Baseline" : "Baseline Biometrics"}
+            </h1>
+            <p className="onboarding-desc">
+              {isPregnancy ? "Let's set your gestational timeline." : "Let's calibrate the cycle intelligence algorithms."}
+            </p>
 
             <div className="biometric-inputs">
               <div className="bio-field">
                 <div className="bio-label-wrap">
                   <Calendar size={18} className="bio-icon text-muted" />
-                  <label>Last Period Start Date</label>
+                  <label>{isPregnancy ? "Last Menstrual Period (LMP)" : "Last Period Start Date"}</label>
                   <span className="bio-value" style={{ background: 'transparent' }}>
                     {new Date(lastPeriodDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })}
                   </span>
@@ -183,33 +223,37 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
                 </div>
               </div>
 
-              <div className="bio-field">
-                <div className="bio-label-wrap">
-                  <Activity size={18} className="bio-icon text-muted" />
-                  <label>Average Cycle Length <span className="bio-value">{cycleLength} days</span></label>
-                </div>
-                <input 
-                  type="range" 
-                  min="21" 
-                  max="35" 
-                  value={cycleLength}
-                  onChange={e => setCycleLength(Number(e.target.value))}
-                />
-              </div>
+              {!isPregnancy && (
+                <>
+                  <div className="bio-field">
+                    <div className="bio-label-wrap">
+                      <Activity size={18} className="bio-icon text-muted" />
+                      <label>Average Cycle Length <span className="bio-value">{cycleLength} days</span></label>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="21" 
+                      max="35" 
+                      value={cycleLength}
+                      onChange={e => setCycleLength(Number(e.target.value))}
+                    />
+                  </div>
 
-              <div className="bio-field">
-                <div className="bio-label-wrap">
-                  <Droplet size={18} className="bio-icon text-muted" style={{ color: 'var(--tone-danger)' }} />
-                  <label>Average Bleeding Duration <span className="bio-value">{bleedingDuration} days</span></label>
-                </div>
-                <input 
-                  type="range" 
-                  min="2" 
-                  max="10" 
-                  value={bleedingDuration}
-                  onChange={e => setBleedingDuration(Number(e.target.value))}
-                />
-              </div>
+                  <div className="bio-field">
+                    <div className="bio-label-wrap">
+                      <Droplet size={18} className="bio-icon text-muted" style={{ color: 'var(--tone-danger)' }} />
+                      <label>Average Bleeding Duration <span className="bio-value">{bleedingDuration} days</span></label>
+                    </div>
+                    <input 
+                      type="range" 
+                      min="2" 
+                      max="10" 
+                      value={bleedingDuration}
+                      onChange={e => setBleedingDuration(Number(e.target.value))}
+                    />
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="onboarding-actions split" style={{ marginTop: '2rem', width: '100%' }}>

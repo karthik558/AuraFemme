@@ -127,6 +127,7 @@ const themeModeLabels: Record<ThemeMode, string> = {
 
 function App() {
   const appRef = useRef<HTMLDivElement>(null);
+  const [isCreatingProfile, setIsCreatingProfile] = useState(false)
 
   useEffect(() => {
     migrateLegacyStorage()
@@ -227,23 +228,31 @@ function App() {
   }, [userProfile?.appMode, activeTab, setActiveTab])
 
   const handleCompleteOnboarding = (profile: UserProfile) => {
+    const newId = Date.now().toString()
+    store.setAccountId(newId)
     setUserProfile(profile)
     setLastPeriodDate(profile.lastPeriodDate)
     setCycleLength(profile.cycleLength)
     setBleedingDuration(profile.bleedingDuration)
+    setLogs({})
+    setIsCreatingProfile(false)
     handleSetAuthMode('authenticated')
   }
 
-  const handleLogin = () => {
-    if (userProfile) {
+  const handleLogin = (id?: string) => {
+    if (id) {
+      store.restoreAccount(id)
+    } else if (userProfile) {
       setLastPeriodDate(userProfile.lastPeriodDate)
       setCycleLength(userProfile.cycleLength)
       setBleedingDuration(userProfile.bleedingDuration)
     }
+    setIsCreatingProfile(false)
     handleSetAuthMode('authenticated')
   }
 
   const handleGuestLogin = () => {
+    store.archiveCurrentAccount()
     setLastPeriodDate(addUtcDays(utcTodayIso(), -12))
     setCycleLength(28)
     setBleedingDuration(5)
@@ -255,12 +264,15 @@ function App() {
       bleedingDuration: 5,
       appMode: 'cycle'
     })
+    store.setAccountId(null)
+    setIsCreatingProfile(false)
     handleSetAuthMode('guest')
   }
 
   const handleDeleteProfile = () => {
     setUserProfile(null)
     setLogs({})
+    store.setAccountId(null)
     handleSetAuthMode('unauthenticated')
   }
 
@@ -381,15 +393,29 @@ function App() {
   }
 
   if (authMode === 'unauthenticated') {
-    if (userProfile) {
+    if (!isCreatingProfile && (userProfile || Object.keys(store.inactiveAccounts).length > 0)) {
       return <LoginScreen 
-        profile={userProfile} 
+        activeProfile={userProfile} 
+        inactiveAccounts={store.inactiveAccounts}
         onLogin={handleLogin} 
         onGuest={handleGuestLogin} 
-        onDeleteProfile={handleDeleteProfile}
+        onDeleteProfile={(id) => {
+          if (!id || id === store.accountId) {
+            handleDeleteProfile()
+          } else {
+            store.deleteAccount(id)
+          }
+        }}
+        onCreateNew={() => {
+          store.archiveCurrentAccount()
+          setUserProfile(null)
+          setLogs({})
+          store.setAccountId(null)
+          setIsCreatingProfile(true)
+        }}
       />
     }
-    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} />
+    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} themeMode={themeMode} />
   }
 
   // Hide logs if we are in guest mode
@@ -561,7 +587,7 @@ function App() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
-                      {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Patient Profile' : 'Managed Profile')}
+                      {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Personal Account' : 'Managed Account')}
                     </p>
                     <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: '0.15rem 0 0 0', fontSize: '0.95rem' }}>
                       {authMode === 'guest' ? 'Guest User' : userProfile?.name}

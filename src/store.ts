@@ -34,6 +34,14 @@ export interface AppState {
   setLutealPhaseLength: (length: number) => void
   goal: CycleGoal
   setGoal: (goal: CycleGoal) => void
+  
+  // Multi-Account
+  accountId: string | null
+  setAccountId: (id: string | null) => void
+  inactiveAccounts: Record<string, import('./types').SavedAccount>
+  archiveCurrentAccount: () => void
+  restoreAccount: (id: string) => void
+  deleteAccount: (id: string) => void
 }
 
 export const useAppStore = create<AppState>()(
@@ -72,6 +80,65 @@ export const useAppStore = create<AppState>()(
       setLutealPhaseLength: (length) => set({ lutealPhaseLength: length }),
       goal: 'track',
       setGoal: (goal) => set({ goal }),
+
+      accountId: null,
+      setAccountId: (id) => set({ accountId: id }),
+      inactiveAccounts: {},
+      archiveCurrentAccount: () => set((state) => {
+        if (!state.accountId || !state.userProfile) return state
+        const account: import('./types').SavedAccount = {
+          id: state.accountId,
+          profile: state.userProfile,
+          lastPeriodDate: state.lastPeriodDate,
+          cycleLength: state.cycleLength,
+          bleedingDuration: state.bleedingDuration,
+          lutealPhaseLength: state.lutealPhaseLength,
+          goal: state.goal,
+          logs: state.logs
+        }
+        return { 
+          inactiveAccounts: { ...state.inactiveAccounts, [account.id]: account },
+          accountId: null,
+          userProfile: null,
+          logs: {}
+        }
+      }),
+      restoreAccount: (id) => set((state) => {
+        const inactiveAccounts = { ...state.inactiveAccounts }
+        if (state.accountId && state.userProfile) {
+          inactiveAccounts[state.accountId] = {
+            id: state.accountId,
+            profile: state.userProfile,
+            lastPeriodDate: state.lastPeriodDate,
+            cycleLength: state.cycleLength,
+            bleedingDuration: state.bleedingDuration,
+            lutealPhaseLength: state.lutealPhaseLength,
+            goal: state.goal,
+            logs: state.logs
+          }
+        }
+        const accToRestore = inactiveAccounts[id]
+        if (!accToRestore) return state 
+        
+        delete inactiveAccounts[id]
+        
+        return {
+          inactiveAccounts,
+          accountId: accToRestore.id,
+          userProfile: accToRestore.profile,
+          lastPeriodDate: accToRestore.lastPeriodDate,
+          cycleLength: accToRestore.cycleLength,
+          bleedingDuration: accToRestore.bleedingDuration,
+          lutealPhaseLength: accToRestore.lutealPhaseLength,
+          goal: accToRestore.goal,
+          logs: accToRestore.logs
+        }
+      }),
+      deleteAccount: (id) => set((state) => {
+        const inactiveAccounts = { ...state.inactiveAccounts }
+        delete inactiveAccounts[id]
+        return { inactiveAccounts }
+      }),
     }),
     {
       name: 'aura-femme-storage',
@@ -85,6 +152,8 @@ export const useAppStore = create<AppState>()(
         bleedingDuration: state.bleedingDuration,
         lutealPhaseLength: state.lutealPhaseLength,
         goal: state.goal,
+        accountId: state.accountId,
+        inactiveAccounts: state.inactiveAccounts,
       }),
     }
   )

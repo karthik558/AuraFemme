@@ -84,6 +84,17 @@ export interface UserProfile {
   appMode?: 'cycle' | 'pregnancy' | 'postpartum'
 }
 
+export interface SavedAccount {
+  id: string
+  profile: UserProfile
+  lastPeriodDate: string
+  cycleLength: number
+  bleedingDuration: number
+  lutealPhaseLength: number
+  goal: CycleGoal
+  logs: Record<string, DailyLog>
+}
+
 export interface PregnancyMetrics {
   lmpIso: string
   todayIso: string

@@ -1,19 +1,21 @@
-import { LogIn, User, Trash2 } from 'lucide-react'
+import { LogIn, User, Trash2, PlusCircle } from 'lucide-react'
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import type { UserProfile } from '../types'
+import type { UserProfile, SavedAccount } from '../types'
 import logo from '../assets/favicon.png'
 import './LoginScreen.css'
 
 interface LoginScreenProps {
-  profile: UserProfile
-  onLogin: () => void
+  activeProfile: UserProfile | null
+  inactiveAccounts: Record<string, SavedAccount>
+  onLogin: (id?: string) => void
   onGuest: () => void
-  onDeleteProfile: () => void
+  onDeleteProfile: (id?: string) => void
+  onCreateNew: () => void
 }
 
-export function LoginScreen({ profile, onLogin, onGuest, onDeleteProfile }: LoginScreenProps) {
+export function LoginScreen({ activeProfile, inactiveAccounts, onLogin, onGuest, onDeleteProfile, onCreateNew }: LoginScreenProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
@@ -35,32 +37,73 @@ export function LoginScreen({ profile, onLogin, onGuest, onDeleteProfile }: Logi
         </div>
         
         <h1 className="heading-primary login-title">Welcome Back</h1>
-        <p className="login-desc">Your private cycle data is securely stored on this device.</p>
+        <p className="login-desc">Select an existing profile or create a new one.</p>
         
-        <div className="login-profile-card" onClick={onLogin}>
-          <div className="profile-avatar">
-            {profile.name.charAt(0).toUpperCase()}
-          </div>
-          <div className="profile-info">
-            <h4>{profile.name}</h4>
-            <p>{profile.managementType === 'self' ? 'Patient Profile' : 'Managed Profile'}</p>
-          </div>
-          <LogIn className="login-arrow" size={20} />
+        <div className="login-profiles-list">
+          {activeProfile && (
+            <div className="login-profile-card">
+              <div className="login-profile-content" onClick={() => onLogin()}>
+                <div className="profile-avatar active-avatar">
+                  {activeProfile.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="profile-info">
+                  <h4>{activeProfile.name} (Active)</h4>
+                  <p>{activeProfile.managementType === 'self' ? 'Personal Account' : 'Managed Account'}</p>
+                </div>
+                <LogIn className="login-arrow" size={20} />
+              </div>
+              <button 
+                className="delete-profile-btn"
+                title="Delete Profile"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Delete profile ${activeProfile.name} permanently?`)) {
+                    onDeleteProfile();
+                  }
+                }}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
+
+          {Object.values(inactiveAccounts).map(acc => (
+            <div key={acc.id} className="login-profile-card">
+              <div className="login-profile-content" onClick={() => onLogin(acc.id)}>
+                <div className="profile-avatar">
+                  {acc.profile.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="profile-info">
+                  <h4>{acc.profile.name}</h4>
+                  <p>{acc.profile.managementType === 'self' ? 'Personal Account' : 'Managed Account'}</p>
+                </div>
+                <LogIn className="login-arrow" size={20} />
+              </div>
+              <button 
+                className="delete-profile-btn"
+                title="Delete Profile"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (window.confirm(`Delete profile ${acc.profile.name} permanently?`)) {
+                    onDeleteProfile(acc.id);
+                  }
+                }}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="login-actions-container">
+          <button className="btn btn-primary btn-new-profile" onClick={onCreateNew}>
+            <PlusCircle size={16} />
+            Create New Profile
+          </button>
+
           <button className="btn btn-outline btn-guest" onClick={onGuest}>
             <User size={16} />
             Continue as Guest
-          </button>
-          
-          <button className="btn-danger-text" onClick={() => {
-            if (window.confirm("Are you sure you want to permanently delete your profile and all logs? This cannot be undone.")) {
-              onDeleteProfile()
-            }
-          }}>
-            <Trash2 size={14} />
-            Wipe Device Data
           </button>
         </div>
       </div>
