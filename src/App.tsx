@@ -14,11 +14,11 @@ import {
   ShieldCheck,
   Baby,
   SunMedium,
-  Target,
   FileText,
   BookOpen,
   Download,
   Upload,
+  Settings2,
 } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
@@ -546,9 +546,9 @@ function App() {
             <div className="glass-card panel">
               <div className="panel-header">
                 <div>
-                  <h2 className="panel-title" style={{ fontSize: '1.25rem' }}>Baseline parameters</h2>
+                  <h2 className="panel-title" style={{ fontSize: '1.25rem' }}>Clinical Profile</h2>
                 </div>
-                <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
+                <Settings2 className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
               </div>
 
               <div className="panel-body">
