@@ -786,6 +786,7 @@ function App() {
                                   logs={activeLogs} 
                                   userProfile={userProfile} 
                                   caseStudy={sharedCaseStudy}
+                                  days={calendarDays}
                                 />
                               </div>
                             </div>
