@@ -600,7 +600,7 @@ function App() {
                           gsap.timeline()
                             .to(saveBtnRef.current, { scale: 0.95, duration: 0.1, ease: 'power2.inOut' })
                             .to(saveBtnRef.current, { scale: 1, background: 'var(--accent-hover)', color: '#ffffff', boxShadow: '0 0 20px var(--accent-soft)', duration: 0.3, ease: 'back.out(1.5)' })
-                            .to(saveBtnRef.current, { background: 'var(--accent-primary)', boxShadow: 'none', duration: 0.4, delay: 1.2, ease: 'power2.inOut', onComplete: () => setIsSaved(false) });
+                            .to(saveBtnRef.current, { background: 'var(--accent-primary)', boxShadow: 'none', duration: 0.4, delay: 1.2, ease: 'power2.inOut', clearProps: 'background,boxShadow,color', onComplete: () => setIsSaved(false) });
                         }}
                         className="btn btn-primary" 
                         style={{ 
@@ -610,7 +610,6 @@ function App() {
                           justifyContent: 'center', 
                           alignItems: 'center', 
                           gap: '0.5rem',
-                          background: 'var(--accent-primary)',
                           transition: 'box-shadow 0.3s ease'
                         }}
                       >
