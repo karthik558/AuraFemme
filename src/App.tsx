@@ -474,9 +474,7 @@ function App() {
     <div ref={appRef} className="app-wrapper" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       <div className="app-bg-glow" />
       <div className="app-container">
-        <header 
-          className="glass-card app-header"
-        >
+        <header className="app-header">
           <div className="header-content header-content-responsive">
             
             {/* Mobile Left: AppModeSwitcher */}
