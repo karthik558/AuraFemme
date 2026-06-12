@@ -195,6 +195,10 @@
     max-width: 100%;
     margin: 0 auto;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 1rem;
+    z-index: 50;
+    backdrop-filter: blur(16px);
   }
 
   :root[data-theme='dark'] .app-nav {
@@ -381,7 +385,7 @@
 @media (min-width: 1280px) {
   .sidebar {
     position: sticky;
-    top: 1.5rem;
+    top: 4.5rem;
     align-self: flex-start;
   }
 }

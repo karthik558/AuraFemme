@@ -544,28 +544,29 @@ function App() {
               <ThemeSwitcher mode={themeMode} appMode={userProfile?.appMode || 'cycle'} onChange={setThemeMode} />
             </div>
           </div>
-          <nav className="app-nav">
-            {(Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')).map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`nav-item ${activeTab === tab ? 'active' : ''}`}
-                style={{ position: 'relative' }}
-              >
-                {activeTab === tab && (
-                  <div
-                    className="nav-active-bg"
-                  />
-                )}
-                <span className="nav-item-content">
-                  {getMobileNavIcon(tab)}
-                  <span className="nav-item-text">{getTabCopy(tab, userProfile?.appMode).title}</span>
-                </span>
-              </button>
-            ))}
-          </nav>
         </header>
+        
+        <nav className="app-nav">
+          {(Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={`nav-item ${activeTab === tab ? 'active' : ''}`}
+              style={{ position: 'relative' }}
+            >
+              {activeTab === tab && (
+                <div
+                  className="nav-active-bg"
+                />
+              )}
+              <span className="nav-item-content">
+                {getMobileNavIcon(tab)}
+                <span className="nav-item-text">{getTabCopy(tab, userProfile?.appMode).title}</span>
+              </span>
+            </button>
+          ))}
+        </nav>
 
         <section className="main-layout">
           <aside 
