@@ -709,6 +709,7 @@ function App() {
                                   const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, activeDay.dateIso)
                                   return (
                                     <>
+                                      <InfoTile label="Clinical milestone" value={pregnancyLogic(pMetrics.gestationalWeeks)} />
                                       <InfoTile label="Gestational age" value={`${pMetrics.gestationalWeeks} weeks, ${pMetrics.gestationalDays % 7} days`} />
                                       <InfoTile label="Pregnancy progress" value={`Trimester ${pMetrics.trimester}`} />
                                       <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
@@ -985,10 +986,20 @@ function AppModeSwitcher({ mode, themeMode, onChange }: { mode: 'cycle' | 'pregn
 }
 
 function phaseLogic(day: CycleDayInfo): string {
-  if (day.isBleeding) return 'Cycle day is still within menstruation, so the bleeding duration rule has precedence.'
-  if (day.isPeak) return 'Cycle day hits the ovulation point, where the fertile window peaks and the egg release is expected.'
-  if (day.isFertile) return 'The date is inside the modeled fertile window where sperm survivability can overlap the ovulatory cycle.'
-  return day.phase === 'follicular' ? 'The follicular interval is building toward ovulation while staying outside the peak release day.' : 'The luteal phase follows ovulation and typically reflects the post-ovulatory stabilization window.'
+  if (day.isBleeding) return 'Endometrial shedding is actively occurring due to a sharp drop in progesterone and estrogen levels. Uterine contractions may cause cramping as the basal layer prepares for the next cycle.'
+  if (day.isPeak) return 'Luteinizing Hormone (LH) has peaked, triggering the rupture of the mature ovarian follicle. The egg is released and remains viable for roughly 12–24 hours. Peak conception probability occurs now.'
+  if (day.isFertile) return 'Rising estrogen levels are altering cervical mucus to become hospitable to sperm, allowing viability for up to 5 days. This physiological shift strongly indicates the impending ovulatory window.'
+  return day.phase === 'follicular' 
+    ? 'Follicle-Stimulating Hormone (FSH) is actively recruiting ovarian follicles. Estrogen levels begin a steady climb, driving the proliferation and thickening of the uterine endometrial lining in preparation for implantation.' 
+    : 'The corpus luteum is secreting high levels of progesterone, stabilizing the endometrium and suppressing further ovulation. Basal body temperature remains elevated, and the post-ovulatory stabilization window is engaged.'
+}
+
+function pregnancyLogic(weeks: number): string {
+  if (weeks < 4) return 'The zygote is undergoing rapid cellular division and migrating toward the uterus. Implantation into the vascularized endometrium occurs late in this window, triggering initial hCG production.'
+  if (weeks >= 4 && weeks < 13) return 'Organogenesis is active. Foundational structures of the cardiovascular and nervous systems develop. Surging hCG and progesterone maintain the uterine lining and often cause early systemic symptoms like fatigue.'
+  if (weeks >= 13 && weeks < 28) return 'The fetal period is characterized by rapid physical growth. The placenta fully assumes endocrine functions, stabilizing maternal hormones. Fetal movement (quickening) becomes detectable.'
+  if (weeks >= 28 && weeks <= 40) return 'Late-stage gestation focuses on rapid fetal weight gain, lung maturation (surfactant production), and CNS development. Maternal physiology begins shifting toward labor readiness.'
+  return 'The gestational timeline has exceeded typical 40-week parameters. Placental monitoring and fetal non-stress testing are standard clinical protocols to ensure continued fetal well-being.'
 }
 
 export default App
