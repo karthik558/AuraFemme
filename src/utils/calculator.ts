@@ -283,10 +283,10 @@ export function buildCaseStudyResult(input: CaseStudyInput): CaseStudyResult {
     riskLabel,
     summary:
       riskLevel === 'elevated'
-        ? 'Intercourse occurs inside the fertile window where sperm survivability can align with ovulation.'
+        ? `Intercourse occurs directly inside the calculated fertile window (Day ${intercourseCycleDay}), aligning with peak sperm survivability and predicted ovulation (Day ${ovulationDay}). The biological probability of conception is statistically high. Continuous tracking is strongly recommended to confirm successful phase transition. No further unprotected exposure is advised if the goal is prevention.`
         : riskLevel === 'low'
-          ? 'Intercourse sits near the fertile window, but the modeled overlap is partial rather than direct.'
-          : 'Intercourse is outside the modeled fertile overlap, so the estimated risk is minimal.',
+          ? `Intercourse sits near the fertile window boundaries (Day ${intercourseCycleDay}), meaning the modeled overlap is partial rather than direct. Given the theoretical lifespan of sperm (up to 5 days), there remains a marginal possibility of exposure if ovulation (Day ${ovulationDay}) occurs earlier than standard algorithmic predictions. Mild caution is advised.`
+          : `Intercourse on Day ${intercourseCycleDay} falls completely outside the modeled fertile overlap (Days ${fertileWindowStart}-${fertileWindowEnd}), so the estimated risk is minimal. Ovulation is predicted on Day ${ovulationDay}, ensuring that sperm lifespan does not intersect with the active egg release. The clinical timeline remains secure based on current baseline data.`,
     timeline,
     confidence: riskLevel === 'elevated' ? 0.91 : riskLevel === 'low' ? 0.66 : 0.28,
   }

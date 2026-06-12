@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ArrowRightLeft, Radar, Settings2 } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { useMemo, useState } from 'react'
 import type { CaseStudyResult } from '../types'
 import { buildCaseStudyResult, clampNumber, formatUtcDateLabel, utcTodayIso } from '../utils/calculator'
@@ -64,6 +65,30 @@ export function SafetyAnalyzer({
     );
   }, { scope: listRef, dependencies: [result] });
 
+  const chartData = useMemo(() => {
+    const data = [];
+    for (let i = 1; i <= cycleLength; i++) {
+      let riskVal = 0;
+      if (i >= result.fertileWindowStart && i <= result.fertileWindowEnd) {
+        riskVal = i === result.ovulationDay ? 100 : 75; // Peak at ovulation
+        if (i < result.ovulationDay) {
+          riskVal = 40 + ((i - result.fertileWindowStart) / (result.ovulationDay - result.fertileWindowStart)) * 60;
+        } else {
+          riskVal = 100 - ((i - result.ovulationDay) / (result.fertileWindowEnd - result.ovulationDay + 1)) * 60;
+        }
+      } else if (i === result.fertileWindowStart - 1 || i === result.fertileWindowEnd + 1) {
+        riskVal = 15;
+      } else if (i >= result.fertileWindowStart - 3 && i < result.fertileWindowStart - 1) {
+        riskVal = 5;
+      }
+      data.push({
+        day: i,
+        Risk: Math.round(riskVal)
+      });
+    }
+    return data;
+  }, [cycleLength, result]);
+
   return (
     <section className="analyzer-grid">
 
@@ -106,19 +131,45 @@ export function SafetyAnalyzer({
         </div>
 
         <div className="summary-box">
-          <div className="summary-inner">
-            <div>
-              <p className="summary-title">Timeline summary</p>
-              <p className="summary-value">{result.summary}</p>
+          <div className="summary-inner" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <p className="summary-title" style={{ marginBottom: '0.5rem' }}>Timeline summary</p>
+              <p className="summary-value" style={{ lineHeight: 1.6, display: 'block' }}>{result.summary}</p>
             </div>
-            <button
-              type="button"
-              onClick={() => onExport(result)}
-              className="btn btn-primary"
-            >
-              <ArrowRightLeft size={18} />
-              Generate Report
-            </button>
+            
+            <div style={{ width: '100%', height: '220px', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorRisk" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={result.riskLevel === 'elevated' ? '#ef4444' : result.riskLevel === 'low' ? '#f59e0b' : '#10b981'} stopOpacity={0.6}/>
+                      <stop offset="95%" stopColor={result.riskLevel === 'elevated' ? '#ef4444' : result.riskLevel === 'low' ? '#f59e0b' : '#10b981'} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(150,150,150,0.15)" vertical={false} />
+                  <XAxis dataKey="day" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `Day ${val}`} />
+                  <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}%`} />
+                  <RechartsTooltip 
+                    contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--border-subtle)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    itemStyle={{ color: 'var(--text-strong)', fontWeight: 600 }}
+                    labelStyle={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}
+                  />
+                  <Area type="monotone" dataKey="Risk" name="Risk Level" stroke={result.riskLevel === 'elevated' ? '#ef4444' : result.riskLevel === 'low' ? '#f59e0b' : '#10b981'} strokeWidth={3} fillOpacity={1} fill="url(#colorRisk)" />
+                  <ReferenceLine x={result.intercourseCycleDay} stroke="var(--text-strong)" strokeWidth={2} strokeDasharray="4 4" label={{ position: 'top', value: 'Intercourse', fill: 'var(--text-strong)', fontSize: 12, fontWeight: 600 }} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+              <button
+                type="button"
+                onClick={() => onExport(result)}
+                className="btn btn-primary"
+              >
+                <ArrowRightLeft size={18} />
+                Generate Report
+              </button>
+            </div>
           </div>
         </div>
       </div>
