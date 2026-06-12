@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import { Trash2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { DailyLog } from '../types'
@@ -35,6 +37,18 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
     return allLogs
   }, [logs, filter, currentCycleStartIso])
 
+  const feedRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (filteredLogs.length > 0) {
+      const isMobile = window.innerWidth < 768;
+      gsap.fromTo('.history-card',
+        { opacity: 0, y: isMobile ? 15 : 10 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out' }
+      );
+    }
+  }, { scope: feedRef, dependencies: [filteredLogs] });
+
   return (
     <section className="history-dashboard animate-fade-in">
 
@@ -62,20 +76,17 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
         </div>
       </div>
 
-      <div className="history-feed">
+      <div className="history-feed" ref={feedRef}>
         {filteredLogs.length === 0 ? (
           <div className="glass-card empty-state">
             <p className="empty-title">No logs found</p>
             <p className="empty-desc">You haven't recorded any symptoms or notes for this timeframe.</p>
           </div>
         ) : (
-          filteredLogs.map((log, index) => (
-            <motion.div 
+          filteredLogs.map((log) => (
+            <div 
               key={log.dateIso}
               className="glass-card history-card"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
             >
               <div className="history-card-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -110,7 +121,7 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
               {log.notes && (
                 <p className="history-notes">{log.notes}</p>
               )}
-            </motion.div>
+            </div>
           ))
         )}
       </div>

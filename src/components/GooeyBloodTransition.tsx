@@ -1,7 +1,8 @@
 import type { ThemeMode } from '../types';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import './GooeyBloodTransition.css';
 
 interface Props {
@@ -54,21 +55,49 @@ export function GooeyBloodTransition({ isActive, targetTheme, targetAppMode, onS
     }
   }, [isActive, phase, onSwitch, onComplete]);
 
+  const wipeRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (isActive && phase === 'animating' && wipeRef.current) {
+      const tl = gsap.timeline();
+      
+      tl.fromTo(wipeRef.current,
+        { y: '-120vh' },
+        { y: '150vh', duration: 1.8, ease: 'power1.inOut' }
+      );
+
+      const dripsElements = gsap.utils.toArray('.blood-drip', wipeRef.current);
+      dripsElements.forEach((drip: any) => {
+        gsap.to(drip, {
+          y: '20%',
+          duration: 0.9,
+          yoyo: true,
+          repeat: 1,
+          ease: 'sine.inOut'
+        });
+      });
+    }
+  }, [isActive, phase]);
+
   if (!isActive && phase === 'idle') return null;
 
   return createPortal(
     <div className="gooey-transition-wrapper">
+      <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
+        <defs>
+          <filter id="blood-goo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="blood-goo" />
+            <feComposite in="SourceGraphic" in2="blood-goo" operator="atop" />
+          </filter>
+        </defs>
+      </svg>
       <div className="gooey-filter-container">
         {phase === 'animating' && (
-          <motion.div
-            className="blood-wipe"
-            initial={{ y: '-120vh' }}
-            animate={{ y: ['-120vh', '0vh', '150vh'] }}
-            transition={{ duration: 1.8, times: [0, 0.5, 1], ease: 'easeInOut' }}
-          >
+          <div ref={wipeRef} className="blood-wipe" style={{ transform: 'translateY(-120vh)' }}>
             <div className="blood-solid-block" style={{ backgroundColor: liquidColor }} />
             {drips.map((drip, i) => (
-              <motion.div
+              <div
                 key={i}
                 className="blood-drip"
                 style={{
@@ -77,13 +106,9 @@ export function GooeyBloodTransition({ isActive, targetTheme, targetAppMode, onS
                   height: drip.height,
                   backgroundColor: liquidColor,
                 }}
-                animate={{ 
-                  y: ['0%', '20%', '0%'] // Subtle stretching physics as it falls
-                }}
-                transition={{ duration: 1.8, ease: 'easeInOut' }}
               />
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </div>,

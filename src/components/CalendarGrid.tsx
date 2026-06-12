@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import { Star, Droplet } from 'lucide-react'
 import type { CycleDayInfo, UserProfile } from '../types'
 import { formatUtcDateLabel, buildPregnancyMetrics } from '../utils/calculator'
@@ -28,6 +30,18 @@ const phaseLabel: Record<CycleDayInfo['phase'], string> = {
 export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: CalendarGridProps) {
   const isPregnancyMode = userProfile?.appMode === 'pregnancy'
 
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (days.length > 0) {
+      const isMobile = window.innerWidth < 768;
+      gsap.fromTo('.calendar-day-card',
+        { opacity: 0, scale: isMobile ? 1 : 0.9, y: isMobile ? 15 : 10 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.02, ease: 'power2.out', willChange: 'opacity, transform' }
+      );
+    }
+  }, { scope: gridRef, dependencies: [days] });
+
   return (
     <section className="glass-card calendar-grid-section">
 
@@ -48,8 +62,8 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
         )}
       </div>
 
-      <div className="calendar-grid">
-        {days.map((day, index) => {
+      <div className="calendar-grid" ref={gridRef}>
+        {days.map((day) => {
           const active = selectedDay?.cycleDay === day.cycleDay
 
           let cardClass = phaseClasses[day.phase]
@@ -64,13 +78,10 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
           }
 
           return (
-            <motion.button
+            <button
               key={day.cycleDay}
               type="button"
               onClick={() => onSelectDay(day)}
-              initial={{ opacity: 0, scale: 0.9, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ type: 'spring', stiffness: 200, damping: 20, delay: index * 0.02 }}
               className={`calendar-day-card ${cardClass} ${active ? 'active' : ''}`}
             >
               <div className="day-circle-wrap">
@@ -96,7 +107,7 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
                   )}
                 </div>
               </div>
-            </motion.button>
+            </button>
           )
         })}
       </div>

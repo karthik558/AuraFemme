@@ -43,7 +43,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'framer-motion'],
+          'vendor-react': ['react', 'react-dom', 'gsap', '@gsap/react'],
           'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
           'vendor-charts': ['recharts'],
           'vendor-pdf': ['jspdf', 'html2canvas']

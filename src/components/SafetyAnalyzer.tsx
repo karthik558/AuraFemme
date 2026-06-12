@@ -1,4 +1,6 @@
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import { ArrowRightLeft, Radar, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { CaseStudyResult } from '../types'
@@ -51,6 +53,16 @@ export function SafetyAnalyzer({
       }),
     [lastPeriodDate, intercourseDate, cycleLength, lutealPhaseLength],
   )
+
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const isMobile = window.innerWidth < 768;
+    gsap.fromTo('.timeline-item',
+      { opacity: 0, y: isMobile ? 15 : 8 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out', willChange: 'opacity, transform' }
+    );
+  }, { scope: listRef, dependencies: [result] });
 
   return (
     <section className="analyzer-grid">
@@ -125,13 +137,10 @@ export function SafetyAnalyzer({
           </div>
         </div>
 
-        <div className="timeline-list">
+        <div className="timeline-list" ref={listRef}>
           {result.timeline.map((item, index) => (
-            <motion.article
+            <article
               key={item.title}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
               className="timeline-item"
             >
               <div className="timeline-item-header">
@@ -147,7 +156,7 @@ export function SafetyAnalyzer({
                 </span>
               </div>
               <p className="timeline-detail">{item.detail}</p>
-            </motion.article>
+            </article>
           ))}
         </div>
 

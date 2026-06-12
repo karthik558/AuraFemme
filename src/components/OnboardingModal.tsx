@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ArrowRight, User, HeartHandshake, Calendar, Activity, Droplet, CheckCircle } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import type { UserProfile } from '../types'
 import { utcTodayIso, addUtcDays } from '../utils/calculator'
 import logo from '../assets/favicon.png'
@@ -48,17 +50,24 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
     return d.toISOString().split('T')[0]
   }).reverse()
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (modalRef.current) {
+      const isMobile = window.innerWidth < 768;
+      gsap.fromTo(modalRef.current,
+        { opacity: 0, x: isMobile ? 0 : 20, y: isMobile ? 20 : 0 },
+        { opacity: 1, x: 0, y: 0, duration: 0.4, ease: 'power2.out', clearProps: 'transform' }
+      );
+    }
+  }, [step]);
+
   return (
     <div className="onboarding-overlay">
-      <AnimatePresence mode="wait">
         {step === 1 && (
-          <motion.div 
-            key="step1"
+          <div 
+            ref={modalRef}
             className="glass-card onboarding-modal"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
           >
             <div className="onboarding-icon-wrap" style={{ background: 'transparent' }}>
               <img src={logo} alt="Aura Femme Logo" style={{ width: '48px', height: '48px' }} />
@@ -96,17 +105,13 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
                 Skip & Explore as Guest
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {step === 2 && (
-          <motion.div 
-            key="step2"
+          <div 
+            ref={modalRef}
             className="glass-card onboarding-modal"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
           >
             <div className="onboarding-icon-wrap">
               <User className="onboarding-icon" />
@@ -135,17 +140,13 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
                 </button>
               </div>
             </form>
-          </motion.div>
+          </div>
         )}
 
         {step === 3 && (
-          <motion.div 
-            key="step3"
+          <div 
+            ref={modalRef}
             className="glass-card onboarding-modal step-3"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
           >
             <div className="onboarding-icon-wrap">
               <Activity className="onboarding-icon" />
@@ -217,9 +218,8 @@ export function OnboardingModal({ onComplete, onGuest }: OnboardingModalProps) {
                 Complete Setup <ArrowRight size={16} />
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   )
 }

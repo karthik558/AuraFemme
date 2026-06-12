@@ -588,10 +588,12 @@
   width: 100%;
   appearance: none;
   -webkit-appearance: none;
+  -moz-appearance: none;
   padding: 0.75rem 2rem 0.75rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   background: rgba(255, 255, 255, 0.03);
+  background-image: none !important;
   color: var(--text-strong);
   font-family: var(--font-family);
   font-size: 0.875rem;
@@ -600,6 +602,10 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   backdrop-filter: blur(8px);
+}
+
+.custom-select::-ms-expand {
+  display: none;
 }
 
 .custom-select:hover {
@@ -995,4 +1001,23 @@
 .nav-item-content svg {
   width: 1.1rem;
   height: 1.1rem;
+}
+
+@keyframes tabSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-transition {
+  animation: tabSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.active-capsule-bg, .nav-active-bg {
+  animation: fadeIn 0.25s ease-out forwards;
 }

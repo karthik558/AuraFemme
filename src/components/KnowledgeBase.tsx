@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area } from 'recharts';
 import ReactMarkdown from 'react-markdown';
@@ -25,14 +26,22 @@ export function KnowledgeBase() {
     };
   });
 
+  const extArticleRef = useRef<HTMLDivElement>(null);
+  useGSAP(() => {
+    if (activeExtendedArticle) {
+      gsap.fromTo(extArticleRef.current,
+        { opacity: 0, x: window.innerWidth < 768 ? 0 : 20, y: window.innerWidth < 768 ? 20 : 0 },
+        { opacity: 1, x: 0, y: 0, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }, [activeExtendedArticle]);
+
   if (activeExtendedArticle) {
     const markdownContent = extendedPregnancyData[activeExtendedArticle.url];
     return (
-      <motion.div 
+      <div 
+        ref={extArticleRef}
         className="article-view"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
       >
         <button className="article-back-btn" onClick={() => setActiveExtendedArticle(null)}>
           <ArrowLeft className="w-4 h-4" />
@@ -50,17 +59,25 @@ export function KnowledgeBase() {
             <p>Content not available offline. <a href={activeExtendedArticle.url} target="_blank" rel="noopener noreferrer">Read on womenshealth.gov</a></p>
           )}
         </div>
-      </motion.div>
+      </div>
     );
   }
 
+  const topicRef = useRef<HTMLDivElement>(null);
+  useGSAP(() => {
+    if (activeTopicData) {
+      gsap.fromTo(topicRef.current,
+        { opacity: 0, x: window.innerWidth < 768 ? 0 : 20, y: window.innerWidth < 768 ? 20 : 0 },
+        { opacity: 1, x: 0, y: 0, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }, [activeTopicData]);
+
   if (activeTopicData) {
     return (
-      <motion.div 
+      <div 
+        ref={topicRef}
         className="article-view"
-        initial={{ opacity: 0, x: 20 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
       >
         <button className="article-back-btn" onClick={() => setActiveArticle(null)}>
           <ArrowLeft className="w-4 h-4" />
@@ -169,32 +186,26 @@ export function KnowledgeBase() {
             </>
           )}
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
     <div className="knowledge-base-container">
-      <div className="reference-grid">
-        <AnimatePresence>
+      <div className="reference-grid" ref={topicRef}>
           {KNOWLEDGE_TOPICS.map((topic) => (
-            <motion.button 
+            <button 
               key={topic.id}
               className="reference-card"
               onClick={() => setActiveArticle(topic.id)}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              layout
             >
               <div className="card-icon-wrapper">
                 {topic.icon}
               </div>
               <h3 className="card-title">{topic.title}</h3>
               <p className="card-excerpt">{topic.content}</p>
-            </motion.button>
+            </button>
           ))}
-        </AnimatePresence>
       </div>
     </div>
   );

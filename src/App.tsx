@@ -1,6 +1,7 @@
 import auraLogo from './assets/icon-color.png'
 import pregnancyLogo from './assets/icon-color-purple.png'
-import { motion, AnimatePresence } from 'framer-motion'
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import {
   Activity,
   CalendarDays,
@@ -125,6 +126,8 @@ const themeModeLabels: Record<ThemeMode, string> = {
 }
 
 function App() {
+  const appRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     migrateLegacyStorage()
   }, [])
@@ -145,6 +148,24 @@ function App() {
     goal, setGoal,
   } = store
 
+  useGSAP(() => {
+    if (!ready || authMode === 'unauthenticated') return;
+    
+    // Initial App Load Animations
+    gsap.fromTo('.app-header', 
+      { y: -20, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'transform' }
+    );
+    gsap.fromTo('.main-content', 
+      { y: 30, opacity: 0 }, 
+      { y: 0, opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out', clearProps: 'transform' }
+    );
+    gsap.fromTo('.app-sidebar', 
+      { x: 30, opacity: 0 }, 
+      { x: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power3.out', clearProps: 'transform' }
+    );
+  }, { scope: appRef, dependencies: [ready, authMode] });
+
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
 
   // Swipe navigation logic
@@ -156,7 +177,7 @@ function App() {
   const handleTouchStart = (e: React.TouchEvent) => {
     // Ignore touches on interactive elements like sliders, buttons, or charts
     const target = e.target as HTMLElement;
-    if (target.closest('input, button, select, a, .recharts-wrapper')) return;
+    if (target.closest('input, button, select, a, .recharts-wrapper, .slider-wrapper, .input-group, .calendar-grid, .history-logs, .no-swipe')) return;
 
     touchEndRef.current = null
     touchEndYRef.current = null
@@ -379,14 +400,11 @@ function App() {
   }
 
   return (
-    <div className="app-wrapper" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+    <div ref={appRef} className="app-wrapper" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       <div className="app-bg-glow" />
       <div className="app-container">
-        <motion.header 
+        <header 
           className="glass-card app-header"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
         >
           <div className="header-content header-content-responsive">
             
@@ -465,10 +483,8 @@ function App() {
                 style={{ position: 'relative' }}
               >
                 {activeTab === tab && (
-                  <motion.div
-                    layoutId="desktopNavActiveBg"
+                  <div
                     className="nav-active-bg"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
                 <span className="nav-item-content">
@@ -478,14 +494,11 @@ function App() {
               </button>
             ))}
           </nav>
-        </motion.header>
+        </header>
 
         <section className="main-layout">
-          <motion.aside 
+          <aside 
             className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''}`}
-            initial={{ x: -30, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.1 }}
           >
             <div className="glass-card panel">
               <div className="panel-header">
@@ -594,17 +607,14 @@ function App() {
                 </div>
               </div>
             </div>
-          </motion.aside>
+          </aside>
 
-          <motion.main 
+          <main 
             className="main-content"
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
             <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading module...</div>}>
               <div>
-                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
+                <div className="tab-panel-container">
                   <div className="glass-card panel">
                     <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
                       <div>
@@ -621,13 +631,8 @@ function App() {
                     <div style={{ marginTop: '1.5rem', position: 'relative' }}>
                       
                       {/* Clinical Dashboard (Overview) */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'overview' ? 1 : 0, 
-                          x: activeTab === 'overview' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
                       >
                         <PersonalDashboard 
@@ -635,16 +640,11 @@ function App() {
                           metrics={metrics} 
                           authMode={authMode} 
                         />
-                      </motion.div>
+                      </div>
 
                       {/* Calendar Terminal */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'calendar' ? 1 : 0, 
-                          x: activeTab === 'calendar' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
                       >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -710,16 +710,11 @@ function App() {
                             </section>
                           )}
                         </div>
-                      </motion.div>
+                      </div>
 
                       {/* Safety Analyzer */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'safety' ? 1 : 0, 
-                          x: activeTab === 'safety' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
                       >
                         <SafetyAnalyzer 
@@ -731,16 +726,11 @@ function App() {
                           onLutealPhaseLengthChange={setLutealPhaseLength}
                           onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
                         />
-                      </motion.div>
+                      </div>
 
                       {/* History Section */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'history' ? 1 : 0, 
-                          x: activeTab === 'history' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'history' ? 'block' : 'none' }}
                       >
                         <HistoryDashboard 
@@ -748,16 +738,11 @@ function App() {
                           currentCycleStartIso={metrics.cycleStartIso}
                           onDeleteLog={handleDeleteLog}
                         />
-                      </motion.div>
+                      </div>
 
                       {/* Reports Section */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'reports' ? 1 : 0, 
-                          x: activeTab === 'reports' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'reports' ? 'block' : 'none' }}
                       >
                         <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
@@ -798,40 +783,32 @@ function App() {
                             </div>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
 
                       {/* Reference Library */}
-                      <motion.div 
-                        initial={{ opacity: 0, x: 30 }}
-                        animate={{ 
-                          opacity: activeTab === 'reference' ? 1 : 0, 
-                          x: activeTab === 'reference' ? 0 : 30 
-                        }}
-                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                      <div 
+                        className="tab-content fade-transition"
                         style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
                       >
                         <KnowledgeBase />
-                      </motion.div>
+                      </div>
 
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </div>
             </Suspense>
-          </motion.main>
+          </main>
         </section>
 
         {/* Footer */}
-        <motion.footer 
-          className="app-footer"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.3 }}
+        <footer 
+          className="app-footer desktop-only"
         >
           <p className="footer-text">
             &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
           </p>
-        </motion.footer>
+        </footer>
       </div>
 
       <nav className="mobile-bottom-nav">
@@ -845,41 +822,17 @@ function App() {
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
               style={{ WebkitTapHighlightColor: 'transparent' }}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="active-capsule"
-                  className="active-capsule-bg"
-                  transition={{ type: 'spring', stiffness: 300, damping: 24, mass: 0.8 }}
-                />
-              )}
-              <motion.div
-                initial={false}
-                animate={{ y: isActive ? -4 : 0 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                className="icon-label-wrapper"
-              >
-                <motion.div
-                  initial={false}
-                  animate={{ scale: isActive ? 1.15 : 1 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  className="icon-container"
-                >
+              {isActive && <div className="active-capsule-bg" />}
+              <div className={`icon-label-wrapper ${isActive ? 'active' : ''}`}>
+                <div className={`icon-container ${isActive ? 'active' : ''}`}>
                   {getMobileNavIcon(tab)}
-                </motion.div>
-                <AnimatePresence mode="popLayout">
-                  {isActive && (
-                    <motion.span
-                      initial={{ opacity: 0, y: 6, scale: 0.8 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 6, scale: 0.8 }}
-                      transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                      className="mobile-nav-label"
-                    >
-                      {getMobileNavTitle(tab)}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                </div>
+                {isActive && (
+                  <span className="mobile-nav-label active">
+                    {getMobileNavTitle(tab)}
+                  </span>
+                )}
+              </div>
             </button>
           )
         })}

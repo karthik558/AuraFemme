@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useRef } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { CalendarDays, Clock3, MoonStar, Activity, Sparkles } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
@@ -117,12 +118,19 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
       : metrics.currentPhase === 'follicular' ? 'Follicular build'
       : metrics.currentPhase === 'ovulation' ? 'Peak fertility window' : 'Luteal stabilization';
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.fromTo(containerRef.current,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }
+    );
+  }, { scope: containerRef });
+
   return (
-    <motion.div 
+    <div 
+      ref={containerRef}
       className="personal-dashboard-container"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
     >
       <div className="dashboard-header-premium">
         <h2 className="dashboard-greeting-premium">
@@ -445,6 +453,6 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         </div>
 
       </div>
-    </motion.div>
+    </div>
   );
 });

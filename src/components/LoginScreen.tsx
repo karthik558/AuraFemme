@@ -1,5 +1,7 @@
 import { LogIn, User, Trash2 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { useRef } from 'react'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
 import type { UserProfile } from '../types'
 import logo from '../assets/favicon.png'
 import './LoginScreen.css'
@@ -12,13 +14,21 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ profile, onLogin, onGuest, onDeleteProfile }: LoginScreenProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    const isMobile = window.innerWidth < 768;
+    gsap.fromTo(containerRef.current,
+      { opacity: 0, scale: isMobile ? 1 : 0.95, y: isMobile ? 30 : 0 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.4, ease: 'power2.out', willChange: 'transform, opacity' }
+    );
+  }, { scope: containerRef });
+
   return (
     <div className="login-overlay">
-      <motion.div 
+      <div 
+        ref={containerRef}
         className="glass-card login-modal"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
       >
         <div className="login-icon-wrap">
           <img src={logo} alt="Aura Femme Logo" className="login-logo" />
@@ -53,7 +63,7 @@ export function LoginScreen({ profile, onLogin, onGuest, onDeleteProfile }: Logi
             Wipe Device Data
           </button>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
