@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ArrowRightLeft, Radar, Sparkles } from 'lucide-react'
+import { ArrowRightLeft, Radar, Settings2 } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { CaseStudyResult } from '../types'
 import { buildCaseStudyResult, clampNumber, formatUtcDateLabel, utcTodayIso } from '../utils/calculator'
@@ -162,7 +162,7 @@ export function SafetyAnalyzer({
 
         <div className="model-inputs">
           <div className="model-inputs-title">
-            <Sparkles className="analyzer-icon" />
+            <Settings2 className="analyzer-icon" />
             Model inputs
           </div>
           <dl className="model-inputs-grid">

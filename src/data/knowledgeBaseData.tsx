@@ -1,4 +1,4 @@
-import { Heart, Sparkles, Stethoscope, Baby, Activity, Info, BookOpen, List } from 'lucide-react';
+import { Heart, Baby, Stethoscope, Activity, Info, BookOpen, List } from 'lucide-react';
 
 export const KNOWLEDGE_TOPICS = [
   {
@@ -38,7 +38,7 @@ export const KNOWLEDGE_TOPICS = [
   {
     id: 'before-pregnant',
     title: 'Before you get pregnant',
-    icon: <Sparkles className="w-7 h-7" />,
+    icon: <Baby className="w-7 h-7" />,
     content: 'Preconception health involves optimizing your biometric baselines. Learn about ovulation tracking, basal body temperature, folic acid supplementation, and evaluating lifestyle factors to build a healthy foundation.',
     articleContent: {
       intro: 'Preconception care focuses on identifying and modifying biomedical, behavioral, and social risks to a woman’s health or pregnancy outcome through prevention and management. The American College of Obstetricians and Gynecologists (ACOG) recommends developing a Reproductive Life Plan.',

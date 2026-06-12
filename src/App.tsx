@@ -12,7 +12,7 @@ import {
   MoonStar,
   ShieldAlert,
   ShieldCheck,
-  Sparkles,
+  Baby,
   SunMedium,
   Target,
   FileText,
@@ -363,7 +363,7 @@ function App() {
           body: metrics.ovulationCountdown <= 5
               ? 'The fertile window is in play. The current math places ovulation close enough that timing matters now.'
               : 'You are outside the peak window, but the model can still help you time the next fertile swing.',
-          icon: <Sparkles className="w-5 h-5" />,
+          icon: <Baby className="w-5 h-5" />,
         }
       case 'avoid':
         return {
@@ -971,11 +971,11 @@ function AppModeSwitcher({ mode, themeMode, onChange }: { mode: 'cycle' | 'pregn
         <span className="theme-btn-text hide-on-mobile">Cycle</span>
       </button>
       <button className={`theme-btn desktop-only ${mode === 'pregnancy' ? 'active' : ''}`} onClick={() => handleModeChange('pregnancy')} title="Pregnancy Tracking">
-        <Sparkles className="w-4 h-4" />
+        <Baby className="w-4 h-4" />
         <span className="theme-btn-text hide-on-mobile">Pregnancy</span>
       </button>
       <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Mode: ${mode === 'cycle' ? 'Cycle' : 'Pregnancy'}`}>
-        {mode === 'cycle' ? <Activity className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+        {mode === 'cycle' ? <Activity className="w-4 h-4" /> : <Baby className="w-4 h-4" />}
       </button>
     </div>
     </>

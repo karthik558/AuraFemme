@@ -1,7 +1,7 @@
 import { useMemo, memo, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { CalendarDays, Clock3, MoonStar, Activity, Sparkles } from 'lucide-react';
+import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -162,7 +162,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               </div>
               <div className="kpi-card">
                 <div className="kpi-header">
-                  <Sparkles className="w-4 h-4" />
+                  <Baby className="w-4 h-4" />
                   <span className="kpi-label">Development</span>
                 </div>
                 <span className="kpi-value" style={{ fontSize: '1.35rem', marginTop: '0.25rem' }}>{pMetrics.trimester === 1 ? 'Embryonic' : pMetrics.trimester === 2 ? 'Fetal growth' : 'Maturation'}</span>
@@ -200,7 +200,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
 
             <div className="kpi-card">
               <div className="kpi-header">
-                <Sparkles className="w-4 h-4" />
+                <Target className="w-4 h-4" />
                 <span className="kpi-label">Ovulation</span>
               </div>
               <span className="kpi-value" style={{ fontSize: '1.75rem' }}>{metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}</span>
@@ -395,7 +395,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               <h3 className="chart-title">3D Hormonal Wave</h3>
               <p className="chart-subtitle">Interactive continuous flow of Estrogen, Progesterone, LH, and FSH. Drag to rotate.</p>
             </div>
-            <Sparkles className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
+            <Activity className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
           <div className="chart-wrapper" style={{ minHeight: '300px', padding: '1rem 0', background: 'var(--bg-card-raised)', borderRadius: 'var(--radius-xl)', boxShadow: 'inset 0 2px 20px rgba(0,0,0,0.05)' }}>
              <HormoneWave3D 
