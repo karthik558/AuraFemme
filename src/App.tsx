@@ -253,9 +253,7 @@ function App() {
 
   const handleSetAuthMode = setAuthMode
   
-  useEffect(() => {
-    document.documentElement.setAttribute('data-app-mode', userProfile?.appMode || 'cycle')
-  }, [userProfile?.appMode])
+
 
   useEffect(() => {
     if (userProfile?.appMode === 'pregnancy' && activeTab === 'safety') {
@@ -372,12 +370,7 @@ function App() {
   }
 
 
-  useEffect(() => {
-    const resolvedTheme = themeMode
-    const root = document.documentElement
-    root.dataset.theme = resolvedTheme
-    root.style.colorScheme = resolvedTheme
-  }, [themeMode])
+
 
   const cycleInput = useMemo<CycleInput>(
     () => ({
