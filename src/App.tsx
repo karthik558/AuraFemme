@@ -734,15 +734,7 @@ function App() {
                         style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
                       >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
-                            <button 
-                              className="btn btn-primary" 
-                              style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
-                              onClick={() => setActiveTab('reports')}
-                            >
-                              <Download size={18} /> Generate Report
-                            </button>
-                          </div>
+
                           <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
                           {activeDay && (
                             <section className="phase-summary">
