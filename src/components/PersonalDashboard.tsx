@@ -1,7 +1,7 @@
 import { useMemo, memo, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target } from 'lucide-react';
+import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target, Dna } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -55,6 +55,34 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   return null;
 };
 
+const getBiologicalFact = (isPregnancy: boolean, day: number, week: number, phase: string): string => {
+  if (isPregnancy) {
+    if (week < 4) return "Early cell division is rapidly occurring. Your body is increasing blood volume to prepare for the placenta.";
+    if (week >= 4 && week <= 8) return "The neural tube is closing right now, laying the foundation for your baby's brain and spinal cord.";
+    if (week >= 9 && week <= 12) return "Organogenesis is nearly complete. Your baby's heart is beating twice as fast as yours!";
+    if (week >= 13 && week <= 16) return "The placenta has fully taken over hormone production, which often brings a welcome relief from early nausea.";
+    if (week >= 17 && week <= 22) return "Fetal bones are hardening (ossification), and you might start feeling the first subtle flutters of movement, known as 'quickening'.";
+    if (week >= 23 && week <= 28) return "Your baby's lungs are beginning to produce surfactant, a crucial substance that will help them breathe air after birth.";
+    if (week >= 29 && week <= 34) return "Your baby is putting on fat rapidly. Your own metabolic rate has increased significantly to support this growth spurt.";
+    return "Maternal antibodies are actively crossing the placenta to your baby, granting them passive immunity for their first few months of life.";
+  }
+
+  if (phase === 'menstruation') {
+    if (day <= 2) return `Day ${day}: Estrogen and progesterone are at their absolute lowest. This drop triggers prostaglandins, causing the uterus to contract and shed its lining.`;
+    return `Day ${day}: As your period tapers off, your brain is already releasing FSH (Follicle Stimulating Hormone) to recruit a new batch of eggs for the upcoming cycle.`;
+  }
+  if (phase === 'follicular') {
+    return `Day ${day}: Estrogen is steadily rising as your ovarian follicles grow. This naturally boosts serotonin and dopamine, leading to higher energy levels and sharper focus!`;
+  }
+  if (phase === 'ovulation') {
+    return `Day ${day}: Luteinizing Hormone (LH) is surging. This triggers a slight drop in basal body temperature followed by a sharp spike right as the mature egg is released.`;
+  }
+  if (day <= 21) {
+    return `Day ${day}: The corpus luteum is pumping out progesterone. This hormone acts as a natural sedative and muscle relaxant, making you feel more relaxed but also a bit sleepy.`;
+  }
+  return `Day ${day}: Progesterone levels are peaking and starting their decline. This hormonal shift can decrease serotonin synthesis, which is why late-luteal mood dips are common.`;
+};
+
 export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal }: PersonalDashboardProps) {
   // Determine name to display
   let displayName = "Ayana";
@@ -70,6 +98,8 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
   const greeting = authMode === 'guest' ? 'Welcome to Aura' : `${timeGreeting}, ${displayName}`;
   const isPregnancyMode = userProfile?.appMode === 'pregnancy';
   
+  const pMetrics = useMemo(() => isPregnancyMode ? buildPregnancyMetrics(userProfile?.lastPeriodDate || metrics.cycleStartIso) : null, [isPregnancyMode, userProfile?.lastPeriodDate, metrics.cycleStartIso]);
+
   const activeHormoneData = useMemo(() => {
     if (isPregnancyMode) {
       const data = [];
@@ -142,10 +172,50 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         <p className="dashboard-subtitle-premium">Here's a look at your cycle insights today.</p>
       </div>
 
+      <div className="bio-fact-card liquid-aurora" style={{
+        position: 'relative',
+        borderRadius: '1.5rem',
+        padding: '2rem',
+        marginBottom: '1.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        background: 'var(--bg-panel)',
+        border: '1px solid var(--border-subtle)',
+        overflow: 'hidden',
+        boxShadow: '0 12px 40px rgba(0,0,0,0.04)'
+      }}>
+        {/* Organic background blobs */}
+        <div style={{
+          position: 'absolute', top: '-50%', left: '-10%', width: '300px', height: '300px',
+          background: 'var(--accent-primary)', opacity: 0.08, filter: 'blur(50px)', borderRadius: '50%',
+          pointerEvents: 'none'
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-50%', right: '-10%', width: '250px', height: '250px',
+          background: 'var(--text-main)', opacity: 0.05, filter: 'blur(50px)', borderRadius: '50%',
+          pointerEvents: 'none'
+        }} />
+        
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
+              <div style={{ background: 'var(--accent-soft)', padding: '0.4rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Dna className="w-4 h-4" style={{ color: 'var(--accent-primary)', animation: 'biologicalPulse 3s infinite' }} />
+              </div>
+              <h4 style={{ margin: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)', fontWeight: 800 }}>
+                Biological Insight
+              </h4>
+            </div>
+            <p style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-strong)', lineHeight: 1.6, fontWeight: 500, fontStyle: 'italic', letterSpacing: '-0.01em' }}>
+              "{getBiologicalFact(isPregnancyMode, metrics.cycleDay, pMetrics?.gestationalWeeks || 0, metrics.currentPhase)}"
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="dashboard-kpi-row">
-        {isPregnancyMode ? (() => {
-          const pMetrics = buildPregnancyMetrics(userProfile?.lastPeriodDate || metrics.cycleStartIso);
-          return (
+        {isPregnancyMode && pMetrics ? (
             <>
               <div className="kpi-card">
                 <div className="kpi-header">
@@ -180,8 +250,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                 <span className="kpi-helper">Estimated arrival</span>
               </div>
             </>
-          )
-        })() : (
+        ) : (
           <>
             <div className="kpi-card">
               <div className="kpi-header">
