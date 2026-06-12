@@ -19,19 +19,21 @@ import {
   Download,
   Upload,
 } from 'lucide-react'
-import { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
 import { CinematicPreloader } from './components/CinematicPreloader'
-import { CalendarGrid } from './components/CalendarGrid'
-import { SafetyAnalyzer } from './components/SafetyAnalyzer'
-import { ReportExport } from './components/ReportExport'
-import { KnowledgeBase } from './components/KnowledgeBase'
 import { DateTriplet } from './components/DateTriplet'
 import { DailyLogEditor } from './components/DailyLogEditor'
-import { HistoryDashboard } from './components/HistoryDashboard'
-import { PersonalDashboard } from './components/PersonalDashboard'
 import { OnboardingModal } from './components/OnboardingModal'
 import { LoginScreen } from './components/LoginScreen'
+import { useAppStore, migrateLegacyStorage } from './store'
+
+const CalendarGrid = React.lazy(() => import('./components/CalendarGrid').then(m => ({ default: m.CalendarGrid })))
+const SafetyAnalyzer = React.lazy(() => import('./components/SafetyAnalyzer').then(m => ({ default: m.SafetyAnalyzer })))
+const ReportExport = React.lazy(() => import('./components/ReportExport').then(m => ({ default: m.ReportExport })))
+const KnowledgeBase = React.lazy(() => import('./components/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })))
+const HistoryDashboard = React.lazy(() => import('./components/HistoryDashboard').then(m => ({ default: m.HistoryDashboard })))
+const PersonalDashboard = React.lazy(() => import('./components/PersonalDashboard').then(m => ({ default: m.PersonalDashboard })))
 import {
   addUtcDays,
   buildCalendarDays,
@@ -42,10 +44,10 @@ import {
   diffUtcDays,
   buildPregnancyMetrics,
 } from './utils/calculator'
-import type { CaseStudyResult, CycleDayInfo, CycleGoal, CycleInput, ThemeMode, DailyLog, UserProfile } from './types'
+import type { CycleDayInfo, CycleGoal, CycleInput, ThemeMode, UserProfile } from './types'
 import './App.css'
 
-type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'reference'
+export type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'reference'
 
 const tabCopy: Record<TabKey, { title: string; subtitle: string }> = {
   overview: {
@@ -123,28 +125,27 @@ const themeModeLabels: Record<ThemeMode, string> = {
 }
 
 function App() {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
-    if (typeof window === 'undefined') return 'light'
-    const stored = window.localStorage.getItem('aura-femme-theme') as ThemeMode | null
-    return stored === 'light' || stored === 'dark' ? stored : 'light'
-  })
-  
+  useEffect(() => {
+    migrateLegacyStorage()
+  }, [])
 
+  const store = useAppStore()
+  const {
+    activeTab, setActiveTab,
+    ready, setReady,
+    sharedCaseStudy, setSharedCaseStudy,
+    themeMode, setThemeMode,
+    logs, setLogs,
+    authMode, setAuthMode,
+    userProfile, setUserProfile,
+    lastPeriodDate, setLastPeriodDate,
+    cycleLength, setCycleLength,
+    bleedingDuration, setBleedingDuration,
+    lutealPhaseLength, setLutealPhaseLength,
+    goal, setGoal,
+  } = store
 
-  const [activeTab, setActiveTab] = useState<TabKey>('overview')
-  const [ready, setReady] = useState(false)
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
-
-  const [sharedCaseStudy, setSharedCaseStudy] = useState<CaseStudyResult | null>(null)
-  
-  const [logs, setLogs] = useState<Record<string, DailyLog>>(() => {
-    try {
-      const savedLogs = localStorage.getItem('aura-femme-logs')
-      return savedLogs ? JSON.parse(savedLogs) : {}
-    } catch {
-      return {}
-    }
-  })
 
   // Swipe navigation logic
   const touchStartRef = useRef<number | null>(null)
@@ -184,55 +185,11 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    localStorage.setItem('aura-femme-logs', JSON.stringify(logs))
-  }, [logs])
+  const handleSaveLog = store.addLog
+  const handleDeleteLog = store.removeLog
 
-
-
-  const handleSaveLog = (log: DailyLog) => {
-    setLogs(prev => ({ ...prev, [log.dateIso]: log }))
-  }
-
-  const handleDeleteLog = (dateIso: string) => {
-    setLogs(prev => {
-      const nextLogs = { ...prev }
-      delete nextLogs[dateIso]
-      return nextLogs
-    })
-  }
-
-  const [authMode, setAuthMode] = useState<'unauthenticated' | 'authenticated' | 'guest'>(() => {
-    const savedMode = localStorage.getItem('aura-femme-authmode')
-    if (savedMode === 'guest' || savedMode === 'unauthenticated' || savedMode === 'authenticated') {
-      return savedMode
-    }
-    return localStorage.getItem('aura-femme-profile') ? 'authenticated' : 'unauthenticated'
-  })
-
-  const handleSetAuthMode = (mode: 'unauthenticated' | 'authenticated' | 'guest') => {
-    setAuthMode(mode)
-    localStorage.setItem('aura-femme-authmode', mode)
-  }
+  const handleSetAuthMode = setAuthMode
   
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('aura-femme-profile')
-    if (saved) {
-      try { return JSON.parse(saved) } catch (e) {}
-    }
-    const oldName = localStorage.getItem('aura-femme-user')
-    if (oldName) {
-      return {
-        name: oldName,
-        managementType: 'self',
-        lastPeriodDate: addUtcDays(utcTodayIso(), -12),
-        cycleLength: 28,
-        bleedingDuration: 5
-      }
-    }
-    return null
-  })
-
   useEffect(() => {
     document.documentElement.setAttribute('data-app-mode', userProfile?.appMode || 'cycle')
   }, [userProfile?.appMode])
@@ -241,11 +198,9 @@ function App() {
     if (userProfile?.appMode === 'pregnancy' && activeTab === 'safety') {
       setActiveTab('overview')
     }
-  }, [userProfile?.appMode, activeTab])
+  }, [userProfile?.appMode, activeTab, setActiveTab])
 
   const handleCompleteOnboarding = (profile: UserProfile) => {
-    localStorage.setItem('aura-femme-profile', JSON.stringify(profile))
-    localStorage.removeItem('aura-femme-user')
     setUserProfile(profile)
     setLastPeriodDate(profile.lastPeriodDate)
     setCycleLength(profile.cycleLength)
@@ -278,15 +233,13 @@ function App() {
   }
 
   const handleDeleteProfile = () => {
-    localStorage.removeItem('aura-femme-profile')
-    localStorage.removeItem('aura-femme-authmode')
     setUserProfile(null)
     setLogs({})
     handleSetAuthMode('unauthenticated')
   }
 
   const handleExportData = () => {
-    const dataStr = JSON.stringify({ userName: userProfile?.name, userProfile, logs }, null, 2)
+    const dataStr = JSON.stringify({ userName: userProfile?.name, userProfile: userProfile, logs: logs }, null, 2)
     const blob = new Blob([dataStr], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -303,7 +256,7 @@ function App() {
       const text = await file.text()
       const parsed = JSON.parse(text)
       if (parsed && parsed.logs && typeof parsed.logs === 'object') {
-        setLogs(prev => ({ ...prev, ...parsed.logs }))
+        setLogs((prev) => ({ ...prev, ...parsed.logs }))
         alert('Data imported successfully!')
       } else {
         alert('Invalid data format. Could not import.')
@@ -325,35 +278,13 @@ function App() {
     }
   }
 
-  const [lastPeriodDate, setLastPeriodDate] = useState<string>(() => {
-    const savedMode = localStorage.getItem('aura-femme-authmode')
-    if (savedMode === 'guest') return addUtcDays(utcTodayIso(), -12)
-    return userProfile?.lastPeriodDate || addUtcDays(utcTodayIso(), -12)
-  })
-  
-  const [cycleLength, setCycleLength] = useState<number>(() => {
-    const savedMode = localStorage.getItem('aura-femme-authmode')
-    if (savedMode === 'guest') return 28
-    return userProfile?.cycleLength || 28
-  })
-  
-  const [bleedingDuration, setBleedingDuration] = useState<number>(() => {
-    const savedMode = localStorage.getItem('aura-femme-authmode')
-    if (savedMode === 'guest') return 5
-    return userProfile?.bleedingDuration || 5
-  })
-  const [lutealPhaseLength, setLutealPhaseLength] = useState(14)
-  const [goal, setGoal] = useState<CycleGoal>('track')
-
 
   useEffect(() => {
     const resolvedTheme = themeMode
     const root = document.documentElement
     root.dataset.theme = resolvedTheme
     root.style.colorScheme = resolvedTheme
-    window.localStorage.setItem('aura-femme-theme', themeMode)
   }, [themeMode])
-
 
   const cycleInput = useMemo<CycleInput>(
     () => ({
@@ -666,220 +597,222 @@ function App() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 100, damping: 20, delay: 0.15 }}
           >
-            <div>
-              <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
-                <div className="glass-card panel">
-                  <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
-                    <div>
-                      <p className="panel-label">Dashboard</p>
-                      <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
-                      <p className="metric-helper" style={{ maxWidth: '42rem' }}>{getTabCopy(activeTab, userProfile?.appMode).subtitle}</p>
+            <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading module...</div>}>
+              <div>
+                <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ type: 'spring', stiffness: 110, damping: 20, delay: 0.2 }}>
+                  <div className="glass-card panel">
+                    <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
+                      <div>
+                        <p className="panel-label">Dashboard</p>
+                        <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
+                        <p className="metric-helper" style={{ maxWidth: '42rem' }}>{getTabCopy(activeTab, userProfile?.appMode).subtitle}</p>
+                      </div>
+                      <div className="nav-item">
+                        <CheckCircle2 className="w-4 h-4" style={{ color: '#10b981' }} />
+                        Clinical math online
+                      </div>
                     </div>
-                    <div className="nav-item">
-                      <CheckCircle2 className="w-4 h-4" style={{ color: '#10b981' }} />
-                      Clinical math online
-                    </div>
-                  </div>
 
-                  <div style={{ marginTop: '1.5rem', position: 'relative' }}>
-                    
-                    {/* Clinical Dashboard (Overview) */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'overview' ? 1 : 0, 
-                        x: activeTab === 'overview' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
-                    >
-                      <PersonalDashboard 
-                        userProfile={userProfile} 
-                        metrics={metrics} 
-                        authMode={authMode} 
-                      />
-                    </motion.div>
+                    <div style={{ marginTop: '1.5rem', position: 'relative' }}>
+                      
+                      {/* Clinical Dashboard (Overview) */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'overview' ? 1 : 0, 
+                          x: activeTab === 'overview' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
+                      >
+                        <PersonalDashboard 
+                          userProfile={userProfile} 
+                          metrics={metrics} 
+                          authMode={authMode} 
+                        />
+                      </motion.div>
 
-                    {/* Calendar Terminal */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'calendar' ? 1 : 0, 
-                        x: activeTab === 'calendar' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
-                          <button 
-                            className="btn btn-primary" 
-                            style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.85rem', padding: '0.6rem 1rem' }}
-                            onClick={() => setActiveTab('reports')}
-                          >
-                            <Download size={16} /> Generate Clinical Report
-                          </button>
-                        </div>
-                        <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
-                        {activeDay && (
-                          <section className="phase-summary">
-                            <div className="panel-header">
-                              <div>
-                                <p className="panel-label">{userProfile?.appMode === 'pregnancy' ? 'Pregnancy Timeline' : 'Chronology terminal'}</p>
-                                {userProfile?.appMode === 'pregnancy' ? (
-                                  <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Week {Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7)}</h3>
-                                ) : (
-                                  <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
-                                )}
-                                <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
+                      {/* Calendar Terminal */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'calendar' ? 1 : 0, 
+                          x: activeTab === 'calendar' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'calendar' ? 'block' : 'none' }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
+                            <button 
+                              className="btn btn-primary" 
+                              style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.85rem', padding: '0.6rem 1rem' }}
+                              onClick={() => setActiveTab('reports')}
+                            >
+                              <Download size={16} /> Generate Clinical Report
+                            </button>
+                          </div>
+                          <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
+                          {activeDay && (
+                            <section className="phase-summary">
+                              <div className="panel-header">
+                                <div>
+                                  <p className="panel-label">{userProfile?.appMode === 'pregnancy' ? 'Pregnancy Timeline' : 'Chronology terminal'}</p>
+                                  {userProfile?.appMode === 'pregnancy' ? (
+                                    <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Week {Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7)}</h3>
+                                  ) : (
+                                    <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
+                                  )}
+                                  <p className="metric-helper">{formatUtcDateLabel(activeDay.dateIso)}</p>
+                                </div>
+                                <div className="badge">
+                                  {userProfile?.appMode === 'pregnancy' 
+                                    ? `Trimester ${Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 28 ? 3 : Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 13 ? 2 : 1}` 
+                                    : (activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable')}
+                                </div>
                               </div>
-                              <div className="badge">
-                                {userProfile?.appMode === 'pregnancy' 
-                                  ? `Trimester ${Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 28 ? 3 : Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 13 ? 2 : 1}` 
-                                  : (activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable')}
-                              </div>
-                            </div>
-                            
-                            <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
-                              {userProfile?.appMode === 'pregnancy' ? (() => {
-                                const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, activeDay.dateIso)
-                                return (
+                              
+                              <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
+                                {userProfile?.appMode === 'pregnancy' ? (() => {
+                                  const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, activeDay.dateIso)
+                                  return (
+                                    <>
+                                      <InfoTile label="Gestational age" value={`${pMetrics.gestationalWeeks} weeks, ${pMetrics.gestationalDays % 7} days`} />
+                                      <InfoTile label="Pregnancy progress" value={`Trimester ${pMetrics.trimester}`} />
+                                      <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
+                                    </>
+                                  )
+                                })() : (
                                   <>
-                                    <InfoTile label="Gestational age" value={`${pMetrics.gestationalWeeks} weeks, ${pMetrics.gestationalDays % 7} days`} />
-                                    <InfoTile label="Pregnancy progress" value={`Trimester ${pMetrics.trimester}`} />
+                                    <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
+                                    <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
                                     <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
                                   </>
-                                )
-                              })() : (
-                                <>
-                                  <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
-                                  <InfoTile label="Phase status" value={activeDay.isBleeding ? 'Menstrual onset' : activeDay.isFertile ? 'Fertile window' : 'Outside fertile window'} />
-                                  <InfoTile label="Date anchor" value={formatUtcDateLabel(activeDay.dateIso)} />
-                                </>
+                                )}
+                              </div>
+
+                                <DailyLogEditor 
+                                  dateIso={activeDay.dateIso} 
+                                  existingLog={activeLogs[activeDay.dateIso] || null} 
+                                  onSave={handleSaveLog} 
+                                  onDelete={() => handleDeleteLog(activeDay.dateIso)}
+                                  isGuest={authMode === 'guest'}
+                                  onClose={() => setSelectedDay(null)}
+                                  userProfile={userProfile}
+                                />
+
+
+                            </section>
+                          )}
+                        </div>
+                      </motion.div>
+
+                      {/* Safety Analyzer */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'safety' ? 1 : 0, 
+                          x: activeTab === 'safety' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
+                      >
+                        <SafetyAnalyzer 
+                          lastPeriodDate={lastPeriodDate}
+                          onLastPeriodDateChange={setLastPeriodDate}
+                          cycleLength={cycleLength}
+                          onCycleLengthChange={setCycleLength}
+                          lutealPhaseLength={lutealPhaseLength}
+                          onLutealPhaseLengthChange={setLutealPhaseLength}
+                          onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
+                        />
+                      </motion.div>
+
+                      {/* History Section */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'history' ? 1 : 0, 
+                          x: activeTab === 'history' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'history' ? 'block' : 'none' }}
+                      >
+                        <HistoryDashboard 
+                          logs={activeLogs} 
+                          currentCycleStartIso={metrics.cycleStartIso}
+                          onDeleteLog={handleDeleteLog}
+                        />
+                      </motion.div>
+
+                      {/* Reports Section */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'reports' ? 1 : 0, 
+                          x: activeTab === 'reports' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'reports' ? 'block' : 'none' }}
+                      >
+                        <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+                            <div className="phase-summary" style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
+                              <div style={{ width: '100%', overflowX: 'auto', minWidth: 0 }}>
+                                <ReportExport 
+                                  metrics={metrics} 
+                                  cycleLength={userProfile?.cycleLength || 28} 
+                                  lutealPhaseLength={lutealPhaseLength} 
+                                  userName={userProfile?.name || 'Ayana'} 
+                                  logs={activeLogs} 
+                                  userProfile={userProfile} 
+                                  caseStudy={sharedCaseStudy}
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
+                            <div className="phase-summary">
+                              <p className="panel-label">Exported case study</p>
+                              {sharedCaseStudy ? (
+                                <div className={`risk-card ${sharedCaseStudy.riskLevel === 'elevated' ? 'risk-high' : 'risk-low'}`}>
+                                  <div className="risk-card-header">
+                                    {sharedCaseStudy.riskLevel === 'elevated' ? <ShieldAlert size={18} className="risk-icon" /> : <ShieldCheck size={18} className="risk-icon" />}
+                                    <span className="risk-title">{sharedCaseStudy.riskLabel} Risk Assessment</span>
+                                  </div>
+                                  <div className="risk-card-body">
+                                    {sharedCaseStudy.summary}
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
                               )}
                             </div>
-
-                              <DailyLogEditor 
-                                dateIso={activeDay.dateIso} 
-                                existingLog={activeLogs[activeDay.dateIso] || null} 
-                                onSave={handleSaveLog} 
-                                onDelete={() => handleDeleteLog(activeDay.dateIso)}
-                                isGuest={authMode === 'guest'}
-                                onClose={() => setSelectedDay(null)}
-                                userProfile={userProfile}
-                              />
-
-
-                          </section>
-                        )}
-                      </div>
-                    </motion.div>
-
-                    {/* Safety Analyzer */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'safety' ? 1 : 0, 
-                        x: activeTab === 'safety' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
-                    >
-                      <SafetyAnalyzer 
-                        lastPeriodDate={lastPeriodDate}
-                        onLastPeriodDateChange={setLastPeriodDate}
-                        cycleLength={cycleLength}
-                        onCycleLengthChange={setCycleLength}
-                        lutealPhaseLength={lutealPhaseLength}
-                        onLutealPhaseLengthChange={setLutealPhaseLength}
-                        onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
-                      />
-                    </motion.div>
-
-                    {/* History Section */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'history' ? 1 : 0, 
-                        x: activeTab === 'history' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'history' ? 'block' : 'none' }}
-                    >
-                      <HistoryDashboard 
-                        logs={activeLogs} 
-                        currentCycleStartIso={metrics.cycleStartIso}
-                        onDeleteLog={handleDeleteLog}
-                      />
-                    </motion.div>
-
-                    {/* Reports Section */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'reports' ? 1 : 0, 
-                        x: activeTab === 'reports' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'reports' ? 'block' : 'none' }}
-                    >
-                      <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
-
-
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
-                          <div className="phase-summary" style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
-                            <div style={{ width: '100%', overflowX: 'auto', minWidth: 0 }}>
-                              <ReportExport 
-                                metrics={metrics} 
-                                cycleLength={userProfile?.cycleLength || 28} 
-                                lutealPhaseLength={lutealPhaseLength} 
-                                userName={userProfile?.name || 'Ayana'} 
-                                logs={activeLogs} 
-                                userProfile={userProfile} 
-                                caseStudy={sharedCaseStudy}
-                              />
-                            </div>
                           </div>
                         </div>
+                      </motion.div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
-                          <div className="phase-summary">
-                            <p className="panel-label">Exported case study</p>
-                            {sharedCaseStudy ? (
-                              <div className={`risk-card ${sharedCaseStudy.riskLevel === 'elevated' ? 'risk-high' : 'risk-low'}`}>
-                                <div className="risk-card-header">
-                                  {sharedCaseStudy.riskLevel === 'elevated' ? <ShieldAlert size={18} className="risk-icon" /> : <ShieldCheck size={18} className="risk-icon" />}
-                                  <span className="risk-title">{sharedCaseStudy.riskLabel} Risk Assessment</span>
-                                </div>
-                                <div className="risk-card-body">
-                                  {sharedCaseStudy.summary}
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="metric-helper" style={{ marginTop: '1rem', fontStyle: 'italic' }}>No case study exported yet.</div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+                      {/* Reference Library */}
+                      <motion.div 
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ 
+                          opacity: activeTab === 'reference' ? 1 : 0, 
+                          x: activeTab === 'reference' ? 0 : 30 
+                        }}
+                        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
+                      >
+                        <KnowledgeBase />
+                      </motion.div>
 
-                    {/* Reference Library */}
-                    <motion.div 
-                      initial={{ opacity: 0, x: 30 }}
-                      animate={{ 
-                        opacity: activeTab === 'reference' ? 1 : 0, 
-                        x: activeTab === 'reference' ? 0 : 30 
-                      }}
-                      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                      style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
-                    >
-                      <KnowledgeBase />
-                    </motion.div>
-
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            </div>
+                </motion.div>
+              </div>
+            </Suspense>
           </motion.main>
         </section>
 
