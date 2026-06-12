@@ -20,6 +20,7 @@ import {
   Upload,
   Settings2,
   X,
+  Heart,
 } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
@@ -957,12 +958,9 @@ function App() {
           </main>
         </section>
 
-        {/* Footer */}
-        <footer 
-          className="app-footer desktop-only"
-        >
+        <footer className="app-footer">
           <p className="footer-text">
-            &copy; 2026 <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>. All rights reserved
+            Designed & Developed with <Heart size={14} fill="currentColor" className="footer-heart" /> by <a href="https://karthiklal.in" target="_blank" rel="noopener noreferrer" className="footer-link">Karthik Lal</a>
           </p>
         </footer>
       </div>
