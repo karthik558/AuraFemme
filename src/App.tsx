@@ -853,8 +853,6 @@ function App() {
                                   userProfile={userProfile} 
                                   caseStudy={sharedCaseStudy}
                                   days={calendarDays}
-                                  goal={goal}
-                                  lastIntercourseDate={lastIntercourseDate}
                                 />
                               </div>
                             </div>

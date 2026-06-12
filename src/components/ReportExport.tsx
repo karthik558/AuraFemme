@@ -20,11 +20,9 @@ interface ReportExportProps {
   logs?: Record<string, DailyLog>;
   userProfile?: UserProfile | null;
   days?: CycleDayInfo[];
-  goal: string;
-  lastIntercourseDate: string;
 }
 
-export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [], goal, lastIntercourseDate }: ReportExportProps) {
+export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [] }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [lang, setLang] = useState<SupportedLanguage>('en');
