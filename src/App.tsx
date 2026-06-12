@@ -738,10 +738,10 @@ function App() {
                           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '-0.5rem' }}>
                             <button 
                               className="btn btn-primary" 
-                              style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', fontSize: '0.85rem', padding: '0.6rem 1rem' }}
+                              style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
                               onClick={() => setActiveTab('reports')}
                             >
-                              <Download size={16} /> Generate Clinical Report
+                              <Download size={18} /> Generate Report
                             </button>
                           </div>
                           <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
