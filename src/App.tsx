@@ -638,7 +638,7 @@ function App() {
               <div>
                 <div className="tab-panel-container">
                   <div className="glass-card panel">
-                    <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
+                    <div className="panel-header" style={{ alignItems: 'center', display: (activeTab === 'overview' || activeTab === 'reference') ? 'none' : 'flex' }}>
                       <div>
                         <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
                         <p className="metric-helper" style={{ maxWidth: '42rem' }}>{getTabCopy(activeTab, userProfile?.appMode).subtitle}</p>
