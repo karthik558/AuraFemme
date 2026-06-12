@@ -8,6 +8,8 @@ interface HormoneWaveProps {
   mode: 'cycle' | 'pregnancy' | 'postpartum'
   cycleLength?: number
   ovulationDay?: number
+  className?: string
+  style?: React.CSSProperties
 }
 
 function HormoneOrbs({ day, mode, cycleLength = 28, ovulationDay = 14 }: HormoneWaveProps) {
@@ -75,9 +77,9 @@ function HormoneOrbs({ day, mode, cycleLength = 28, ovulationDay = 14 }: Hormone
   )
 }
 
-export default function HormoneWave3D({ day, mode, cycleLength, ovulationDay }: HormoneWaveProps) {
+export default function HormoneWave3D({ day, mode, cycleLength, ovulationDay, className, style }: HormoneWaveProps) {
   return (
-    <div style={{ width: '100%', height: '300px', overflow: 'hidden', background: 'transparent' }}>
+    <div className={className} style={{ width: '100%', height: '300px', overflow: 'hidden', background: 'transparent', ...style }}>
       <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
         <HormoneOrbs day={day} mode={mode} cycleLength={cycleLength} ovulationDay={ovulationDay} />
         <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.5} />
