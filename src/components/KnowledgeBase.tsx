@@ -155,36 +155,6 @@ export function KnowledgeBase() {
               );
             })}
           </div>
-
-          {activeTopicData.articleContent?.externalLinks && (
-            <>
-              <h3 className="article-section-title" style={{ marginTop: '3rem' }}>Deep Dive Reading</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {activeTopicData.articleContent.externalLinks.map((link: any, idx: number) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setActiveExtendedArticle(link)}
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.5rem', 
-                      color: 'var(--accent-primary)',
-                      background: 'transparent',
-                      border: 'none',
-                      padding: '0.5rem 0',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontWeight: 500,
-                      fontSize: '1rem'
-                    }}
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    {link.title}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
         </div>
       </div>
     );
