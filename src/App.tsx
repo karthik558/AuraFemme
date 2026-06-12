@@ -375,7 +375,7 @@ function App() {
   const activeLogs = authMode === 'guest' ? {} : logs;
 
   if (!ready) {
-    return <CinematicPreloader onComplete={() => setReady(true)} appMode={userProfile?.appMode || 'cycle'} />
+    return <CinematicPreloader onComplete={() => setReady(true)} appMode={userProfile?.appMode || 'cycle'} themeMode={themeMode} />
   }
 
   return (
