@@ -8,7 +8,8 @@ import {
   AreaChart, Area, Legend
 } from 'recharts';
 import type { UserProfile, CycleMetrics } from '../types';
-import { formatUtcDateLabel, buildPregnancyMetrics } from '../utils/calculator';
+import { formatUtcDateLabel, buildPregnancyMetrics, diffUtcDays } from '../utils/calculator';
+import { useAppStore } from '../store';
 import HormoneWave3D from './HormoneWave3D';
 import './PersonalDashboard.css';
 
@@ -20,14 +21,7 @@ interface PersonalDashboardProps {
   lastIntercourseDate: string;
 }
 
-const mockCycleHistory = [
-  { month: 'Jan', length: 28 },
-  { month: 'Feb', length: 29 },
-  { month: 'Mar', length: 27 },
-  { month: 'Apr', length: 30 },
-  { month: 'May', length: 28 },
-  { month: 'Jun', length: 28 },
-];
+
 
 const mockSymptoms = [
   { subject: 'Cramps', frequency: 85, fullMark: 100 },
@@ -137,12 +131,33 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
     }
   }, [isPregnancyMode, metrics.cycleLength, metrics.ovulationDay]);
 
-  const historyData = mockCycleHistory.map((item, index) => {
-    if (index === mockCycleHistory.length - 1) {
-      return { ...item, length: metrics.cycleLength };
+  const pastPeriodDates = useAppStore(state => state.pastPeriodDates) || [];
+  const lastPeriodDate = useAppStore(state => state.lastPeriodDate);
+
+  const historyData = useMemo(() => {
+    const allDates = [...pastPeriodDates];
+    if (lastPeriodDate && !allDates.includes(lastPeriodDate)) {
+      allDates.push(lastPeriodDate);
     }
-    return item;
-  });
+    allDates.sort();
+
+    if (allDates.length < 2) {
+      return [];
+    }
+
+    let data = [];
+    for (let i = 1; i < allDates.length; i++) {
+      const length = diffUtcDays(allDates[i], allDates[i - 1]);
+      const date = new Date(allDates[i - 1]);
+      const monthLabel = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short' }).format(date);
+      data.push({ month: monthLabel, length });
+    }
+    
+    // Show last 5 months by default
+    return data.slice(-5);
+  }, [pastPeriodDates, lastPeriodDate, metrics.cycleLength]);
+
+  const hasRealHistory = pastPeriodDates.length >= 1; // Since lastPeriodDate is also included, this means at least 2 dates
 
   const reportPhaseSplit = [
     { label: 'Menstruation', value: userProfile?.bleedingDuration || 5, tone: 'bg-red' },
@@ -473,34 +488,43 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           <div className="chart-card">
             <div className="chart-header">
               <div>
-                <h3 className="chart-title">Cycle Length History</h3>
-                <p className="chart-subtitle">Last 6 cycles recorded</p>
+                <h3 className="chart-title">{hasRealHistory ? 'Cycle Length History' : 'Cycle Variance Projection'}</h3>
+                <p className="chart-subtitle">{hasRealHistory ? 'Actual recorded variance' : 'Expected baseline fluctuations'}</p>
               </div>
               <CalendarDays className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
             </div>
             <div className="chart-wrapper">
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
-                  <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} domain={[20, 35]} />
-                  <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-                  <Bar dataKey="length" radius={[6, 6, 0, 0]} maxBarSize={40}>
-                    {historyData.map((_entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={index === historyData.length - 1 ? 'url(#activeCycleGrad)' : 'var(--border-subtle)'} 
-                      />
-                    ))}
-                  </Bar>
-                  <defs>
-                    <linearGradient id="activeCycleGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#f43f5e" />
-                      <stop offset="100%" stopColor="#fda4af" />
-                    </linearGradient>
-                  </defs>
-                </BarChart>
-              </ResponsiveContainer>
+              {hasRealHistory ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                    <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} domain={[0, 'auto']} />
+                    <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+                    <Bar dataKey="length" radius={[6, 6, 0, 0]} maxBarSize={40}>
+                      {historyData.map((_entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={index === historyData.length - 1 ? 'url(#activeCycleGrad)' : 'var(--border-subtle)'} 
+                        />
+                      ))}
+                    </Bar>
+                    <defs>
+                      <linearGradient id="activeCycleGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f43f5e" />
+                        <stop offset="100%" stopColor="#fda4af" />
+                      </linearGradient>
+                    </defs>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '300px', padding: '2rem', textAlign: 'center' }}>
+                  <CalendarDays className="w-12 h-12" style={{ color: 'var(--border-subtle)', marginBottom: '1rem' }} />
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '300px', lineHeight: 1.5 }}>
+                    Log at least one past period date in your Clinical Profile to generate your historical variance chart.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         )}

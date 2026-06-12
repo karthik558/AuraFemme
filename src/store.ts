@@ -36,6 +36,8 @@ export interface AppState {
   setGoal: (goal: CycleGoal) => void
   lastIntercourseDate: string
   setLastIntercourseDate: (date: string) => void
+  pastPeriodDates: string[]
+  setPastPeriodDates: (dates: string[]) => void
 
   // Multi-Account
   accountId: string | null
@@ -84,6 +86,8 @@ export const useAppStore = create<AppState>()(
       setGoal: (goal) => set({ goal }),
       lastIntercourseDate: utcTodayIso(),
       setLastIntercourseDate: (date) => set({ lastIntercourseDate: date }),
+      pastPeriodDates: [],
+      setPastPeriodDates: (dates) => set({ pastPeriodDates: dates }),
 
       accountId: null,
       setAccountId: (id) => set({ accountId: id }),
@@ -99,13 +103,15 @@ export const useAppStore = create<AppState>()(
           lutealPhaseLength: state.lutealPhaseLength,
           goal: state.goal,
           lastIntercourseDate: state.lastIntercourseDate,
-          logs: state.logs
+          logs: state.logs,
+          pastPeriodDates: state.pastPeriodDates
         }
         return {
           inactiveAccounts: { ...state.inactiveAccounts, [account.id]: account },
           accountId: null,
           userProfile: null,
-          logs: {}
+          logs: {},
+          pastPeriodDates: []
         }
       }),
       restoreAccount: (id) => set((state) => {
@@ -120,7 +126,8 @@ export const useAppStore = create<AppState>()(
             lutealPhaseLength: state.lutealPhaseLength,
             goal: state.goal,
             lastIntercourseDate: state.lastIntercourseDate,
-            logs: state.logs
+            logs: state.logs,
+            pastPeriodDates: state.pastPeriodDates
           }
         }
         const accToRestore = inactiveAccounts[id]
@@ -138,7 +145,8 @@ export const useAppStore = create<AppState>()(
           lutealPhaseLength: accToRestore.lutealPhaseLength,
           goal: accToRestore.goal,
           lastIntercourseDate: accToRestore.lastIntercourseDate,
-          logs: accToRestore.logs
+          logs: accToRestore.logs,
+          pastPeriodDates: accToRestore.pastPeriodDates || []
         }
       }),
       deleteAccount: (id) => set((state) => {
@@ -162,6 +170,7 @@ export const useAppStore = create<AppState>()(
         lastIntercourseDate: state.lastIntercourseDate,
         accountId: state.accountId,
         inactiveAccounts: state.inactiveAccounts,
+        pastPeriodDates: state.pastPeriodDates
       }),
     }
   )

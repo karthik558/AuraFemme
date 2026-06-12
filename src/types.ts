@@ -94,6 +94,7 @@ export interface SavedAccount {
   goal: CycleGoal
   lastIntercourseDate: string
   logs: Record<string, DailyLog>
+  pastPeriodDates: string[]
 }
 
 export interface PregnancyMetrics {

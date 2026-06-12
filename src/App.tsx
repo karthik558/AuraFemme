@@ -19,6 +19,7 @@ import {
   Download,
   Upload,
   Settings2,
+  X,
 } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
@@ -147,13 +148,35 @@ function App() {
     bleedingDuration, setBleedingDuration,
     lutealPhaseLength, setLutealPhaseLength,
     goal, setGoal,
-    lastIntercourseDate, setLastIntercourseDate
+    lastIntercourseDate, setLastIntercourseDate,
+    pastPeriodDates, setPastPeriodDates
   } = store
   
   const [draftLastPeriodDate, setDraftLastPeriodDate] = useState(lastPeriodDate)
   const [draftCycleLength, setDraftCycleLength] = useState(cycleLength)
   const [draftBleedingDuration, setDraftBleedingDuration] = useState(bleedingDuration)
   const [draftGoal, setDraftGoal] = useState(goal)
+  const [newPastDate, setNewPastDate] = useState(utcTodayIso())
+
+  const handleAddPastDate = () => {
+    if (newPastDate) {
+      const newMonthStr = newPastDate.substring(0, 7); // YYYY-MM
+      const hasMonth = pastPeriodDates.some(d => d.startsWith(newMonthStr));
+      
+      if (hasMonth) {
+        alert("You have already logged a period for this month. Please delete the old one first before adding a new date in the same month.");
+        return;
+      }
+      
+      if (!pastPeriodDates.includes(newPastDate)) {
+        setPastPeriodDates([...pastPeriodDates, newPastDate].sort())
+      }
+    }
+  }
+
+  const handleRemovePastDate = (dateToRemove: string) => {
+    setPastPeriodDates(pastPeriodDates.filter(d => d !== dateToRemove))
+  }
 
   useEffect(() => {
     setDraftLastPeriodDate(lastPeriodDate)
@@ -297,7 +320,8 @@ function App() {
         lutealPhaseLength,
         bleedingDuration,
         lastIntercourseDate,
-        goal
+        goal,
+        pastPeriodDates
       },
       metrics,
       logs,
@@ -321,6 +345,10 @@ function App() {
       const parsed = JSON.parse(text)
       if (parsed && parsed.logs && typeof parsed.logs === 'object') {
         setLogs((prev) => ({ ...prev, ...parsed.logs }))
+        if (parsed.baseline && Array.isArray(parsed.baseline.pastPeriodDates)) {
+          // Merge and deduplicate past dates
+          setPastPeriodDates(Array.from(new Set([...pastPeriodDates, ...parsed.baseline.pastPeriodDates])).sort())
+        }
         alert('Data imported successfully!')
       } else {
         alert('Invalid data format. Could not import.')
@@ -578,6 +606,41 @@ function App() {
                             </span>
                           </button>
                         ))}
+                      </div>
+                    </div>
+                    
+                    <div className="field-group" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+                      <p className="field-label" style={{ marginBottom: '0.75rem' }}>Historical Periods</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                        {pastPeriodDates.length === 0 ? (
+                          <p className="metric-helper" style={{ margin: 0, fontStyle: 'italic' }}>No past periods logged yet.</p>
+                        ) : (
+                          pastPeriodDates.map(date => (
+                            <div key={date} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-inset)', padding: '0.5rem 0.75rem', borderRadius: '8px' }}>
+                              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{date}</span>
+                              <button type="button" onClick={() => handleRemovePastDate(date)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <DateTriplet 
+                          label="Add past period" 
+                          value={newPastDate} 
+                          onChange={setNewPastDate} 
+                          helper="Select the start date" 
+                        />
+                        <button 
+                          type="button" 
+                          onClick={handleAddPastDate}
+                          className="btn btn-outline"
+                          style={{ padding: '0.5rem 1rem', width: '100%' }}
+                          disabled={!newPastDate}
+                        >
+                          Add Date
+                        </button>
                       </div>
                     </div>
 
