@@ -3,9 +3,9 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ArrowRightLeft, Radar, Settings2 } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import type { CaseStudyResult } from '../types'
-import { buildCaseStudyResult, clampNumber, formatUtcDateLabel, utcTodayIso } from '../utils/calculator'
+import { buildCaseStudyResult, clampNumber, formatUtcDateLabel } from '../utils/calculator'
 import { DateTriplet } from './DateTriplet'
 import './SafetyAnalyzer.css'
 
@@ -16,6 +16,8 @@ interface SafetyAnalyzerProps {
   onCycleLengthChange: (length: number) => void
   lutealPhaseLength: number
   onLutealPhaseLengthChange: (length: number) => void
+  lastIntercourseDate: string
+  onLastIntercourseDateChange: (date: string) => void
   onExport: (result: CaseStudyResult) => void
 }
 
@@ -40,19 +42,20 @@ export function SafetyAnalyzer({
   onCycleLengthChange,
   lutealPhaseLength,
   onLutealPhaseLengthChange,
+  lastIntercourseDate,
+  onLastIntercourseDateChange,
   onExport,
 }: SafetyAnalyzerProps) {
-  const [intercourseDate, setIntercourseDate] = useState(() => utcTodayIso())
 
   const result = useMemo(
     () =>
       buildCaseStudyResult({
         lastPeriodDate,
-        intercourseDate,
+        intercourseDate: lastIntercourseDate,
         cycleLength,
         lutealPhaseLength,
       }),
-    [lastPeriodDate, intercourseDate, cycleLength, lutealPhaseLength],
+    [lastPeriodDate, lastIntercourseDate, cycleLength, lutealPhaseLength],
   )
 
   const listRef = useRef<HTMLDivElement>(null);
@@ -104,10 +107,10 @@ export function SafetyAnalyzer({
             helper="The cycle baseline used for the model."
           />
           <DateTriplet
-            label="Intercourse date"
-            value={intercourseDate}
-            onChange={setIntercourseDate}
-            helper="Event being evaluated against the fertile window."
+            label="Last intercourse date"
+            value={lastIntercourseDate}
+            onChange={onLastIntercourseDateChange}
+            helper="The risk level is calculated relative to this date."
           />
           <RangeField
             label="Cycle length"

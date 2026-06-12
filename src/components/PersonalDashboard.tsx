@@ -17,6 +17,7 @@ interface PersonalDashboardProps {
   metrics: CycleMetrics;
   authMode: 'guest' | 'authenticated';
   goal: 'track' | 'conceive' | 'avoid';
+  lastIntercourseDate: string;
 }
 
 const mockCycleHistory = [
@@ -83,7 +84,7 @@ const getBiologicalFact = (isPregnancy: boolean, day: number, week: number, phas
   return `Day ${day}: Progesterone levels are peaking and starting their decline. This hormonal shift can decrease serotonin synthesis, which is why late-luteal mood dips are common.`;
 };
 
-export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal }: PersonalDashboardProps) {
+export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal, lastIntercourseDate }: PersonalDashboardProps) {
   // Determine name to display
   let displayName = "Ayana";
   if (userProfile?.name && userProfile.name.trim() !== '') {
@@ -97,6 +98,12 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
 
   const greeting = authMode === 'guest' ? 'Welcome to Aura' : `${timeGreeting}, ${displayName}`;
   const isPregnancyMode = userProfile?.appMode === 'pregnancy';
+  
+  const daysSinceIntercourse = useMemo(() => {
+    const today = new Date();
+    const intercourseDate = new Date(lastIntercourseDate);
+    return Math.max(0, Math.floor((today.getTime() - intercourseDate.getTime()) / (1000 * 60 * 60 * 24)));
+  }, [lastIntercourseDate]);
   
   const pMetrics = useMemo(() => isPregnancyMode ? buildPregnancyMetrics(userProfile?.lastPeriodDate || metrics.cycleStartIso) : null, [isPregnancyMode, userProfile?.lastPeriodDate, metrics.cycleStartIso]);
 
@@ -377,7 +384,13 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Intercourse Timing</p>
-                  <p className="metric-helper" style={{ margin: 0 }}>Target intercourse every 1-2 days during the 5-day fertile window leading up to peak ovulation day ({metrics.ovulationDay}) for maximum probability.</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Target intercourse every 1-2 days during the 5-day fertile window leading up to peak ovulation day ({metrics.ovulationDay}) for maximum probability. 
+                    <br/><br/>
+                    <span style={{ color: daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
+                      Last logged: {daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
+                      {daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? ' High priority to try again today!' : ''}
+                    </span>
+                  </p>
                 </div>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Basal Body Temp (BBT)</p>
@@ -393,7 +406,13 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Strict Abstinence Window</p>
-                  <p className="metric-helper" style={{ margin: 0 }}>Sperm can survive up to 5 days in fertile cervical mucus. Use primary barriers or abstain strictly from day {Math.max(1, metrics.fertileWindowStart - 1)} through day {metrics.fertileWindowEnd + 1}.</p>
+                  <p className="metric-helper" style={{ margin: 0 }}>Sperm can survive up to 5 days in fertile cervical mucus. Use primary barriers or abstain strictly from day {Math.max(1, metrics.fertileWindowStart - 1)} through day {metrics.fertileWindowEnd + 1}.
+                    <br/><br/>
+                    <span style={{ color: daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
+                      Last logged: {daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
+                      {daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? ' WARNING: Risk of conception overlaps with sperm survival window!' : ''}
+                    </span>
+                  </p>
                 </div>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Peak Risk</p>

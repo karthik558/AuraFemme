@@ -20,9 +20,11 @@ interface ReportExportProps {
   logs?: Record<string, DailyLog>;
   userProfile?: UserProfile | null;
   days?: CycleDayInfo[];
+  goal: string;
+  lastIntercourseDate: string;
 }
 
-export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [] }: ReportExportProps) {
+export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [], goal, lastIntercourseDate }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [lang, setLang] = useState<SupportedLanguage>('en');
@@ -148,6 +150,31 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
     }
   };
 
+  const exportJSON = () => {
+    const data = {
+      userProfile,
+      baseline: {
+        cycleLength,
+        lutealPhaseLength,
+        lastIntercourseDate,
+        goal
+      },
+      metrics,
+      logs,
+      caseStudy
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Aura_Femme_Data_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const activeCycleLength = caseStudy ? caseStudy.input.cycleLength : cycleLength;
   const activeLuteal = caseStudy ? caseStudy.input.lutealPhaseLength : lutealPhaseLength;
 
@@ -211,13 +238,21 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             </select>
             <div className="report-actions-divider" />
             <button 
+              onClick={exportJSON} 
+              className="btn btn-outline report-download-btn"
+              style={{ padding: '0.65rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+            >
+              <Download size={16} />
+              JSON
+            </button>
+            <button 
               onClick={generatePDF} 
               disabled={isExporting}
               className="btn btn-primary report-download-btn"
-              style={{ opacity: isExporting ? 0.7 : 1 }}
+              style={{ opacity: isExporting ? 0.7 : 1, padding: '0.65rem 1rem', display: 'flex', gap: '0.5rem', alignItems: 'center' }}
             >
-              <Download size={18} />
-              Download
+              <Download size={16} />
+              PDF
             </button>
           </div>
         </div>

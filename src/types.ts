@@ -92,6 +92,7 @@ export interface SavedAccount {
   bleedingDuration: number
   lutealPhaseLength: number
   goal: CycleGoal
+  lastIntercourseDate: string
   logs: Record<string, DailyLog>
 }
 

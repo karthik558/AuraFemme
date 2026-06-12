@@ -147,7 +147,23 @@ function App() {
     bleedingDuration, setBleedingDuration,
     lutealPhaseLength, setLutealPhaseLength,
     goal, setGoal,
+    lastIntercourseDate, setLastIntercourseDate
   } = store
+  
+  const [draftLastPeriodDate, setDraftLastPeriodDate] = useState(lastPeriodDate)
+  const [draftCycleLength, setDraftCycleLength] = useState(cycleLength)
+  const [draftBleedingDuration, setDraftBleedingDuration] = useState(bleedingDuration)
+  const [draftGoal, setDraftGoal] = useState(goal)
+
+  useEffect(() => {
+    setDraftLastPeriodDate(lastPeriodDate)
+    setDraftCycleLength(cycleLength)
+    setDraftBleedingDuration(bleedingDuration)
+    setDraftGoal(goal)
+  }, [lastPeriodDate, cycleLength, bleedingDuration, goal])
+
+  const [isSaved, setIsSaved] = useState(false)
+  const saveBtnRef = useRef<HTMLButtonElement>(null)
 
   useGSAP(() => {
     if (!ready || authMode === 'unauthenticated') return;
@@ -273,7 +289,21 @@ function App() {
   }
 
   const handleExportData = () => {
-    const dataStr = JSON.stringify({ userName: userProfile?.name, userProfile: userProfile, logs: logs }, null, 2)
+    const exportData = {
+      userName: userProfile?.name,
+      userProfile,
+      baseline: {
+        cycleLength,
+        lutealPhaseLength,
+        bleedingDuration,
+        lastIntercourseDate,
+        goal
+      },
+      metrics,
+      logs,
+      caseStudy: sharedCaseStudy
+    }
+    const dataStr = JSON.stringify(exportData, null, 2)
     const blob = new Blob([dataStr], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -378,15 +408,6 @@ function App() {
     return calendarDays.find((day) => day.cycleDay === selectedDay.cycleDay) ?? calendarDays[0]
   }, [calendarDays, selectedDay])
 
-
-  function handleDatePartsChange(nextIso: string) {
-    setLastPeriodDate(nextIso)
-    if (userProfile && authMode === 'authenticated') {
-      const nextProfile = { ...userProfile, lastPeriodDate: nextIso }
-      setUserProfile(nextProfile)
-      localStorage.setItem('aura-femme-profile', JSON.stringify(nextProfile))
-    }
-  }
 
   if (authMode === 'unauthenticated') {
     if (!isCreatingProfile && (userProfile || Object.keys(store.inactiveAccounts).length > 0)) {
@@ -532,13 +553,13 @@ function App() {
 
               <div className="panel-body">
                 {userProfile?.appMode === 'pregnancy' ? (
-                  <DateTriplet label="Last period (LMP)" value={lastPeriodDate} onChange={handleDatePartsChange} />
+                  <DateTriplet label="Last period start date" value={draftLastPeriodDate} onChange={setDraftLastPeriodDate} />
                 ) : (
                   <>
-                    <DateTriplet label="Last period start date" value={lastPeriodDate} onChange={handleDatePartsChange} />
+                    <DateTriplet label="Last period start date" value={draftLastPeriodDate} onChange={setDraftLastPeriodDate} />
 
-                    <SliderField label="Cycle duration" helper="21 to 40 days" value={cycleLength} min={21} max={40} onChange={setCycleLength} />
-                    <SliderField label="Bleeding duration" helper="Menstruation length" value={bleedingDuration} min={2} max={10} onChange={setBleedingDuration} />
+                    <SliderField label="Cycle duration" helper="21 to 40 days" value={draftCycleLength} min={21} max={40} onChange={setDraftCycleLength} />
+                    <SliderField label="Bleeding duration" helper="Menstruation length" value={draftBleedingDuration} min={2} max={10} onChange={setDraftBleedingDuration} />
                     <SliderField label="Luteal phase" helper="Default 14 days" value={lutealPhaseLength} min={10} max={18} onChange={setLutealPhaseLength} />
 
                     <div className="field-group">
@@ -548,8 +569,8 @@ function App() {
                           <button
                             key={option.value}
                             type="button"
-                            onClick={() => setGoal(option.value)}
-                            className={`goal-btn ${goal === option.value ? 'active' : ''}`}
+                            onClick={() => setDraftGoal(option.value)}
+                            className={`goal-btn ${draftGoal === option.value ? 'active' : ''}`}
                           >
                             <span className="goal-btn-title">{option.label}</span>
                             <span className="goal-btn-desc">
@@ -558,6 +579,43 @@ function App() {
                           </button>
                         ))}
                       </div>
+                    </div>
+
+                    <div style={{ marginTop: '1rem' }}>
+                      <button 
+                        ref={saveBtnRef}
+                        onClick={() => {
+                          // Commit Drafts to Main State
+                          setLastPeriodDate(draftLastPeriodDate)
+                          setCycleLength(draftCycleLength)
+                          setBleedingDuration(draftBleedingDuration)
+                          setGoal(draftGoal)
+                          if (userProfile) {
+                            setUserProfile({ ...userProfile, lastPeriodDate: draftLastPeriodDate, cycleLength: draftCycleLength, bleedingDuration: draftBleedingDuration })
+                          }
+                          
+                          setIsSaved(true);
+                          
+                          // Animate the button smoothly with correct variables
+                          gsap.timeline()
+                            .to(saveBtnRef.current, { scale: 0.95, duration: 0.1, ease: 'power2.inOut' })
+                            .to(saveBtnRef.current, { scale: 1, background: 'var(--accent-hover)', color: '#ffffff', boxShadow: '0 0 20px var(--accent-soft)', duration: 0.3, ease: 'back.out(1.5)' })
+                            .to(saveBtnRef.current, { background: 'var(--accent-primary)', boxShadow: 'none', duration: 0.4, delay: 1.2, ease: 'power2.inOut', onComplete: () => setIsSaved(false) });
+                        }}
+                        className="btn btn-primary" 
+                        style={{ 
+                          width: '100%', 
+                          padding: '0.85rem', 
+                          display: 'flex', 
+                          justifyContent: 'center', 
+                          alignItems: 'center', 
+                          gap: '0.5rem',
+                          background: 'var(--accent-primary)',
+                          transition: 'box-shadow 0.3s ease'
+                        }}
+                      >
+                        {isSaved ? 'Details Saved!' : 'Save Details'}
+                      </button>
                     </div>
                   </>
                 )}
@@ -667,6 +725,7 @@ function App() {
                           metrics={metrics} 
                           authMode={authMode} 
                           goal={goal}
+                          lastIntercourseDate={lastIntercourseDate}
                         />
                       </div>
 
@@ -765,6 +824,8 @@ function App() {
                           onCycleLengthChange={setCycleLength}
                           lutealPhaseLength={lutealPhaseLength}
                           onLutealPhaseLengthChange={setLutealPhaseLength}
+                          lastIntercourseDate={lastIntercourseDate}
+                          onLastIntercourseDateChange={setLastIntercourseDate}
                           onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
                         />
                       </div>
@@ -801,6 +862,8 @@ function App() {
                                   userProfile={userProfile} 
                                   caseStudy={sharedCaseStudy}
                                   days={calendarDays}
+                                  goal={goal}
+                                  lastIntercourseDate={lastIntercourseDate}
                                 />
                               </div>
                             </div>

@@ -34,7 +34,9 @@ export interface AppState {
   setLutealPhaseLength: (length: number) => void
   goal: CycleGoal
   setGoal: (goal: CycleGoal) => void
-  
+  lastIntercourseDate: string
+  setLastIntercourseDate: (date: string) => void
+
   // Multi-Account
   accountId: string | null
   setAccountId: (id: string | null) => void
@@ -57,8 +59,8 @@ export const useAppStore = create<AppState>()(
       themeMode: 'light',
       setThemeMode: (mode) => set({ themeMode: mode }),
       logs: {},
-      setLogs: (logsOrUpdater) => set((state) => ({ 
-        logs: typeof logsOrUpdater === 'function' ? logsOrUpdater(state.logs) : logsOrUpdater 
+      setLogs: (logsOrUpdater) => set((state) => ({
+        logs: typeof logsOrUpdater === 'function' ? logsOrUpdater(state.logs) : logsOrUpdater
       })),
       addLog: (log) => set((state) => ({ logs: { ...state.logs, [log.dateIso]: log } })),
       removeLog: (dateIso) => set((state) => {
@@ -80,6 +82,8 @@ export const useAppStore = create<AppState>()(
       setLutealPhaseLength: (length) => set({ lutealPhaseLength: length }),
       goal: 'track',
       setGoal: (goal) => set({ goal }),
+      lastIntercourseDate: utcTodayIso(),
+      setLastIntercourseDate: (date) => set({ lastIntercourseDate: date }),
 
       accountId: null,
       setAccountId: (id) => set({ accountId: id }),
@@ -94,9 +98,10 @@ export const useAppStore = create<AppState>()(
           bleedingDuration: state.bleedingDuration,
           lutealPhaseLength: state.lutealPhaseLength,
           goal: state.goal,
+          lastIntercourseDate: state.lastIntercourseDate,
           logs: state.logs
         }
-        return { 
+        return {
           inactiveAccounts: { ...state.inactiveAccounts, [account.id]: account },
           accountId: null,
           userProfile: null,
@@ -114,14 +119,15 @@ export const useAppStore = create<AppState>()(
             bleedingDuration: state.bleedingDuration,
             lutealPhaseLength: state.lutealPhaseLength,
             goal: state.goal,
+            lastIntercourseDate: state.lastIntercourseDate,
             logs: state.logs
           }
         }
         const accToRestore = inactiveAccounts[id]
-        if (!accToRestore) return state 
-        
+        if (!accToRestore) return state
+
         delete inactiveAccounts[id]
-        
+
         return {
           inactiveAccounts,
           accountId: accToRestore.id,
@@ -131,6 +137,7 @@ export const useAppStore = create<AppState>()(
           bleedingDuration: accToRestore.bleedingDuration,
           lutealPhaseLength: accToRestore.lutealPhaseLength,
           goal: accToRestore.goal,
+          lastIntercourseDate: accToRestore.lastIntercourseDate,
           logs: accToRestore.logs
         }
       }),
@@ -152,6 +159,7 @@ export const useAppStore = create<AppState>()(
         bleedingDuration: state.bleedingDuration,
         lutealPhaseLength: state.lutealPhaseLength,
         goal: state.goal,
+        lastIntercourseDate: state.lastIntercourseDate,
         accountId: state.accountId,
         inactiveAccounts: state.inactiveAccounts,
       }),
@@ -162,7 +170,7 @@ export const useAppStore = create<AppState>()(
 // Helper to migrate legacy local storage keys to the new zustand store
 export const migrateLegacyStorage = () => {
   if (typeof window === 'undefined') return
-  
+
   const store = useAppStore.getState()
   const hasMigrated = localStorage.getItem('aura-femme-migrated')
   if (hasMigrated) return
