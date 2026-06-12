@@ -116,8 +116,8 @@ export function SafetyAnalyzer({
               onClick={() => onExport(result)}
               className="btn btn-primary"
             >
-              <ArrowRightLeft className="w-4 h-4" />
-              Generate Clinical Safety Report
+              <ArrowRightLeft size={18} />
+              Generate Report
             </button>
           </div>
         </div>

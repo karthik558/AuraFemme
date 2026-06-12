@@ -644,13 +644,18 @@ function App() {
                   <div className="glass-card panel">
                     <div className="panel-header" style={{ alignItems: 'center', display: activeTab === 'overview' ? 'none' : 'flex' }}>
                       <div>
-                        <p className="panel-label">Dashboard</p>
                         <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
                         <p className="metric-helper" style={{ maxWidth: '42rem' }}>{getTabCopy(activeTab, userProfile?.appMode).subtitle}</p>
                       </div>
-                      <div className="nav-item">
-                        <CheckCircle2 className="w-4 h-4" style={{ color: '#10b981' }} />
-                        Clinical math online
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                        {['calendar', 'safety', 'reports'].includes(activeTab) && (
+                          <div className="clinical-badge">
+                            <CheckCircle2 className="w-4 h-4" />
+                            <span className="hide-on-mobile">Clinical math online</span>
+                            <span className="mobile-only">Online</span>
+                          </div>
+                        )}
+
                       </div>
                     </div>
 

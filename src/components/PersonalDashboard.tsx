@@ -60,7 +60,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
   if (userProfile?.name && userProfile.name.trim() !== '') {
     displayName = userProfile.name.trim().split(' ')[0];
   }
-  
+
   const hour = new Date().getHours();
   let timeGreeting = 'Good morning';
   if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
