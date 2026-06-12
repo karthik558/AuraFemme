@@ -40,7 +40,7 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
   const feedRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    if (filteredLogs.length > 0) {
+    if (filteredLogs.length > 0 && feedRef.current && feedRef.current.querySelectorAll('.history-card').length > 0) {
       const isMobile = window.innerWidth < 768;
       gsap.fromTo('.history-card',
         { opacity: 0, y: isMobile ? 15 : 10 },

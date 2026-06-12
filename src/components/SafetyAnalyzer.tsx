@@ -59,10 +59,12 @@ export function SafetyAnalyzer({
 
   useGSAP(() => {
     const isMobile = window.innerWidth < 768;
-    gsap.fromTo('.timeline-item',
-      { opacity: 0, y: isMobile ? 15 : 8 },
-      { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out', willChange: 'opacity, transform' }
-    );
+    if (listRef.current && listRef.current.querySelectorAll('.timeline-item').length > 0) {
+      gsap.fromTo('.timeline-item',
+        { opacity: 0, y: isMobile ? 15 : 8 },
+        { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out', willChange: 'opacity, transform' }
+      );
+    }
   }, { scope: listRef, dependencies: [result] });
 
   const chartData = useMemo(() => {
@@ -137,7 +139,7 @@ export function SafetyAnalyzer({
               <p className="summary-value" style={{ lineHeight: 1.6, display: 'block' }}>{result.summary}</p>
             </div>
             
-            <div style={{ width: '100%', height: '220px', marginBottom: '1.5rem', marginTop: '0.5rem' }}>
+            <div style={{ width: '100%', height: '200px', minWidth: 0, minHeight: 0, marginBottom: '20px' }}>
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
                   <defs>

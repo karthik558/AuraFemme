@@ -161,10 +161,6 @@ function App() {
       { y: 30, opacity: 0 }, 
       { y: 0, opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out', clearProps: 'transform' }
     );
-    gsap.fromTo('.app-sidebar', 
-      { x: 30, opacity: 0 }, 
-      { x: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: 'power3.out', clearProps: 'transform' }
-    );
   }, { scope: appRef, dependencies: [ready, authMode] });
 
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
