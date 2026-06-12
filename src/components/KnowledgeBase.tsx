@@ -1,17 +1,14 @@
 import { useState, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area } from 'recharts';
-import ReactMarkdown from 'react-markdown';
+
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
-import { extendedPregnancyData } from '../data/extendedPregnancyData';
 import './KnowledgeBase.css';
 
 export function KnowledgeBase() {
   const [activeArticle, setActiveArticle] = useState<string | null>(null);
-  const [activeExtendedArticle, setActiveExtendedArticle] = useState<{ url: string; title: string } | null>(null);
-
   const activeTopicData = KNOWLEDGE_TOPICS.find(t => t.id === activeArticle);
 
   // Generate generic educational graph data
@@ -26,42 +23,6 @@ export function KnowledgeBase() {
     };
   });
 
-  const extArticleRef = useRef<HTMLDivElement>(null);
-  useGSAP(() => {
-    if (activeExtendedArticle) {
-      gsap.fromTo(extArticleRef.current,
-        { opacity: 0, x: window.innerWidth < 768 ? 0 : 20, y: window.innerWidth < 768 ? 20 : 0 },
-        { opacity: 1, x: 0, y: 0, duration: 0.4, ease: 'power2.out' }
-      );
-    }
-  }, [activeExtendedArticle]);
-
-  if (activeExtendedArticle) {
-    const markdownContent = extendedPregnancyData[activeExtendedArticle.url];
-    return (
-      <div 
-        ref={extArticleRef}
-        className="article-view"
-      >
-        <button className="article-back-btn" onClick={() => setActiveExtendedArticle(null)}>
-          <ArrowLeft className="w-4 h-4" />
-          Back to {activeTopicData?.title || 'Library'}
-        </button>
-
-        <div className="article-hero" style={{ paddingBottom: '1rem', marginBottom: '1.5rem' }}>
-          <h2 className="article-hero-title">{activeExtendedArticle.title}</h2>
-        </div>
-
-        <div className="article-body extended-markdown">
-          {markdownContent ? (
-            <ReactMarkdown>{markdownContent}</ReactMarkdown>
-          ) : (
-            <p>Content not available offline. <a href={activeExtendedArticle.url} target="_blank" rel="noopener noreferrer">Read on womenshealth.gov</a></p>
-          )}
-        </div>
-      </div>
-    );
-  }
 
   const topicRef = useRef<HTMLDivElement>(null);
   useGSAP(() => {
