@@ -7,6 +7,7 @@ import type { CaseStudyResult, DailyLog, UserProfile } from '../types';
 import { buildPregnancyMetrics, formatUtcDateLabel } from '../utils/calculator';
 import faviconGradient from '../assets/favicon-gradient.png';
 import pregnancyLogo from '../assets/icon-color-purple.png';
+import { useAppStore } from '../store';
 
 interface ReportExportProps {
   metrics: any;
@@ -21,6 +22,19 @@ interface ReportExportProps {
 export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const accountId = useAppStore(state => state.accountId);
+
+  const auraId = useMemo(() => {
+    if (accountId && accountId !== 'guest') {
+      let hash = 0;
+      for (let i = 0; i < accountId.length; i++) {
+        hash = (hash << 5) - hash + accountId.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return `AF-${Math.abs(hash).toString().substring(0, 4).padStart(4, '0')}`;
+    }
+    return 'AF-GUEST';
+  }, [accountId]);
 
   // Process logs
   const { totalLogs, frequentSymptoms, recentLogs } = useMemo(() => {
@@ -114,7 +128,8 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
       const now = new Date();
       const dateStr = now.toISOString().split('T')[0];
       const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
-      pdf.save(`Aura-Femme-Report-${dateStr}-${timeStr}.pdf`);
+      const firstName = userName.split(' ')[0] || 'User';
+      pdf.save(`${firstName}-Aura-Report-${dateStr}-${timeStr}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
     } finally {
@@ -213,9 +228,9 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             </div>
           </div>
           <div style={{ textAlign: 'left' }}>
-            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>Patient Name: <strong style={{ color: '#1a1a1a' }}>{userName}</strong></p>
-            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>Generated: <strong style={{ color: '#1a1a1a' }}>{new Date().toLocaleDateString()}</strong></p>
-            <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>Aura ID: <strong style={{ color: '#1a1a1a' }}>AF-{Math.floor(Math.random() * 10000)}</strong></p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>User: <strong style={{ color: '#1a1a1a' }}>{userName}</strong></p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>Generated: <strong style={{ color: '#1a1a1a' }}>{new Date().toLocaleString()}</strong></p>
+            <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>Aura ID: <strong style={{ color: '#1a1a1a' }}>{auraId}</strong></p>
           </div>
         </div>
 
