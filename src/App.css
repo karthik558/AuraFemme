@@ -1073,3 +1073,23 @@
 .active-capsule-bg, .nav-active-bg {
   animation: fadeIn 0.25s ease-out forwards;
 }
+
+.desktop-hidden {
+  display: none !important;
+}
+
+
+@media (min-width: 1280px) {
+  .main-layout.sidebar-hidden {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.panel.article-mode {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+

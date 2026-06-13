@@ -1,17 +1,62 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ArrowLeft, Clock } from 'lucide-react';
+import { ArrowLeft, Clock, Globe, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
-import reportsData from '../data/reports.json';
+
+import reportsDataEn from '../data/reports.json';
+import reportsDataMl from '../data/reports-ml.json';
+import reportsDataTa from '../data/reports-ta.json';
+import reportsDataHi from '../data/reports-hi.json';
+import reportsDataEs from '../data/reports-es.json';
+import reportsDataAr from '../data/reports-ar.json';
+
+import topicsMl from '../data/topics-ml.json';
+import topicsTa from '../data/topics-ta.json';
+import topicsHi from '../data/topics-hi.json';
+import topicsEs from '../data/topics-es.json';
+import topicsAr from '../data/topics-ar.json';
+
+const REPORTS_MAP: Record<string, any[]> = {
+  en: reportsDataEn,
+  ml: reportsDataMl,
+  ta: reportsDataTa,
+  hi: reportsDataHi,
+  es: reportsDataEs,
+  ar: reportsDataAr
+};
+
+const TOPICS_MAP: Record<string, any[]> = {
+  ml: topicsMl,
+  ta: topicsTa,
+  hi: topicsHi,
+  es: topicsEs,
+  ar: topicsAr
+};
 import './KnowledgeBase.css';
 
-export function KnowledgeBase() {
-  const [activeArticle, setActiveArticle] = useState<string | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
+type SupportedLanguage = 'en' | 'ml' | 'ta' | 'hi' | 'es' | 'ar';
 
-  const activeTopicData = KNOWLEDGE_TOPICS.find(t => t.id === activeArticle);
+export function KnowledgeBase({ onArticleChange }: { onArticleChange?: (isOpen: boolean) => void }) {
+  const [activeArticle, setActiveArticle] = useState<string | null>(null);
+
+  const handleSetArticle = (id: string | null) => {
+    setActiveArticle(id);
+    onArticleChange?.(!!id);
+  };
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [lang, setLang] = useState<SupportedLanguage>('en');
+
+  const reportsData = REPORTS_MAP[lang] || REPORTS_MAP['en'];
+  
+  const localizedTopics = KNOWLEDGE_TOPICS.map(baseTopic => {
+    if (lang === 'en' || !TOPICS_MAP[lang]) return baseTopic;
+    const localized = TOPICS_MAP[lang].find((t: any) => t.id === baseTopic.id);
+    return localized ? { ...baseTopic, title: localized.title, content: localized.content } : baseTopic;
+  });
+
+  const activeTopicData = localizedTopics.find(t => t.id === activeArticle);
   const rawMarkdown = reportsData.find((r: any) => r.id === activeArticle)?.markdown_content;
   const markdownContent = rawMarkdown?.replace(/^#\s+.*?(?:\r?\n)+/, '');
 
@@ -66,7 +111,7 @@ export function KnowledgeBase() {
             <div className="article-progress-bar" style={{ width: `${scrollProgress}%` }} />
           </div>
           <div className="article-sticky-nav">
-            <button className="article-glass-back-btn" onClick={() => setActiveArticle(null)}>
+            <button className="article-glass-back-btn" onClick={() => handleSetArticle(null)}>
               <ArrowLeft className="w-4 h-4" />
               <span>Library</span>
             </button>
@@ -97,18 +142,34 @@ export function KnowledgeBase() {
 
   return (
     <div className="knowledge-base-container">
-      <div className="panel-header" style={{ alignItems: 'center', display: 'flex', paddingBottom: '1.5rem', marginBottom: '1.5rem', marginTop: '-1.5rem' }}>
+      <div className="panel-header" style={{ alignItems: 'center', display: 'flex', paddingBottom: '1.5rem', marginBottom: '1.5rem', marginTop: '-1.5rem', justifyContent: 'space-between' }}>
         <div>
           <h2 className="panel-title">Clinical Library</h2>
           <p className="metric-helper" style={{ maxWidth: '42rem' }}>Evidence-based protocols, peer-reviewed deep dives, and extended health literature.</p>
         </div>
+        <div className="premium-lang-switcher">
+          <Globe className="w-4 h-4 icon-glow" />
+          <select 
+            className="lang-select-hidden"
+            value={lang} 
+            onChange={(e) => setLang(e.target.value as SupportedLanguage)}
+          >
+            <option value="en">English</option>
+            <option value="ml">മലയാളം</option>
+            <option value="ta">தமிழ்</option>
+            <option value="hi">हिन्दी</option>
+            <option value="es">Español</option>
+            <option value="ar">العربية</option>
+          </select>
+          <ChevronDown className="w-4 h-4 icon-muted" />
+        </div>
       </div>
       <div className="reference-grid" ref={topicRef}>
-          {KNOWLEDGE_TOPICS.map((topic, i) => (
+          {localizedTopics.map((topic, i) => (
             <button 
               key={topic.id}
               className="reference-card-premium"
-              onClick={() => setActiveArticle(topic.id)}
+              onClick={() => handleSetArticle(topic.id)}
               style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="card-top-row">

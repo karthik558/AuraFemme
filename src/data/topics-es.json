@@ -1,0 +1,42 @@
+[
+  {
+    "id": "pregnancy",
+    "title": "Embarazo",
+    "content": "Conocimientos clínicos completos sobre los trimestres del embarazo. Supervise los cambios fisiológicos, las líneas base hormonales y los requisitos nutricionales."
+  },
+  {
+    "id": "before-you-get-pregnant",
+    "title": "Antes de quedar embarazada",
+    "content": "Aprenda sobre el seguimiento de la ovulación, la temperatura basal, la suplementación con ácido fólico y cómo construir una base saludable."
+  },
+  {
+    "id": "youre-pregnant-now-what",
+    "title": "Estás embarazada: ¿Y ahora qué?",
+    "content": "El primer trimestre inicia rápidos cambios endocrinos. Programe su consulta obstétrica, comience con las vitaminas y familiarícese con los primeros síntomas."
+  },
+  {
+    "id": "getting-ready-for-baby",
+    "title": "Preparándose para el bebé",
+    "content": "Preparación práctica para el parto. Incluye la elaboración de un plan de parto, la preparación de la guardería y la comprensión de las exigencias del parto."
+  },
+  {
+    "id": "childbirth-and-beyond",
+    "title": "El parto y más allá",
+    "content": "Una descripción general de las etapas del parto, los protocolos para el manejo del dolor y la rehabilitación fisiológica posparto."
+  },
+  {
+    "id": "features-and-fact-sheets",
+    "title": "Características y hojas informativas",
+    "content": "Revise nuestras hojas informativas revisadas por pares sobre temas como SOP, endometriosis, función tiroidea y ciclos irregulares."
+  },
+  {
+    "id": "ovulation-calculator",
+    "title": "Calculadora de ovulación",
+    "content": "Un algoritmo predictivo que identifica sus días más fértiles. Maximiza la probabilidad de concepción minimizando el riesgo."
+  },
+  {
+    "id": "view-a-z-health-topics",
+    "title": "Ver temas de salud de la A a la Z",
+    "content": "Explore nuestro directorio completo de temas de salud ginecológica y obstétrica."
+  }
+]

@@ -128,6 +128,7 @@ function App({ onGoHome }: AppProps = {}) {
   const touchStartY = useRef<number>(0);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isArticleOpen, setIsArticleOpen] = useState(false)
 
   useEffect(() => {
     migrateLegacyStorage()
@@ -611,9 +612,9 @@ function App({ onGoHome }: AppProps = {}) {
           ))}
         </nav>
 
-        <section className="main-layout">
+        <section className={`main-layout ${(activeTab === 'reference' && isArticleOpen) ? 'sidebar-hidden' : ''}`}>
           <aside 
-            className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''}`}
+            className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''} ${(activeTab === 'reference' && isArticleOpen) ? 'desktop-hidden' : ''}`}
           >
             <div className="glass-card panel">
               <div className="panel-header">
@@ -774,7 +775,7 @@ function App({ onGoHome }: AppProps = {}) {
             <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading module...</div>}>
               <div>
                 <div className="tab-panel-container">
-                  <div className="glass-card panel">
+                  <div className={`glass-card panel ${(activeTab === 'reference' && isArticleOpen) ? 'article-mode' : ''}`}>
                     <div className="panel-header" style={{ alignItems: 'center', display: (activeTab === 'overview' || activeTab === 'reference') ? 'none' : 'flex' }}>
                       <div>
                         <h2 className="panel-title">{getTabCopy(activeTab, userProfile?.appMode).title}</h2>
@@ -792,7 +793,7 @@ function App({ onGoHome }: AppProps = {}) {
                       </div>
                     </div>
 
-                    <div style={{ marginTop: '1.5rem', position: 'relative' }}>
+                    <div style={{ marginTop: (activeTab === 'reference' && isArticleOpen) ? 0 : '1.5rem', position: 'relative' }}>
                       
                       {/* Clinical Dashboard (Overview) */}
                       <div 
@@ -964,7 +965,7 @@ function App({ onGoHome }: AppProps = {}) {
                         className="tab-content fade-transition"
                         style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
                       >
-                        <KnowledgeBase />
+                        <KnowledgeBase onArticleChange={setIsArticleOpen} />
                       </div>
 
                     </div>
