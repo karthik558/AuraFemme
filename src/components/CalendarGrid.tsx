@@ -111,13 +111,15 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
           )}
         </div>
 
-        <div className="calendar-nav">
-          <button className="nav-btn" onClick={prevMonth} aria-label="Previous month"><ChevronLeft size={20} /></button>
-          <h2 className="calendar-month-label">{monthLabel}</h2>
-          <button className="nav-btn" onClick={nextMonth} aria-label="Next month"><ChevronRight size={20} /></button>
-          <button className="btn btn-outline btn-today" onClick={goToToday} style={{ marginLeft: '0.5rem', padding: '0.5rem' }}>
+        <div className="calendar-nav-wrapper">
+          <div className="calendar-nav-pill">
+            <button className="nav-btn" onClick={prevMonth} aria-label="Previous month"><ChevronLeft size={20} /></button>
+            <h2 className="calendar-month-label">{monthLabel}</h2>
+            <button className="nav-btn" onClick={nextMonth} aria-label="Next month"><ChevronRight size={20} /></button>
+          </div>
+          <button className="btn-today" onClick={goToToday} aria-label="Go to today">
             <CalendarIcon size={16} />
-            <span className="desktop-only" style={{ marginLeft: '0.5rem', fontSize: '0.8rem' }}>Today</span>
+            <span className="hide-on-mobile">Today</span>
           </button>
         </div>
       </div>
