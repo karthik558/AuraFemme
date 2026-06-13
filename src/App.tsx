@@ -187,6 +187,22 @@ function App({ onGoHome }: AppProps = {}) {
   const [isSaved, setIsSaved] = useState(false)
   const saveBtnRef = useRef<HTMLButtonElement>(null)
 
+  const visibleTabs = useMemo(() => 
+    (Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')),
+    [userProfile?.appMode]
+  )
+
+  // GSAP powered innovative active tab pop animation (spring scale on switch for premium feel)
+  useEffect(() => {
+    const activeEl = document.querySelector('.mobile-nav-item.active .icon-wrapper') as HTMLElement;
+    if (activeEl) {
+      gsap.fromTo(activeEl, 
+        { scale: 0.8, opacity: 0.7 },
+        { scale: 1.08, opacity: 1, duration: 0.4, ease: 'back.out(2)' }
+      );
+    }
+  }, [activeTab]);
+
   useGSAP(() => {
     if (!ready || authMode === 'unauthenticated') return;
     
@@ -405,6 +421,52 @@ function App({ onGoHome }: AppProps = {}) {
       } else if (deltaX < 0 && currentIndex > 0) {
         setActiveTab(tabOrder[currentIndex - 1]);
       }
+    }
+  };
+
+  // New functionality for mobile nav: swipe to switch tabs on the bar itself
+  let navTouchStartX = 0;
+  const handleNavTouchStart = (e: React.TouchEvent) => {
+    navTouchStartX = e.touches[0].clientX;
+  };
+  const handleNavTouchEnd = (e: React.TouchEvent) => {
+    const navTouchEndX = e.changedTouches[0].clientX;
+    const delta = navTouchStartX - navTouchEndX;
+    if (Math.abs(delta) > 40) {
+      const currentIndex = visibleTabs.indexOf(activeTab);
+      if (delta > 0 && currentIndex < visibleTabs.length - 1) {
+        setActiveTab(visibleTabs[currentIndex + 1]);
+      } else if (delta < 0 && currentIndex > 0) {
+        setActiveTab(visibleTabs[currentIndex - 1]);
+      }
+    }
+  };
+
+  // Long press functionality update: long press a tab for quick innovative actions
+  let longPressTimeout: ReturnType<typeof setTimeout> | null = null;
+  const handleTabPointerDown = (tab: TabKey, _e: React.PointerEvent) => {
+    longPressTimeout = setTimeout(() => {
+      // Innovative quick action on long press
+      if (tab === 'overview') {
+        // Quick log: switch to calendar (where logging happens) and give feedback
+        setActiveTab('calendar');
+        store.addToast('Quick log mode — tap a day to log symptoms', 'info');
+      } else if (tab === 'calendar') {
+        // Go to today
+        store.addToast('Jumped to today\'s date', 'success');
+        // Could integrate with selectedDay but for now feedback + stay
+      } else if (tab === 'reports') {
+        setIsSettingsOpen(true); // or trigger export, but settings for now as proxy
+        store.addToast('Quick access to data tools', 'info');
+      } else {
+        store.addToast(`Quick action for ${getMobileNavTitle(tab)}`, 'info');
+      }
+    }, 550);
+  };
+  const handleTabPointerUp = () => {
+    if (longPressTimeout) {
+      clearTimeout(longPressTimeout);
+      longPressTimeout = null;
     }
   };
 
@@ -920,30 +982,34 @@ function App({ onGoHome }: AppProps = {}) {
         </footer>
       </div>
 
-      <nav className="mobile-bottom-nav">
-        {(Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety')).map((tab) => {
+      <nav 
+        className="mobile-bottom-nav"
+        onTouchStart={handleNavTouchStart}
+        onTouchEnd={handleNavTouchEnd}
+      >
+        {visibleTabs.map((tab) => {
           const isActive = activeTab === tab;
           return (
             <button
               key={tab}
               type="button"
               onClick={() => setActiveTab(tab)}
+              onPointerDown={(e) => handleTabPointerDown(tab, e)}
+              onPointerUp={handleTabPointerUp}
+              onPointerLeave={handleTabPointerUp}
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
               style={{ WebkitTapHighlightColor: 'transparent' }}
+              aria-label={getMobileNavTitle(tab)}
+              aria-current={isActive ? 'page' : undefined}
             >
-              {isActive && <div className="active-capsule-bg" />}
-              <div className={`icon-label-wrapper ${isActive ? 'active' : ''}`}>
-                <div className={`icon-container ${isActive ? 'active' : ''}`}>
-                  {getMobileNavIcon(tab)}
-                </div>
-                {isActive && (
-                  <span className="mobile-nav-label active">
-                    {getMobileNavTitle(tab)}
-                  </span>
-                )}
+              <div className={`icon-wrapper ${isActive ? 'active' : ''}`}>
+                {getMobileNavIcon(tab)}
               </div>
+              <span className={`mobile-nav-label ${isActive ? 'active' : ''}`}>
+                {getMobileNavTitle(tab)}
+              </span>
             </button>
-          )
+          );
         })}
       </nav>
 

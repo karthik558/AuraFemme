@@ -256,7 +256,7 @@
 /* Mobile Responsiveness Overrides */
 @media (max-width: 768px) {
   .app-wrapper {
-    padding-bottom: 5.5rem;
+    padding-bottom: 5.9rem;
   }
 
   .today-label, .today-divider {
@@ -276,50 +276,60 @@
   .mobile-bottom-nav {
     display: flex;
     position: fixed;
-    bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
-    width: 95vw;
-    max-width: 450px;
-    background: rgba(255, 255, 255, 0.75);
+    width: 94vw;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 999px;
-    padding: 0.4rem;
-    justify-content: space-evenly;
+    border-radius: 2rem;
+    padding: 0.25rem 0.4rem;
+    justify-content: space-between;
     align-items: center;
     z-index: 50;
-    backdrop-filter: blur(24px) saturate(200%);
-    -webkit-backdrop-filter: blur(24px) saturate(200%);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(30px) saturate(200%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.12), 
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
 
   :root[data-theme='dark'] .mobile-bottom-nav {
-    background: rgba(20, 20, 20, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    background: rgba(18, 14, 16, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.4), 
+      0 4px 12px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
 
   .mobile-nav-item {
     position: relative;
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex: 1 1 0px;
     min-width: 0;
-    height: 3.5rem;
+    padding: 0.35rem 0.1rem 0.25rem;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    padding: 0 0.25rem;
     cursor: pointer;
     outline: none;
     touch-action: manipulation;
-    border-radius: 999px;
+    border-radius: 1rem;
     -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
-  .mobile-nav-item:hover {
+  .mobile-nav-item:active {
+    transform: scale(0.9);
+  }
+
+  .mobile-nav-item:hover:not(.active) {
     color: var(--text-main);
   }
 
@@ -327,43 +337,42 @@
     color: var(--accent-primary);
   }
 
-  .active-capsule-bg {
-    position: absolute;
-    inset: 0.2rem;
-    background: var(--accent-soft);
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.1rem;
+    height: 2.1rem;
     border-radius: 999px;
-    z-index: 0;
+    background: transparent;
+    transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+    margin-bottom: 0.1rem;
   }
 
-  .icon-label-wrapper {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.15rem;
+  .mobile-nav-item.active .icon-wrapper {
+    background: var(--accent-soft);
+    box-shadow: 0 3px 10px rgba(197, 34, 51, 0.2);
+    transform: scale(1.05);
   }
 
-  .icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-
-  .icon-container svg {
-    width: 1.25rem;
-    height: 1.25rem;
+  .icon-wrapper svg {
+    width: 1.35rem;
+    height: 1.35rem;
   }
 
   .mobile-nav-label {
-    font-size: 0.6rem;
-    font-weight: 700;
+    font-size: 0.52rem;
+    font-weight: 600;
     letter-spacing: -0.01em;
     white-space: nowrap;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-item.active .mobile-nav-label {
+    opacity: 1;
+    font-weight: 700;
+    color: var(--accent-primary);
   }
   
   .report-grid-3, .report-grid-2 {
@@ -371,7 +380,7 @@
   }
   
   .app-footer {
-    margin-bottom: 4rem; /* Additional clearance for mobile bottom nav */
+    margin-bottom: 4.5rem; /* Additional clearance for mobile bottom nav */
   }
 }
 
