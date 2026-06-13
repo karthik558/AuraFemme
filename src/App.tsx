@@ -172,6 +172,7 @@ function App({ onGoHome }: AppProps = {}) {
   const [draftCycleLength, setDraftCycleLength] = useState(cycleLength)
   const [draftBleedingDuration, setDraftBleedingDuration] = useState(bleedingDuration)
   const [draftGoal, setDraftGoal] = useState(goal)
+  const [draftLutealPhaseLength, setDraftLutealPhaseLength] = useState(lutealPhaseLength)
   const [newPastDate, setNewPastDate] = useState(utcTodayIso())
 
   const handleAddPastDate = () => {
@@ -199,7 +200,8 @@ function App({ onGoHome }: AppProps = {}) {
     setDraftCycleLength(cycleLength)
     setDraftBleedingDuration(bleedingDuration)
     setDraftGoal(goal)
-  }, [lastPeriodDate, cycleLength, bleedingDuration, goal])
+    setDraftLutealPhaseLength(lutealPhaseLength)
+  }, [lastPeriodDate, cycleLength, bleedingDuration, goal, lutealPhaseLength])
 
   const [isSaved, setIsSaved] = useState(false)
   const saveBtnRef = useRef<HTMLButtonElement>(null)
@@ -362,17 +364,17 @@ function App({ onGoHome }: AppProps = {}) {
 
   const cycleInput = useMemo<CycleInput>(
     () => ({
-      lastPeriodDate,
-      cycleLength,
-      bleedingDuration,
-      lutealPhaseLength,
-      goal,
+      lastPeriodDate: draftLastPeriodDate,
+      cycleLength: draftCycleLength,
+      bleedingDuration: draftBleedingDuration,
+      lutealPhaseLength: draftLutealPhaseLength,
+      goal: draftGoal,
     }),
-    [lastPeriodDate, cycleLength, bleedingDuration, lutealPhaseLength, goal],
+    [draftLastPeriodDate, draftCycleLength, draftBleedingDuration, draftLutealPhaseLength, draftGoal],
   )
 
   const metrics = useMemo(() => buildCycleMetrics(cycleInput), [cycleInput])
-  const calendarDays = useMemo(() => generateAllCycleDays(pastPeriodDates, lastPeriodDate, cycleInput), [pastPeriodDates, lastPeriodDate, cycleInput])
+  const calendarDays = useMemo(() => generateAllCycleDays(pastPeriodDates, draftLastPeriodDate, cycleInput), [pastPeriodDates, draftLastPeriodDate, cycleInput])
 
   const advisory = useMemo(() => {
     if (userProfile?.appMode === 'pregnancy') {
@@ -384,7 +386,7 @@ function App({ onGoHome }: AppProps = {}) {
     }
 
     const fertileCaution = metrics.currentPhase === 'ovulation' || metrics.currentPhase === 'luteal'
-    switch (goal) {
+    switch (draftGoal) {
       case 'track':
         return {
           title: 'Tracking mode engaged',
@@ -410,7 +412,7 @@ function App({ onGoHome }: AppProps = {}) {
           icon: <ShieldAlert className="w-5 h-5" />,
         }
     }
-  }, [goal, metrics.currentPhase, metrics.ovulationCountdown, userProfile?.appMode])
+  }, [draftGoal, metrics.currentPhase, metrics.ovulationCountdown, userProfile?.appMode])
 
   const activeDay = useMemo(() => {
     if (!calendarDays.length) return null
@@ -649,7 +651,7 @@ function App({ onGoHome }: AppProps = {}) {
 
                     <SliderField label="Cycle duration" helper="21 to 40 days" value={draftCycleLength} min={21} max={40} onChange={setDraftCycleLength} />
                     <SliderField label="Bleeding duration" helper="Menstruation length" value={draftBleedingDuration} min={2} max={10} onChange={setDraftBleedingDuration} />
-                    <SliderField label="Luteal phase" helper="Default 14 days" value={lutealPhaseLength} min={10} max={18} onChange={setLutealPhaseLength} />
+                    <SliderField label="Luteal phase" helper="Default 14 days" value={draftLutealPhaseLength} min={10} max={18} onChange={setDraftLutealPhaseLength} />
 
                     <div className="field-group">
                       <p className="field-label">Primary goal</p>
@@ -714,6 +716,7 @@ function App({ onGoHome }: AppProps = {}) {
                           setCycleLength(draftCycleLength)
                           setBleedingDuration(draftBleedingDuration)
                           setGoal(draftGoal)
+                          setLutealPhaseLength(draftLutealPhaseLength)
                           if (userProfile) {
                             setUserProfile({ ...userProfile, lastPeriodDate: draftLastPeriodDate, cycleLength: draftCycleLength, bleedingDuration: draftBleedingDuration })
                           }
@@ -820,7 +823,7 @@ function App({ onGoHome }: AppProps = {}) {
                           userProfile={userProfile} 
                           metrics={metrics} 
                           authMode={authMode} 
-                          goal={goal}
+                          goal={draftGoal}
                           lastIntercourseDate={lastIntercourseDate}
                         />
                       </div>
@@ -832,14 +835,14 @@ function App({ onGoHome }: AppProps = {}) {
                       >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-                          <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} />
+                          <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} draftLastPeriodDate={draftLastPeriodDate} />
                           {activeDay && (
                             <section className="phase-summary">
                               <div className="panel-header">
                                 <div>
                                   <p className="panel-label">{userProfile?.appMode === 'pregnancy' ? 'Pregnancy Timeline' : 'Chronology terminal'}</p>
                                   {userProfile?.appMode === 'pregnancy' ? (
-                                    <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Week {Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7)}</h3>
+                                    <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Week {Math.floor(diffUtcDays(activeDay.dateIso, draftLastPeriodDate || userProfile.lastPeriodDate) / 7)}</h3>
                                   ) : (
                                     <h3 className="panel-title" style={{ fontSize: '1.5rem' }}>Day {activeDay.cycleDay}: {activeDay.phaseLabel}</h3>
                                   )}
@@ -847,14 +850,14 @@ function App({ onGoHome }: AppProps = {}) {
                                 </div>
                                 <div className="badge">
                                   {userProfile?.appMode === 'pregnancy' 
-                                    ? `Trimester ${Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 28 ? 3 : Math.floor(diffUtcDays(activeDay.dateIso, userProfile.lastPeriodDate) / 7) >= 13 ? 2 : 1}` 
+                                    ? `Trimester ${Math.floor(diffUtcDays(activeDay.dateIso, draftLastPeriodDate || userProfile.lastPeriodDate) / 7) >= 28 ? 3 : Math.floor(diffUtcDays(activeDay.dateIso, draftLastPeriodDate || userProfile.lastPeriodDate) / 7) >= 13 ? 2 : 1}` 
                                     : (activeDay.isPeak ? 'Peak ovulation' : activeDay.isFertile ? 'Fertile' : 'Phase stable')}
                                 </div>
                               </div>
                               
                               <div className="metrics-grid" style={{ marginTop: '1.5rem' }}>
                                 {userProfile?.appMode === 'pregnancy' ? (() => {
-                                  const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, activeDay.dateIso)
+                                  const pMetrics = buildPregnancyMetrics(draftLastPeriodDate || userProfile.lastPeriodDate, activeDay.dateIso)
                                   return (
                                     <>
                                       <InfoTile label="Clinical milestone" value={pregnancyLogic(pMetrics.gestationalWeeks)} />
@@ -866,13 +869,13 @@ function App({ onGoHome }: AppProps = {}) {
                                 })() : (
                                   <>
                                     <InfoTile label="Cycle logic" value={phaseLogic(activeDay)} />
-                                    {goal === 'conceive' && (
+                                    {draftGoal === 'conceive' && (
                                       <InfoTile 
                                         label="Conception Probability" 
                                         value={activeDay.isPeak ? 'Peak (Egg release expected within 12-24h)' : activeDay.isFertile ? 'High (Sperm survivability overlaps with incoming ovulation)' : 'Low (Outside fertile window)'} 
                                       />
                                     )}
-                                    {goal === 'avoid' && (
+                                    {draftGoal === 'avoid' && (
                                       <InfoTile 
                                         label="Contraceptive Requirement" 
                                         value={activeDay.isPeak ? 'CRITICAL: Peak risk day. Strict abstinence or dual barriers required.' : activeDay.isFertile ? 'HIGH RISK: Sperm can survive up to 5 days. Abstinence or barriers required.' : 'Standard precautions (Outside primary fertile window)'} 
@@ -906,12 +909,12 @@ function App({ onGoHome }: AppProps = {}) {
                         style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
                       >
                         <SafetyAnalyzer 
-                          lastPeriodDate={lastPeriodDate}
-                          onLastPeriodDateChange={setLastPeriodDate}
-                          cycleLength={cycleLength}
-                          onCycleLengthChange={setCycleLength}
-                          lutealPhaseLength={lutealPhaseLength}
-                          onLutealPhaseLengthChange={setLutealPhaseLength}
+                          lastPeriodDate={draftLastPeriodDate}
+                          onLastPeriodDateChange={setDraftLastPeriodDate}
+                          cycleLength={draftCycleLength}
+                          onCycleLengthChange={setDraftCycleLength}
+                          lutealPhaseLength={draftLutealPhaseLength}
+                          onLutealPhaseLengthChange={setDraftLutealPhaseLength}
                           lastIntercourseDate={lastIntercourseDate}
                           onLastIntercourseDateChange={setLastIntercourseDate}
                           onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 

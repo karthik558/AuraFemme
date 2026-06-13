@@ -11,6 +11,7 @@ interface CalendarGridProps {
   selectedDay: CycleDayInfo | null
   onSelectDay: (day: CycleDayInfo) => void
   userProfile?: UserProfile | null
+  draftLastPeriodDate?: string
 }
 
 const phaseClasses: Record<CycleDayInfo['phase'], string> = {
@@ -27,7 +28,7 @@ const phaseLabel: Record<CycleDayInfo['phase'], string> = {
   luteal: 'Luteal',
 }
 
-export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: CalendarGridProps) {
+export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draftLastPeriodDate }: CalendarGridProps) {
   const isPregnancyMode = userProfile?.appMode === 'pregnancy'
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -152,8 +153,8 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
             let cardClass = phaseClasses[day.phase]
             let pregnancyWeeks = 0
             
-            if (isPregnancyMode && userProfile?.lastPeriodDate) {
-              const pMetrics = buildPregnancyMetrics(userProfile.lastPeriodDate, day.dateIso)
+            if (isPregnancyMode && (draftLastPeriodDate || userProfile?.lastPeriodDate)) {
+              const pMetrics = buildPregnancyMetrics(draftLastPeriodDate || userProfile!.lastPeriodDate, day.dateIso)
               cardClass = `phase-trimester-${pMetrics.trimester}`
               pregnancyWeeks = pMetrics.gestationalWeeks
             }
