@@ -1,0 +1,22 @@
+.nf-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.nf-container {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nf-card {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+}
+
+:root[data-theme='dark'] .nf-card {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
