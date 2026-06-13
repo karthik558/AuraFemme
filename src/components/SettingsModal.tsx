@@ -105,7 +105,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
       >
         <div 
           ref={modalRef}
-          className="settings-modal glass-card"
+          className="settings-modal"
         >
           {/* Close */}
           <button 
