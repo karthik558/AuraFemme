@@ -83,15 +83,6 @@ export function GooeyBloodTransition({ isActive, targetTheme, targetAppMode, onS
 
   return createPortal(
     <div className="gooey-transition-wrapper">
-      <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
-        <defs>
-          <filter id="blood-goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10" result="blood-goo" />
-            <feComposite in="SourceGraphic" in2="blood-goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
       <div className="gooey-filter-container">
         {phase === 'animating' && (
           <div ref={wipeRef} className="blood-wipe" style={{ transform: 'translateY(-120vh)' }}>

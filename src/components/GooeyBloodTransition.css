@@ -9,9 +9,8 @@
 .gooey-filter-container {
   width: 100%;
   height: 100%;
-  filter: url('#blood-goo');
-  /* Ensure hardware acceleration for the filter container */
-  transform: translateZ(0);
+  /* Removed heavy SVG filter to prevent severe lag during transition */
+  /* transform: translateZ(0); */
 }
 
 .blood-wipe {
