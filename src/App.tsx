@@ -129,6 +129,22 @@ function App({ onGoHome }: AppProps = {}) {
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isArticleOpen, setIsArticleOpen] = useState(false)
+  const [isNavVisible, setIsNavVisible] = useState(true)
+  const lastScrollY = useRef(0)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+        setIsNavVisible(false)
+      } else if (currentScrollY < lastScrollY.current) {
+        setIsNavVisible(true)
+      }
+      lastScrollY.current = currentScrollY
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   useEffect(() => {
     migrateLegacyStorage()
@@ -984,7 +1000,7 @@ function App({ onGoHome }: AppProps = {}) {
       </div>
 
       <nav 
-        className="mobile-bottom-nav"
+        className={`mobile-bottom-nav ${!isNavVisible ? 'nav-hidden' : ''}`}
         onTouchStart={handleNavTouchStart}
         onTouchEnd={handleNavTouchEnd}
       >
