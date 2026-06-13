@@ -938,22 +938,16 @@ function App({ onGoHome }: AppProps = {}) {
                         <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
 
 
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
-                            <div className="phase-summary" style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box', overflow: 'hidden' }}>
-                              <div style={{ width: '100%', overflowX: 'auto', minWidth: 0 }}>
-                                <ReportExport 
-                                  metrics={metrics} 
-                                  cycleLength={userProfile?.cycleLength || 28} 
-                                  lutealPhaseLength={lutealPhaseLength} 
-                                  userName={userProfile?.name || 'Ayana'} 
-                                  logs={activeLogs} 
-                                  userProfile={userProfile} 
-                                  caseStudy={sharedCaseStudy}
-                                  days={calendarDays}
-                                />
-                              </div>
-                            </div>
-                          </div>
+                          <ReportExport 
+                            metrics={metrics} 
+                            cycleLength={userProfile?.cycleLength || 28} 
+                            lutealPhaseLength={lutealPhaseLength} 
+                            userName={userProfile?.name || 'Ayana'} 
+                            logs={activeLogs} 
+                            userProfile={userProfile} 
+                            caseStudy={sharedCaseStudy}
+                            days={calendarDays}
+                          />
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
                             <div className="phase-summary">
