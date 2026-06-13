@@ -319,7 +319,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             }}>
               {cycles.map(c => {
                 const isSelected = selectedCycleIsos.includes(c.startIso);
-                let title = c.startIso === currentCycleStart ? 'Current Cycle' : 'Past Cycle';
+                let title = c.startIso === currentCycleStart ? t(lang, 'current_cycle') : t(lang, 'past_cycle');
                 let dateStr = formatUtcDateLabel(c.startIso);
                 
                 return (
@@ -403,22 +403,22 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
           {!isPregnancyMode && (
             <>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Last Period</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'last_period')}</p>
                 <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#c52233' }}>{metrics.cycleStartIso ? formatUtcDateLabel(metrics.cycleStartIso) : '-'}</p>
               </div>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Next Period</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'next_period_short')}</p>
                 <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>{metrics.nextPeriodIso ? formatUtcDateLabel(metrics.nextPeriodIso) : '-'}</p>
               </div>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Phase Split</p>
+                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'phase_split')}</p>
                 <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a', textTransform: 'capitalize' }}>
-                  {metrics.currentPhaseLabel} (Day {metrics.cycleDay})
+                  {metrics.currentPhaseLabel} ({t(lang, 'day_label')} {metrics.cycleDay})
                 </p>
               </div>
               <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
                 <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'ovulation_day')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>Day {metrics.ovulationDay}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>{t(lang, 'day_label')} {metrics.ovulationDay}</p>
               </div>
             </>
           )}
@@ -453,7 +453,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               {cycles.filter(c => selectedCycleIsos.includes(c.startIso)).map(c => (
                 <div key={c.startIso}>
                   <p style={{ fontSize: '13px', fontWeight: 600, color: '#666', margin: '0 0 8px 0' }}>
-                    {c.startIso === currentCycleStart ? 'Current Cycle' : `Cycle starting ${formatUtcDateLabel(c.startIso)}`}
+                    {c.startIso === currentCycleStart ? t(lang, 'current_cycle') : `${t(lang, 'cycle_map')} (${formatUtcDateLabel(c.startIso)})`}
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                     {c.days.map((day) => {

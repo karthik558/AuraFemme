@@ -79,12 +79,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "Notes",
   
     cycle_map: "Cycle Map",
+    current_cycle: "Current Cycle",
+    past_cycle: "Past Cycle",
     bleeding: "Bleeding",
     follicular: "Follicular",
     fertile: "Fertile",
     luteal: "Luteal",
   
     timeline_events: "Timeline Events",
+    last_period: "Last Period",
+    next_period_short: "Next Period",
+    phase_split: "Phase Split",
+    day_label: "Day"
   },
   ml: {
     clinical_cycle_report: "സൈക്കിൾ റിപ്പോർട്ട്",
@@ -155,12 +161,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "കുറിപ്പുകൾ",
   
     cycle_map: "സൈക്കിൾ മാപ്പ്",
+    current_cycle: "നിലവിലെ സൈക്കിൾ",
+    past_cycle: "കഴിഞ്ഞ സൈക്കിൾ",
     bleeding: "രക്തസ്രാവം",
     follicular: "ഫോളിക്കുലാർ",
     fertile: "ഗർഭധാരണ സമയം",
     luteal: "ല്യൂട്ടിയൽ",
   
     timeline_events: "ടൈംലൈൻ ഇവൻ്റുകൾ",
+    last_period: "അവസാന ആർത്തവം",
+    next_period_short: "അടുത്ത ആർത്തവം",
+    phase_split: "ഫേസ് സ്പ്ലിറ്റ്",
+    day_label: "ദിവസം"
   },
   ta: {
     clinical_cycle_report: "மாதவிடாய் சுழற்சி அறிக்கை",
@@ -231,12 +243,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "குறிப்புகள்",
   
     cycle_map: "சுழற்சி வரைபடம்",
+    current_cycle: "தற்போதைய சுழற்சி",
+    past_cycle: "கடந்த சுழற்சி",
     bleeding: "இரத்தப்போக்கு",
     follicular: "நுண்ணறை",
     fertile: "கருவுறுதல்",
     luteal: "லூட்டியல்",
   
     timeline_events: "காலக்கெடு நிகழ்வுகள்",
+    last_period: "கடைசி மாதவிடாய்",
+    next_period_short: "அடுத்த மாதவிடாய்",
+    phase_split: "கட்டப் பிரிவு",
+    day_label: "நாள்"
   },
   hi: {
     clinical_cycle_report: "चक्र रिपोर्ट",
@@ -307,12 +325,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "नोट्स",
   
     cycle_map: "मासिक धर्म चक्र",
+    current_cycle: "वर्तमान चक्र",
+    past_cycle: "पिछला चक्र",
     bleeding: "रक्तस्राव",
     follicular: "पुटकीय",
     fertile: "प्रजनन",
     luteal: "ल्युटियल",
   
     timeline_events: "समयरेखा घटनाक्रम",
+    last_period: "पिछली माहवारी",
+    next_period_short: "अगली माहवारी",
+    phase_split: "चरण विभाजन",
+    day_label: "दिन"
   },
   es: {
     clinical_cycle_report: "Informe del Ciclo",
@@ -383,12 +407,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "Notas",
   
     cycle_map: "Mapa del ciclo",
+    current_cycle: "Ciclo Actual",
+    past_cycle: "Ciclo Pasado",
     bleeding: "Sangrado",
     follicular: "Folicular",
     fertile: "Fértil",
     luteal: "Lútea",
   
     timeline_events: "Eventos de la línea de tiempo",
+    last_period: "Último período",
+    next_period_short: "Próximo período",
+    phase_split: "Fase actual",
+    day_label: "Día"
   },
   ar: {
     clinical_cycle_report: "التقرير السريري للدورة",
@@ -459,12 +489,18 @@ export const translations: Record<SupportedLanguage, Record<string, string>> = {
     notes: "ملاحظات",
   
     cycle_map: "خريطة الدورة",
+    current_cycle: "الدورة الحالية",
+    past_cycle: "الدورة الماضية",
     bleeding: "نزيف",
     follicular: "جريبي",
     fertile: "خصبة",
     luteal: "أصفري",
   
     timeline_events: "أحداث الجدول الزمني",
+    last_period: "الدورة السابقة",
+    next_period_short: "الدورة القادمة",
+    phase_split: "مرحلة الدورة",
+    day_label: "يوم"
   }
 };
 
