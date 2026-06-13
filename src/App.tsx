@@ -458,7 +458,30 @@ function App({ onGoHome }: AppProps = {}) {
         }}
       />
     }
-    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} themeMode={themeMode} />
+    
+    const handleImportFullProfile = (parsed: any) => {
+      if (parsed.userProfile) {
+        const newId = Date.now().toString()
+        store.setAccountId(newId)
+        setUserProfile(parsed.userProfile)
+        if (parsed.baseline) {
+          setLastPeriodDate(parsed.baseline.lastPeriodDate || parsed.userProfile.lastPeriodDate)
+          setCycleLength(parsed.baseline.cycleLength || parsed.userProfile.cycleLength)
+          setBleedingDuration(parsed.baseline.bleedingDuration || parsed.userProfile.bleedingDuration)
+          if (parsed.baseline.lutealPhaseLength) store.setLutealPhaseLength(parsed.baseline.lutealPhaseLength)
+          if (parsed.baseline.goal) store.setGoal(parsed.baseline.goal)
+          if (parsed.baseline.lastIntercourseDate) store.setLastIntercourseDate(parsed.baseline.lastIntercourseDate)
+          if (parsed.baseline.pastPeriodDates) store.setPastPeriodDates(parsed.baseline.pastPeriodDates)
+        }
+        if (parsed.logs) {
+          setLogs(parsed.logs)
+        }
+        setIsCreatingProfile(false)
+        handleSetAuthMode('authenticated')
+      }
+    }
+    
+    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} onImportProfile={handleImportFullProfile} themeMode={themeMode} />
   }
 
   // Hide logs if we are in guest mode

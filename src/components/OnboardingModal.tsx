@@ -11,12 +11,15 @@ import './OnboardingModal.css'
 interface OnboardingModalProps {
   onComplete: (profile: UserProfile) => void
   onGuest: () => void
+  onImportProfile: (parsedData: any) => void
   themeMode: ThemeMode
   appMode?: 'cycle' | 'pregnancy' | 'postpartum'
 }
 
-export function OnboardingModal({ onComplete, onGuest, themeMode }: OnboardingModalProps) {
+export function OnboardingModal({ onComplete, onGuest, onImportProfile, themeMode }: OnboardingModalProps) {
   const [step, setStep] = useState(1)
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   // Profile State
   const [localAppMode, setLocalAppMode] = useState<'cycle' | 'pregnancy'>('cycle')
@@ -59,6 +62,23 @@ export function OnboardingModal({ onComplete, onGuest, themeMode }: OnboardingMo
     d.setUTCDate(d.getUTCDate() - i)
     return d.toISOString().split('T')[0]
   }).reverse()
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    try {
+      const text = await file.text()
+      const parsed = JSON.parse(text)
+      if (parsed && parsed.userProfile) {
+        onImportProfile(parsed)
+      } else {
+        alert('Invalid data format. Could not find a valid user profile.')
+      }
+    } catch (err) {
+      alert('Failed to parse the backup file.')
+    }
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -140,6 +160,20 @@ export function OnboardingModal({ onComplete, onGuest, themeMode }: OnboardingMo
               <button className="btn btn-outline onboarding-btn" onClick={onGuest}>
                 Skip & Explore as Guest
               </button>
+              <button 
+                className="btn btn-outline onboarding-btn" 
+                onClick={() => fileInputRef.current?.click()}
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', textDecoration: 'underline' }}
+              >
+                Import Existing Profile
+              </button>
+              <input 
+                type="file" 
+                accept=".json" 
+                ref={fileInputRef} 
+                style={{ display: 'none' }} 
+                onChange={handleFileChange}
+              />
             </div>
           </div>
         )}
