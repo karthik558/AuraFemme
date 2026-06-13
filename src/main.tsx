@@ -6,15 +6,19 @@ import { useAppStore } from './store'
 import './index.css'
 
 function Root() {
-  const [path, setPath] = useState(window.location.pathname)
   const themeMode = useAppStore(state => state.themeMode)
   const userProfile = useAppStore(state => state.userProfile)
+  const authMode = useAppStore(state => state.authMode)
+  
+  // If they are already authenticated or a guest, default to showing the app
+  const [showApp, setShowApp] = useState(authMode !== 'unauthenticated')
 
+  // Automatically return to Landing Page when signed out
   useEffect(() => {
-    const handlePopState = () => setPath(window.location.pathname)
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [])
+    if (authMode === 'unauthenticated') {
+      setShowApp(false)
+    }
+  }, [authMode])
 
   useEffect(() => {
     const resolvedTheme = themeMode
@@ -28,16 +32,13 @@ function Root() {
   }, [userProfile?.appMode])
 
   const navigateToApp = () => {
-    window.history.pushState({}, '', '/app')
-    setPath('/app')
+    setShowApp(true)
   }
 
-  // If we're on /app, render the main App
-  if (path === '/app') {
-    return <App />
+  if (showApp) {
+    return <App onGoHome={() => setShowApp(false)} />
   }
 
-  // Otherwise, render the LandingPage
   return <LandingPage onGoToApp={navigateToApp} />
 }
 

@@ -127,7 +127,11 @@ const themeModeLabels: Record<ThemeMode, string> = {
   dark: 'Dark',
 }
 
-function App() {
+interface AppProps {
+  onGoHome?: () => void;
+}
+
+function App({ onGoHome }: AppProps = {}) {
   const appRef = useRef<HTMLDivElement>(null);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
 
@@ -496,7 +500,7 @@ function App() {
             </div>
 
             {/* Center Logo */}
-            <div className="header-brand" style={{ cursor: 'pointer' }} onClick={() => setActiveTab('overview')}>
+            <div className="header-brand" style={{ cursor: 'pointer' }} onClick={() => onGoHome ? onGoHome() : setActiveTab('overview')}>
               <picture>
                 <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
                 <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
