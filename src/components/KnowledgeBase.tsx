@@ -36,9 +36,18 @@ const TOPICS_MAP: Record<string, any[]> = {
 };
 import './KnowledgeBase.css';
 
+import type { UserProfile, CycleMetrics } from '../types';
+
 type SupportedLanguage = 'en' | 'ml' | 'ta' | 'hi' | 'es' | 'ar';
 
-export function KnowledgeBase({ onArticleChange }: { onArticleChange?: (isOpen: boolean) => void }) {
+export interface KnowledgeBaseProps {
+  onArticleChange?: (isOpen: boolean) => void;
+  userProfile?: UserProfile | null;
+  metrics?: CycleMetrics;
+  qualityScore?: number;
+}
+
+export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualityScore }: KnowledgeBaseProps) {
   const [activeArticle, setActiveArticle] = useState<string | null>(null);
 
   const handleSetArticle = (id: string | null) => {
@@ -55,6 +64,34 @@ export function KnowledgeBase({ onArticleChange }: { onArticleChange?: (isOpen: 
     const localized = TOPICS_MAP[lang].find((t: any) => t.id === baseTopic.id);
     return localized ? { ...baseTopic, title: localized.title, content: localized.content } : baseTopic;
   });
+
+  const getRecommendedTopics = () => {
+    if (!userProfile || !metrics) return [];
+    
+    const scoredTopics = localizedTopics.map(topic => {
+      let score = 0;
+      
+      if (userProfile.appMode === 'pregnancy') {
+        if (['pregnancy', 'youre-pregnant-now-what'].includes(topic.id)) score += 5;
+        if (['childbirth-and-beyond', 'getting-ready-for-baby'].includes(topic.id)) score += 3;
+      }
+      
+      if (userProfile.appMode !== 'pregnancy') {
+        if (metrics.goal === 'conceive' && ['ovulation-calculator', 'before-you-get-pregnant'].includes(topic.id)) score += 4;
+        if (metrics.goal === 'avoid' && ['ovulation-calculator'].includes(topic.id)) score += 2;
+      }
+
+      if (metrics.currentPhase === 'menstruation' && ['features-and-fact-sheets'].includes(topic.id)) score += 2;
+      
+      if (qualityScore !== undefined && qualityScore < 50 && ['features-and-fact-sheets'].includes(topic.id)) score += 3;
+
+      return { ...topic, score };
+    });
+
+    return scoredTopics.filter(t => t.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+  };
+
+  const recommendations = getRecommendedTopics();
 
   const activeTopicData = localizedTopics.find(t => t.id === activeArticle);
   const rawMarkdown = reportsData.find((r: any) => r.id === activeArticle)?.markdown_content;
@@ -161,7 +198,35 @@ export function KnowledgeBase({ onArticleChange }: { onArticleChange?: (isOpen: 
         </div>
       </div>
       <div className="reference-grid" ref={topicRef}>
-          {localizedTopics.map((topic, i) => (
+        {recommendations.length > 0 && (
+          <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '1rem' }}>Recommended For You</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+              {recommendations.map((topic, i) => (
+                <button 
+                  key={`rec-${topic.id}`}
+                  className="reference-card-premium"
+                  onClick={() => handleSetArticle(topic.id)}
+                  style={{ animationDelay: `${i * 0.05}s`, background: 'var(--bg-inset)', border: '1px solid var(--accent-primary)' }}
+                >
+                  <div className="card-top-row">
+                    <div className="card-icon-wrapper-premium" style={{ background: 'var(--accent-primary)', color: 'white' }}>
+                      {topic.icon}
+                    </div>
+                    <div className="card-reading-time">
+                      <Clock className="w-3 h-3" />
+                      <span>{getReadingTime(topic.id)}</span>
+                    </div>
+                  </div>
+                  <h3 className="card-title-premium">{topic.title}</h3>
+                  <p className="card-excerpt-premium">{topic.content}</p>
+                </button>
+              ))}
+            </div>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)', marginTop: '2.5rem', marginBottom: '0.5rem' }}>All Topics</h3>
+          </div>
+        )}
+        {localizedTopics.map((topic, i) => (
             <button 
               key={topic.id}
               className="reference-card-premium"

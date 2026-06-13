@@ -26,13 +26,6 @@ import { OnboardingModal } from './components/OnboardingModal'
 import { LoginScreen } from './components/LoginScreen'
 import { SettingsModal } from './components/SettingsModal'
 import { useAppStore, migrateLegacyStorage } from './store'
-
-const CalendarGrid = React.lazy(() => import('./components/CalendarGrid').then(m => ({ default: m.CalendarGrid })))
-const SafetyAnalyzer = React.lazy(() => import('./components/SafetyAnalyzer').then(m => ({ default: m.SafetyAnalyzer })))
-const ReportExport = React.lazy(() => import('./components/ReportExport').then(m => ({ default: m.ReportExport })))
-const KnowledgeBase = React.lazy(() => import('./components/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })))
-const HistoryDashboard = React.lazy(() => import('./components/HistoryDashboard').then(m => ({ default: m.HistoryDashboard })))
-const PersonalDashboard = React.lazy(() => import('./components/PersonalDashboard').then(m => ({ default: m.PersonalDashboard })))
 import {
   addUtcDays,
   generateAllCycleDays,
@@ -45,6 +38,14 @@ import {
 } from './utils/calculator'
 import type { CycleDayInfo, CycleGoal, CycleInput, ThemeMode, UserProfile } from './types'
 import './App.css'
+
+const CalendarGrid = React.lazy(() => import('./components/CalendarGrid').then(m => ({ default: m.CalendarGrid })))
+const SafetyAnalyzer = React.lazy(() => import('./components/SafetyAnalyzer').then(m => ({ default: m.SafetyAnalyzer })))
+const ReportExport = React.lazy(() => import('./components/ReportExport').then(m => ({ default: m.ReportExport })))
+const KnowledgeBase = React.lazy(() => import('./components/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })))
+const MetricInspector = React.lazy(() => import('./components/MetricInspector').then(m => ({ default: m.MetricInspector })))
+const HistoryDashboard = React.lazy(() => import('./components/HistoryDashboard').then(m => ({ default: m.HistoryDashboard })))
+const PersonalDashboard = React.lazy(() => import('./components/PersonalDashboard').then(m => ({ default: m.PersonalDashboard })))
 
 export type TabKey = 'overview' | 'calendar' | 'safety' | 'reports' | 'history' | 'reference'
 
@@ -130,6 +131,7 @@ function App({ onGoHome }: AppProps = {}) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isArticleOpen, setIsArticleOpen] = useState(false)
   const [isNavVisible, setIsNavVisible] = useState(true)
+  const [inspectorMetric, setInspectorMetric] = useState<'ovulation' | 'period' | 'quality' | 'phase' | null>(null);
   const lastScrollY = useRef(0)
 
   useEffect(() => {
@@ -825,6 +827,7 @@ function App({ onGoHome }: AppProps = {}) {
                           authMode={authMode} 
                           goal={draftGoal}
                           lastIntercourseDate={lastIntercourseDate}
+                          onInspectMetric={(metric) => setInspectorMetric?.(metric)}
                         />
                       </div>
 
@@ -973,12 +976,17 @@ function App({ onGoHome }: AppProps = {}) {
                         </div>
                       </div>
 
-                      {/* Reference Library */}
+                      {/* Knowledge Base */}
                       <div 
                         className="tab-content fade-transition"
                         style={{ display: activeTab === 'reference' ? 'block' : 'none' }}
                       >
-                        <KnowledgeBase onArticleChange={setIsArticleOpen} />
+                        <KnowledgeBase 
+                          onArticleChange={setIsArticleOpen} 
+                          userProfile={userProfile}
+                          metrics={metrics}
+                          qualityScore={80} // Mock score since clinical intelligence is removed
+                        />
                       </div>
 
                     </div>
@@ -1036,6 +1044,15 @@ function App({ onGoHome }: AppProps = {}) {
           setIsSettingsOpen(false)
           fileInputRef.current?.click()
         }}
+      />
+
+      <MetricInspector
+        isOpen={inspectorMetric !== null}
+        onClose={() => setInspectorMetric(null)}
+        metricType={inspectorMetric}
+        metrics={metrics}
+        userProfile={userProfile}
+        qualityScore={80}
       />
     </div>
   )

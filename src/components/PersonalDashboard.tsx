@@ -1,7 +1,7 @@
 import { useMemo, memo, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target, Dna } from 'lucide-react';
+import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target, Dna, Info } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -16,9 +16,11 @@ import './PersonalDashboard.css';
 interface PersonalDashboardProps {
   userProfile: UserProfile | null;
   metrics: CycleMetrics;
-  authMode: 'guest' | 'authenticated';
+  authMode: 'guest' | 'authenticated' | 'unauthenticated';
   goal: 'track' | 'conceive' | 'avoid';
-  lastIntercourseDate: string;
+  lastIntercourseDate?: string | null;
+  qualityScore?: number;
+  onInspectMetric?: (type: 'ovulation' | 'period' | 'quality' | 'phase') => void;
 }
 
 
@@ -78,7 +80,7 @@ const getBiologicalFact = (isPregnancy: boolean, day: number, week: number, phas
   return `Day ${day}: Progesterone levels are peaking and starting their decline. This hormonal shift can decrease serotonin synthesis, which is why late-luteal mood dips are common.`;
 };
 
-export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal, lastIntercourseDate }: PersonalDashboardProps) {
+export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, metrics, authMode, goal, lastIntercourseDate, qualityScore = 0, onInspectMetric }: PersonalDashboardProps) {
   // Determine name to display
   let displayName = "Ayana";
   if (userProfile?.name && userProfile.name.trim() !== '') {
@@ -94,7 +96,9 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
   const isPregnancyMode = userProfile?.appMode === 'pregnancy';
   
   const daysSinceIntercourse = useMemo(() => {
+    if (!lastIntercourseDate) return null;
     const today = new Date();
+    today.setHours(0,0,0,0);
     const intercourseDate = new Date(lastIntercourseDate);
     return Math.max(0, Math.floor((today.getTime() - intercourseDate.getTime()) / (1000 * 60 * 60 * 24)));
   }, [lastIntercourseDate]);
@@ -253,7 +257,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <span className="kpi-label">Days left</span>
                 </div>
                 <span className="kpi-value" style={{ fontSize: '1.75rem' }}>{pMetrics.remainingDays}</span>
-                <span className="kpi-helper">Until due date</span>
+                <span className="log-value">{daysSinceIntercourse !== null ? daysSinceIntercourse : '--'} days</span>
               </div>
               <div className="kpi-card">
                 <div className="kpi-header">
@@ -275,39 +279,76 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         ) : (
           <>
             <div className="kpi-card">
-              <div className="kpi-header">
-                <Clock3 className="w-4 h-4" />
-                <span className="kpi-label">Current status</span>
+              <div className="kpi-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Clock3 className="w-4 h-4" />
+                  <span className="kpi-label">Current status</span>
+                </div>
               </div>
               <span className="kpi-value" style={{ fontSize: '1.75rem' }}>Day {metrics.cycleDay} <span style={{fontSize: '1rem', color: 'var(--text-muted)'}}>of {metrics.cycleLength}</span></span>
               <span className="kpi-helper">{metrics.cycleStartIso === userProfile?.lastPeriodDate ? 'Current cycle anchor' : 'Rolled forward from baseline'}</span>
             </div>
             
             <div className="kpi-card">
-              <div className="kpi-header">
-                <CalendarDays className="w-4 h-4" />
-                <span className="kpi-label">Active phase</span>
+              <div className="kpi-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <CalendarDays className="w-4 h-4" />
+                  <span className="kpi-label">Active phase</span>
+                </div>
               </div>
               <span className="kpi-value" style={{ fontSize: '1.35rem', marginTop: '0.25rem' }}>{metrics.currentPhaseLabel}</span>
               <span className="kpi-helper">{currentPhaseSentence}</span>
             </div>
 
             <div className="kpi-card">
-              <div className="kpi-header">
-                <Target className="w-4 h-4" />
-                <span className="kpi-label">Ovulation</span>
+              <div className="kpi-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Target className="w-4 h-4" />
+                  <span className="kpi-label">Ovulation</span>
+                </div>
+                {onInspectMetric && (
+                  <button onClick={() => onInspectMetric('ovulation')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                    <Info className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               <span className="kpi-value" style={{ fontSize: '1.75rem' }}>{metrics.ovulationCountdown === 0 ? 'Today' : `${metrics.ovulationCountdown} days`}</span>
               <span className="kpi-helper">{`Peak release near day ${metrics.ovulationDay}`}</span>
             </div>
 
             <div className="kpi-card" style={{ background: 'linear-gradient(145deg, rgba(253, 164, 175, 0.1), transparent)'}}>
-              <div className="kpi-header">
-                <MoonStar className="w-4 h-4" style={{ color: '#e11d48' }} />
-                <span className="kpi-label">Next Period Due</span>
+              <div className="kpi-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <MoonStar className="w-4 h-4" style={{ color: '#e11d48' }} />
+                  <span className="kpi-label">Next Period Due</span>
+                </div>
+                {onInspectMetric && (
+                  <button onClick={() => onInspectMetric('period')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                    <Info className="w-4 h-4" />
+                  </button>
+                )}
               </div>
               <span className="kpi-value" style={{ fontSize: '1.5rem', marginTop: '0.25rem' }}>{formatUtcDateLabel(metrics.nextPeriodIso)}</span>
               <span className="kpi-helper">{metrics.isOverdue ? 'Cycle window closing' : `In ${metrics.nextPeriodCountdown} days`}</span>
+            </div>
+
+            <div className="kpi-card" style={{ background: 'linear-gradient(145deg, rgba(16, 185, 129, 0.05), transparent)', borderColor: 'rgba(16, 185, 129, 0.2)' }}>
+              <div className="kpi-header" style={{ justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Activity className="w-4 h-4" style={{ color: '#10b981' }} />
+                  <span className="kpi-label">Data Quality</span>
+                </div>
+                {onInspectMetric && (
+                  <button onClick={() => onInspectMetric('quality')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                    <Info className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: '0.25rem' }}>
+                <span className="kpi-value" style={{ fontSize: '1.75rem', color: '#10b981' }}>{qualityScore}</span>
+                <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 600 }}>/100</span>
+              </div>
+              <span className="kpi-helper">Prediction confidence</span>
             </div>
           </>
         )}
@@ -402,9 +443,9 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Intercourse Timing</p>
                   <p className="metric-helper" style={{ margin: 0 }}>Target intercourse every 1-2 days during the 5-day fertile window leading up to peak ovulation day ({metrics.ovulationDay}) for maximum probability. 
                     <br/><br/>
-                    <span style={{ color: daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
-                      Last logged: {daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
-                      {daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? ' High priority to try again today!' : ''}
+                    <span style={{ color: daysSinceIntercourse !== null && daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
+                      Last logged: {daysSinceIntercourse === null ? 'Never' : daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
+                      {daysSinceIntercourse !== null && daysSinceIntercourse > 2 && metrics.currentPhase === 'ovulation' ? ' High priority to try again today!' : ''}
                     </span>
                   </p>
                 </div>
@@ -424,9 +465,9 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Strict Abstinence Window</p>
                   <p className="metric-helper" style={{ margin: 0 }}>Sperm can survive up to 5 days in fertile cervical mucus. Use primary barriers or abstain strictly from day {Math.max(1, metrics.fertileWindowStart - 1)} through day {metrics.fertileWindowEnd + 1}.
                     <br/><br/>
-                    <span style={{ color: daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
-                      Last logged: {daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
-                      {daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? ' WARNING: Risk of conception overlaps with sperm survival window!' : ''}
+                    <span style={{ color: daysSinceIntercourse !== null && daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? '#ef4444' : 'var(--accent-primary)', fontWeight: 600 }}>
+                      Last logged: {daysSinceIntercourse === null ? 'Never' : daysSinceIntercourse === 0 ? 'Today' : `${daysSinceIntercourse} days ago`}. 
+                      {daysSinceIntercourse !== null && daysSinceIntercourse <= 5 && metrics.currentPhase === 'ovulation' ? ' WARNING: Risk of conception overlaps with sperm survival window!' : ''}
                     </span>
                   </p>
                 </div>
