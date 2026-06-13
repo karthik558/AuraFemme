@@ -390,10 +390,11 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
 
       {!isPregnancyMode && (
         <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
-          <div className="phase-summary" style={{ background: 'var(--accent-soft)', borderColor: 'var(--border-subtle)' }}>
+          <div className="phase-summary highlight">
+            <p className="panel-label">Goal Strategy</p>
             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.25rem' }}>
               <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
-              <h3 className="panel-title" style={{ fontSize: '1.25rem', margin: 0 }}>Goal Strategy: {goal === 'conceive' ? 'Conception Planning' : goal === 'avoid' ? 'Pregnancy Prevention' : 'Neutral Tracking'}</h3>
+              <h3 className="panel-title" style={{ fontSize: '1.25rem', margin: 0 }}>{goal === 'conceive' ? 'Conception Planning' : goal === 'avoid' ? 'Pregnancy Prevention' : 'Neutral Tracking'}</h3>
             </div>
             {goal === 'conceive' && (
               <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
