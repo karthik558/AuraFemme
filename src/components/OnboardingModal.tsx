@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowRight, User, HeartHandshake, Calendar, Activity, Droplet, CheckCircle, Baby } from 'lucide-react'
+import { ArrowRight, User, HeartHandshake, Calendar, Activity, Droplet, CheckCircle, Baby, Upload, X } from 'lucide-react'
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
@@ -12,11 +12,12 @@ interface OnboardingModalProps {
   onComplete: (profile: UserProfile) => void
   onGuest: () => void
   onImportProfile: (parsedData: any) => void
+  onCancel?: () => void
   themeMode: ThemeMode
   appMode?: 'cycle' | 'pregnancy' | 'postpartum'
 }
 
-export function OnboardingModal({ onComplete, onGuest, onImportProfile, themeMode }: OnboardingModalProps) {
+export function OnboardingModal({ onComplete, onGuest, onImportProfile, onCancel, themeMode }: OnboardingModalProps) {
   const [step, setStep] = useState(1)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -98,7 +99,16 @@ export function OnboardingModal({ onComplete, onGuest, onImportProfile, themeMod
           <div 
             ref={modalRef}
             className="glass-card onboarding-modal"
+            style={{ position: 'relative' }}
           >
+            {onCancel && (
+              <button 
+                onClick={onCancel}
+                style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+              >
+                <X size={20} />
+              </button>
+            )}
             <div className="onboarding-icon-wrap" style={{ background: 'transparent' }}>
               <img src={logo} alt="Aura Femme Logo" style={{ width: '48px', height: '48px', filter: isPregnancy && !isDark ? 'hue-rotate(240deg)' : 'none' }} />
             </div>
@@ -163,9 +173,17 @@ export function OnboardingModal({ onComplete, onGuest, onImportProfile, themeMod
               <button 
                 className="btn btn-outline onboarding-btn" 
                 onClick={() => fileInputRef.current?.click()}
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', textDecoration: 'underline' }}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '0.5rem',
+                  marginTop: '1rem',
+                  borderStyle: 'dashed',
+                  opacity: 0.8
+                }}
               >
-                Import Existing Profile
+                <Upload size={16} /> Import Existing Profile
               </button>
               <input 
                 type="file" 

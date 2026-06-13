@@ -13,13 +13,6 @@ function Root() {
   // If they are already authenticated or a guest, default to showing the app
   const [showApp, setShowApp] = useState(authMode !== 'unauthenticated')
 
-  // Automatically return to Landing Page when signed out
-  useEffect(() => {
-    if (authMode === 'unauthenticated') {
-      setShowApp(false)
-    }
-  }, [authMode])
-
   useEffect(() => {
     const resolvedTheme = themeMode
     const root = document.documentElement

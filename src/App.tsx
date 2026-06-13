@@ -481,7 +481,13 @@ function App({ onGoHome }: AppProps = {}) {
       }
     }
     
-    return <OnboardingModal onComplete={handleCompleteOnboarding} onGuest={handleGuestLogin} onImportProfile={handleImportFullProfile} themeMode={themeMode} />
+    return <OnboardingModal 
+      onComplete={handleCompleteOnboarding} 
+      onGuest={handleGuestLogin} 
+      onImportProfile={handleImportFullProfile} 
+      onCancel={Object.keys(store.inactiveAccounts).length > 0 ? () => setIsCreatingProfile(false) : undefined}
+      themeMode={themeMode} 
+    />
   }
 
   // Hide logs if we are in guest mode
