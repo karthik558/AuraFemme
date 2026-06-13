@@ -47,6 +47,37 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
     return 'AF-GUEST';
   }, [accountId]);
 
+  // Group days into cycles
+  const cycles = useMemo(() => {
+    const cycleGroups: { startIso: string; days: CycleDayInfo[] }[] = [];
+    let currentGroup: CycleDayInfo[] = [];
+    
+    for (const day of days) {
+      if (day.cycleDay === 1) {
+        if (currentGroup.length > 0) {
+          cycleGroups.push({ startIso: currentGroup[0].dateIso, days: currentGroup });
+        }
+        currentGroup = [day];
+      } else {
+        if (currentGroup.length > 0) {
+          currentGroup.push(day);
+        }
+      }
+    }
+    if (currentGroup.length > 0) {
+      cycleGroups.push({ startIso: currentGroup[0].dateIso, days: currentGroup });
+    }
+    return cycleGroups;
+  }, [days]);
+
+  const currentCycleStart = metrics.cycleStartIso;
+  const [selectedCycleIso, setSelectedCycleIso] = useState<string>(currentCycleStart);
+
+  const selectedCycleDays = useMemo(() => {
+    const cycle = cycles.find(c => c.startIso === selectedCycleIso);
+    return cycle ? cycle.days : (cycles.length > 0 ? cycles[cycles.length - 1].days : []);
+  }, [cycles, selectedCycleIso]);
+
   // Process logs
   const { totalLogs, frequentSymptoms, recentLogs } = useMemo(() => {
     const logArray = Object.values(logs).sort((a, b) => b.dateIso.localeCompare(a.dateIso));
@@ -352,14 +383,30 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         </div>
 
         {/* Calendar Grid Visual */}
-        {!isPregnancyMode && days && days.length > 0 && (
+        {!isPregnancyMode && selectedCycleDays && selectedCycleDays.length > 0 && (
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '15px', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
-              {t(lang, 'cycle_map')}
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '15px' }}>
+              <h2 style={{ fontSize: '18px', margin: 0, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
+                {t(lang, 'cycle_map')}
+              </h2>
+              {cycles.length > 1 && (
+                <select 
+                  className="report-lang-select" 
+                  value={selectedCycleIso} 
+                  onChange={(e) => setSelectedCycleIso(e.target.value)}
+                  style={{ background: '#f9fafb', fontSize: '13px' }}
+                >
+                  {cycles.map((c, i) => {
+                    let label = `Cycle starting ${formatUtcDateLabel(c.startIso)}`;
+                    if (c.startIso === currentCycleStart) label = `Current Cycle (${formatUtcDateLabel(c.startIso)})`;
+                    return <option key={c.startIso} value={c.startIso}>{label}</option>;
+                  })}
+                </select>
+              )}
+            </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-              {days.map((day) => {
+              {selectedCycleDays.map((day) => {
                 let bg = '#e5e7eb'; // default grey
                 let color = '#4b5563';
                 if (day.phase === 'menstruation') { bg = '#ffe4e6'; color = '#e11d48'; }
@@ -373,8 +420,8 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                     background: bg, color: color, 
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '12px', fontWeight: 600,
-                    border: metrics.cycleDay === day.cycleDay ? `2px solid ${color}` : '1px solid transparent',
-                    boxShadow: metrics.cycleDay === day.cycleDay ? `0 0 0 2px white, 0 0 0 4px ${color}` : 'none'
+                    border: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `2px solid ${color}` : '1px solid transparent',
+                    boxShadow: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `0 0 0 2px white, 0 0 0 4px ${color}` : 'none'
                   }}>
                     {parseInt(day.dateIso.split('-')[2], 10)}
                   </div>

@@ -35,7 +35,7 @@ const HistoryDashboard = React.lazy(() => import('./components/HistoryDashboard'
 const PersonalDashboard = React.lazy(() => import('./components/PersonalDashboard').then(m => ({ default: m.PersonalDashboard })))
 import {
   addUtcDays,
-  buildCalendarDays,
+  generateAllCycleDays,
   buildCycleMetrics,
   clampNumber,
   formatUtcDateLabel,
@@ -355,7 +355,7 @@ function App({ onGoHome }: AppProps = {}) {
   )
 
   const metrics = useMemo(() => buildCycleMetrics(cycleInput), [cycleInput])
-  const calendarDays = useMemo(() => buildCalendarDays(metrics.cycleStartIso, cycleInput), [cycleInput, metrics.cycleStartIso])
+  const calendarDays = useMemo(() => generateAllCycleDays(pastPeriodDates, lastPeriodDate, cycleInput), [pastPeriodDates, lastPeriodDate, cycleInput])
 
   const advisory = useMemo(() => {
     if (userProfile?.appMode === 'pregnancy') {
@@ -398,7 +398,7 @@ function App({ onGoHome }: AppProps = {}) {
   const activeDay = useMemo(() => {
     if (!calendarDays.length) return null
     if (!selectedDay) return calendarDays[0]
-    return calendarDays.find((day) => day.cycleDay === selectedDay.cycleDay) ?? calendarDays[0]
+    return calendarDays.find((day) => day.dateIso === selectedDay.dateIso) ?? calendarDays[0]
   }, [calendarDays, selectedDay])
 
 

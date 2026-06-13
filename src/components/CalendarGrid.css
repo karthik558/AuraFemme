@@ -6,7 +6,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 @media (min-width: 1024px) {
@@ -15,7 +15,21 @@
   }
 }
 
-/* Legend */
+/* Header & Nav */
+.calendar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 .calendar-legend-glass {
   display: flex;
   flex-wrap: wrap;
@@ -44,155 +58,228 @@
   border-radius: 50%;
 }
 
-/* Calendar Grid */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 1.25rem;
-  justify-content: center;
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
-@media (min-width: 1280px) {
-  .calendar-grid { 
-    grid-template-columns: repeat(7, 1fr); 
-    gap: 1.5rem; 
+.calendar-month-label {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-strong);
+  margin: 0;
+  min-width: 140px;
+  text-align: center;
+}
+
+.nav-btn {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: var(--bg-inset);
+  color: var(--text-strong);
+  transform: scale(1.05);
+}
+
+.btn-today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+/* Calendar Grid Layout */
+.calendar-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.weekday-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.calendar-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-days-grid {
+    gap: 0.75rem;
   }
 }
 
-/* Squircle Day Card */
-.calendar-day-card {
+/* Day Cells */
+.calendar-day-cell {
   position: relative;
-  background: var(--ring-bg, linear-gradient(transparent, transparent)), var(--panel-bg);
-  border-radius: 1.5rem;
-  padding: 1.5rem 1rem;
+  aspect-ratio: 1;
+  background: var(--ring-bg, var(--panel-bg));
+  border-radius: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
+  justify-content: space-between;
   cursor: pointer;
   outline: none;
   border: 1px solid var(--border-subtle);
-  box-shadow: var(--panel-shadow);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
-  text-align: center;
-  min-height: 10rem;
 }
 
-.calendar-day-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 1.5rem;
-  padding: 1px;
-  background: linear-gradient(135deg, var(--panel-border), transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+@media (min-width: 768px) {
+  .calendar-day-cell {
+    padding: 0.75rem;
+  }
+}
+
+.calendar-day-cell.padding {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
   pointer-events: none;
 }
 
-.calendar-day-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  background: var(--ring-bg-hover, linear-gradient(transparent, transparent)), var(--panel-bg);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+.calendar-day-cell.empty {
+  background: var(--bg-inset);
+  opacity: 0.5;
 }
 
-.calendar-day-card.active {
-  background: var(--ring-bg, linear-gradient(transparent, transparent)), var(--panel-bg);
+.calendar-day-cell:not(.padding):hover {
+  transform: translateY(-2px) scale(1.02);
+  background: var(--ring-bg-hover, var(--bg-inset));
+  border-color: var(--border-hover);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-day-cell.active {
+  background: var(--ring-bg, var(--panel-bg));
   border-color: var(--ring-color);
   transform: scale(1.05);
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15), 0 0 20px var(--ring-glow);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 15px var(--ring-glow);
   z-index: 10;
 }
 
-.calendar-day-card.active::before {
-  background: linear-gradient(135deg, var(--panel-border), var(--ring-color));
+.cell-active-glow {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, var(--ring-color));
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.cell-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.day-number-small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  background: var(--panel-bg);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .day-number-small {
+    font-size: 1rem;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.calendar-day-cell.active .day-number-small {
+  background: var(--ring-color);
+  color: #fff;
+  box-shadow: 0 0 10px var(--ring-glow);
+}
+
+.cycle-day-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(0,0,0,0.03);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.calendar-day-cell.active .cycle-day-badge {
+  color: var(--ring-color);
+  background: var(--ring-glow);
+}
+
+.cell-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  min-height: 20px;
+  width: 100%;
+}
+
+.day-phase-indicator {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.day-phase-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   opacity: 0.8;
 }
 
-/* Day Circle */
-.day-circle-wrap {
-  position: relative;
-}
-
-.day-circle {
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--panel-bg);
-  border: 1px solid var(--border-subtle);
-  position: relative;
-  z-index: 2;
-  transition: all 0.3s ease;
-}
-
-.calendar-day-card.active .day-circle {
-  background: var(--bg-gradient-start);
-  border-color: var(--ring-color);
-  transform: scale(1.1);
-}
-
-.day-circle-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  background: var(--ring-color);
-  filter: blur(15px);
-  opacity: 0.4;
-  z-index: 1;
-}
-
-.day-number {
-  font-size: 1.35rem;
-  font-weight: 700;
+.calendar-day-cell.active .day-phase-text {
   color: var(--text-strong);
-  letter-spacing: -0.02em;
+  opacity: 1;
 }
 
-/* Day Info */
-.day-info-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.day-date {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 0;
-}
-
-.day-phase-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-main);
-  margin: 0;
-}
-
-.calendar-day-card.active .day-phase-title {
-  color: var(--text-strong);
-}
-
-.day-icons {
+.day-icons-small {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 1.25rem;
-  margin-top: 0.25rem;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: 0.25rem;
 }
 
 .day-icon-dot {
@@ -225,48 +312,46 @@
 /* Phase Variables */
 .phase-menstruation {
   --ring-color: #f43f5e;
-  --ring-bg: linear-gradient(145deg, rgba(244, 63, 94, 0.15), rgba(159, 18, 57, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(244, 63, 94, 0.2), rgba(159, 18, 57, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(244, 63, 94, 0.1), rgba(159, 18, 57, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(244, 63, 94, 0.15), rgba(159, 18, 57, 0.2));
   --ring-glow: rgba(244, 63, 94, 0.25);
 }
 .phase-follicular {
   --ring-color: #06b6d4;
-  --ring-bg: linear-gradient(145deg, rgba(6, 182, 212, 0.15), rgba(8, 145, 178, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(6, 182, 212, 0.2), rgba(8, 145, 178, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(6, 182, 212, 0.15), rgba(8, 145, 178, 0.2));
   --ring-glow: rgba(6, 182, 212, 0.25);
 }
 .phase-ovulation {
   --ring-color: #f59e0b;
-  --ring-bg: linear-gradient(145deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.2));
   --ring-glow: rgba(245, 158, 11, 0.25);
 }
 .phase-luteal {
   --ring-color: #d946ef;
-  --ring-bg: linear-gradient(145deg, rgba(217, 70, 239, 0.15), rgba(192, 38, 211, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(217, 70, 239, 0.2), rgba(192, 38, 211, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(217, 70, 239, 0.1), rgba(192, 38, 211, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(217, 70, 239, 0.15), rgba(192, 38, 211, 0.2));
   --ring-glow: rgba(217, 70, 239, 0.25);
 }
 
 .phase-trimester-1 {
   --ring-color: #f472b6;
-  --ring-bg: linear-gradient(145deg, rgba(244, 114, 182, 0.15), rgba(219, 39, 119, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(244, 114, 182, 0.2), rgba(219, 39, 119, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(244, 114, 182, 0.1), rgba(219, 39, 119, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(244, 114, 182, 0.15), rgba(219, 39, 119, 0.2));
   --ring-glow: rgba(244, 114, 182, 0.25);
 }
 
 .phase-trimester-2 {
   --ring-color: #c084fc;
-  --ring-bg: linear-gradient(145deg, rgba(192, 132, 252, 0.15), rgba(147, 51, 234, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(192, 132, 252, 0.2), rgba(147, 51, 234, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(192, 132, 252, 0.1), rgba(147, 51, 234, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(192, 132, 252, 0.15), rgba(147, 51, 234, 0.2));
   --ring-glow: rgba(192, 132, 252, 0.25);
 }
 
 .phase-trimester-3 {
   --ring-color: #38bdf8;
-  --ring-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(2, 132, 199, 0.25));
-  --ring-bg-hover: linear-gradient(145deg, rgba(56, 189, 248, 0.2), rgba(2, 132, 199, 0.3));
+  --ring-bg: linear-gradient(145deg, rgba(56, 189, 248, 0.1), rgba(2, 132, 199, 0.15));
+  --ring-bg-hover: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(2, 132, 199, 0.2));
   --ring-glow: rgba(56, 189, 248, 0.25);
 }
-
-

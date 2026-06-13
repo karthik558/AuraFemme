@@ -194,6 +194,53 @@ export function buildCalendarDays(cycleStartIso: string, input: CycleInput, toda
   })
 }
 
+export function generateAllCycleDays(pastPeriodDates: string[], lastPeriodDate: string, input: CycleInput): CycleDayInfo[] {
+  const cycleLength = clampNumber(input.cycleLength, 21, 40)
+  const bleedingDuration = clampNumber(input.bleedingDuration, 2, Math.min(10, cycleLength - 2))
+  const lutealPhaseLength = clampNumber(input.lutealPhaseLength, 10, Math.min(18, cycleLength - bleedingDuration - 1))
+
+  const allStarts = Array.from(new Set([...pastPeriodDates, lastPeriodDate])).sort()
+  if (allStarts.length === 0) return []
+  
+  // Add predicted future starts (e.g., 6 cycles ahead)
+  let lastStart = allStarts[allStarts.length - 1]
+  for (let i = 0; i < 6; i++) {
+    lastStart = addUtcDays(lastStart, cycleLength)
+    allStarts.push(lastStart)
+  }
+
+  const days: CycleDayInfo[] = []
+  
+  for (let i = 0; i < allStarts.length - 1; i++) {
+    const start = allStarts[i]
+    const nextStart = allStarts[i + 1]
+    const actualCycleLength = Math.max(10, diffUtcDays(nextStart, start))
+    
+    // For past cycles, ovulation is typically lutealPhaseLength before the next period.
+    const ovulationDay = clampNumber(actualCycleLength - lutealPhaseLength, bleedingDuration + 1, actualCycleLength - 1)
+    const fertileWindowStart = Math.max(1, ovulationDay - 5)
+    const fertileWindowEnd = Math.min(actualCycleLength, ovulationDay + 1)
+    
+    for (let dayIdx = 0; dayIdx < actualCycleLength; dayIdx++) {
+      const cycleDay = dayIdx + 1
+      const dateIso = addUtcDays(start, dayIdx)
+      const phase = getPhase(cycleDay, bleedingDuration, fertileWindowStart, ovulationDay)
+      
+      days.push({
+        cycleDay,
+        dateIso,
+        phase,
+        phaseLabel: describePhase(phase),
+        isFertile: cycleDay >= fertileWindowStart && cycleDay <= fertileWindowEnd,
+        isPeak: cycleDay === ovulationDay,
+        isBleeding: cycleDay <= bleedingDuration,
+      })
+    }
+  }
+  
+  return days
+}
+
 function determineRisk(daysBeforeOvulation: number, intercourseCycleDay: number, fertileWindowStart: number, fertileWindowEnd: number): RiskLevel {
   if (intercourseCycleDay >= fertileWindowStart && intercourseCycleDay <= fertileWindowEnd) {
     return 'elevated'
