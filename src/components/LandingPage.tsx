@@ -13,7 +13,6 @@ import {
   Zap,
   Shield,
   BarChart3,
-  MousePointerClick,
   CheckCircle2
 } from 'lucide-react';
 import gsap from 'gsap';
