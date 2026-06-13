@@ -4,6 +4,14 @@ import type { ThemeMode, DailyLog, UserProfile, CycleGoal, CaseStudyResult } fro
 import type { TabKey } from './App'
 import { addUtcDays, utcTodayIso } from './utils/calculator'
 
+export type ToastType = 'success' | 'error' | 'info'
+
+export interface ToastMessage {
+  id: string;
+  type: ToastType;
+  message: string;
+}
+
 export interface AppState {
   // UI State (Not persisted)
   activeTab: TabKey
@@ -12,6 +20,9 @@ export interface AppState {
   setReady: (ready: boolean) => void
   sharedCaseStudy: CaseStudyResult | null
   setSharedCaseStudy: (study: CaseStudyResult | null) => void
+  toasts: ToastMessage[]
+  addToast: (message: string, type?: ToastType) => void
+  removeToast: (id: string) => void
 
   // Persisted State
   themeMode: ThemeMode
@@ -57,6 +68,13 @@ export const useAppStore = create<AppState>()(
       setReady: (ready) => set({ ready }),
       sharedCaseStudy: null,
       setSharedCaseStudy: (study) => set({ sharedCaseStudy: study }),
+      toasts: [],
+      addToast: (message, type = 'info') => set((state) => ({ 
+        toasts: [...state.toasts, { id: Date.now().toString() + Math.random(), type, message }] 
+      })),
+      removeToast: (id) => set((state) => ({ 
+        toasts: state.toasts.filter(t => t.id !== id) 
+      })),
 
       themeMode: 'light',
       setThemeMode: (mode) => set({ themeMode: mode }),

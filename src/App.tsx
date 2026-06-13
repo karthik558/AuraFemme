@@ -8,16 +8,11 @@ import {
   CheckCircle2,
   Clock3,
   HeartPulse,
-  LogOut,
-  MoonStar,
   ShieldAlert,
   ShieldCheck,
   Baby,
-  SunMedium,
   FileText,
   BookOpen,
-  Download,
-  Upload,
   Settings2,
   X,
   Heart,
@@ -29,6 +24,7 @@ import { DateTriplet } from './components/DateTriplet'
 import { DailyLogEditor } from './components/DailyLogEditor'
 import { OnboardingModal } from './components/OnboardingModal'
 import { LoginScreen } from './components/LoginScreen'
+import { SettingsModal } from './components/SettingsModal'
 import { useAppStore, migrateLegacyStorage } from './store'
 
 const CalendarGrid = React.lazy(() => import('./components/CalendarGrid').then(m => ({ default: m.CalendarGrid })))
@@ -122,18 +118,16 @@ const goalOptions: Array<{ value: CycleGoal; label: string; tone: string }> = [
   { value: 'avoid', label: 'Avoid pregnancy', tone: 'active' },
 ]
 
-const themeModeLabels: Record<ThemeMode, string> = {
-  light: 'Light',
-  dark: 'Dark',
-}
-
 interface AppProps {
   onGoHome?: () => void;
 }
 
 function App({ onGoHome }: AppProps = {}) {
   const appRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   useEffect(() => {
     migrateLegacyStorage()
@@ -144,7 +138,7 @@ function App({ onGoHome }: AppProps = {}) {
     activeTab, setActiveTab,
     ready, setReady,
     sharedCaseStudy, setSharedCaseStudy,
-    themeMode, setThemeMode,
+    themeMode,
     logs, setLogs,
     authMode, setAuthMode,
     userProfile, setUserProfile,
@@ -169,7 +163,7 @@ function App({ onGoHome }: AppProps = {}) {
       const hasMonth = pastPeriodDates.some(d => d.startsWith(newMonthStr));
       
       if (hasMonth) {
-        alert("You have already logged a period for this month. Please delete the old one first before adding a new date in the same month.");
+        store.addToast("You have already logged a period for this month. Please delete the old one first before adding a new date in the same month.", 'error');
         return;
       }
       
@@ -208,49 +202,6 @@ function App({ onGoHome }: AppProps = {}) {
   }, { scope: appRef, dependencies: [ready, authMode] });
 
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
-
-  // Swipe navigation logic
-  const touchStartRef = useRef<number | null>(null)
-  const touchEndRef = useRef<number | null>(null)
-  const touchStartYRef = useRef<number | null>(null)
-  const touchEndYRef = useRef<number | null>(null)
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    // Ignore touches on interactive elements like sliders, buttons, or charts
-    const target = e.target as HTMLElement;
-    if (target.closest('input, button, select, a, .recharts-wrapper, .slider-wrapper, .input-group, .calendar-grid, .history-logs, .no-swipe')) return;
-
-    touchEndRef.current = null
-    touchEndYRef.current = null
-    touchStartRef.current = e.targetTouches[0].clientX
-    touchStartYRef.current = e.targetTouches[0].clientY
-  }
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartRef.current === null) return; // Prevent move if start was ignored
-    touchEndRef.current = e.targetTouches[0].clientX
-    touchEndYRef.current = e.targetTouches[0].clientY
-  }
-
-  const handleTouchEnd = () => {
-    if (touchStartRef.current === null || touchEndRef.current === null || touchStartYRef.current === null || touchEndYRef.current === null) return
-    
-    const distanceX = touchStartRef.current - touchEndRef.current
-    const distanceY = touchStartYRef.current - touchEndYRef.current
-    
-    // Determine if the swipe is mostly horizontal and meets a distance threshold (e.g. 50px)
-    if (Math.abs(distanceX) > 50 && Math.abs(distanceX) > Math.abs(distanceY)) {
-      const availableTabs = (Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety'))
-      const currentIndex = availableTabs.indexOf(activeTab)
-      
-      if (distanceX > 0 && currentIndex < availableTabs.length - 1) { // Swipe left -> next tab
-        setActiveTab(availableTabs[currentIndex + 1])
-      }
-      if (distanceX < 0 && currentIndex > 0) { // Swipe right -> previous tab
-        setActiveTab(availableTabs[currentIndex - 1])
-      }
-    }
-  }
 
   const handleSaveLog = store.addLog
   const handleDeleteLog = store.removeLog
@@ -352,13 +303,13 @@ function App({ onGoHome }: AppProps = {}) {
           // Merge and deduplicate past dates
           setPastPeriodDates(Array.from(new Set([...pastPeriodDates, ...parsed.baseline.pastPeriodDates])).sort())
         }
-        alert('Data imported successfully!')
+        store.addToast('Data imported successfully!', 'success')
       } else {
-        alert('Invalid data format. Could not import.')
+        store.addToast('Invalid data format. Could not import.', 'error')
       }
     } catch (err) {
       console.error(err)
-      alert('Failed to parse file.')
+      store.addToast('Failed to parse file.', 'error')
     }
   }
 
@@ -435,6 +386,28 @@ function App({ onGoHome }: AppProps = {}) {
   }, [calendarDays, selectedDay])
 
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchStartX.current - touchEndX;
+    const deltaY = touchStartY.current - touchEndY;
+    
+    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+      const tabOrder: TabKey[] = (Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety'));
+      const currentIndex = tabOrder.indexOf(activeTab);
+      if (deltaX > 0 && currentIndex < tabOrder.length - 1) {
+        setActiveTab(tabOrder[currentIndex + 1]);
+      } else if (deltaX < 0 && currentIndex > 0) {
+        setActiveTab(tabOrder[currentIndex - 1]);
+      }
+    }
+  };
+
   if (authMode === 'unauthenticated') {
     if (!isCreatingProfile && (userProfile || Object.keys(store.inactiveAccounts).length > 0)) {
       return <LoginScreen 
@@ -498,14 +471,13 @@ function App({ onGoHome }: AppProps = {}) {
   }
 
   return (
-    <div ref={appRef} className="app-wrapper" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+    <div ref={appRef} className="app-wrapper">
       <div className="app-bg-glow" />
       <div className="app-container">
         <header className="app-header">
-          <div className="header-content header-content-responsive">
-            
-            {/* Mobile Left: AppModeSwitcher */}
-            <div className="mobile-only header-left">
+          <div className="header-content">
+            {/* Left: AppModeSwitcher */}
+            <div className="header-left">
               <AppModeSwitcher 
                 mode={userProfile?.appMode || 'cycle'} 
                 themeMode={themeMode}
@@ -538,35 +510,19 @@ function App({ onGoHome }: AppProps = {}) {
             
             {/* Right: Actions */}
             <div className="header-actions">
-              <div className="desktop-only">
-                <AppModeSwitcher 
-                  mode={userProfile?.appMode || 'cycle'} 
-                  themeMode={themeMode}
-                  onChange={(newMode) => {
-                    if (userProfile) {
-                      const nextProfile = { ...userProfile, appMode: newMode }
-                      setUserProfile(nextProfile)
-                      localStorage.setItem('aura-femme-profile', JSON.stringify(nextProfile))
-                    } else {
-                      setUserProfile({
-                        name: 'Guest User',
-                        managementType: 'self',
-                        lastPeriodDate: addUtcDays(utcTodayIso(), -12),
-                        cycleLength: 28,
-                        bleedingDuration: 5,
-                        appMode: newMode
-                      })
-                    }
-                  }} 
-                />
-              </div>
               <div className="today-badge desktop-only">
                 <CalendarDays className="w-4 h-4" style={{ color: 'var(--accent-primary)' }} />
                 <p className="today-label">Today</p>
                 <div className="today-divider" />
                 <p className="today-date">{formatUtcDateLabel(utcTodayIso())}</p>
               </div>
-              <ThemeSwitcher mode={themeMode} appMode={userProfile?.appMode || 'cycle'} onChange={setThemeMode} />
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setIsSettingsOpen(true)}
+                style={{ padding: '0.65rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', borderRadius: '2rem' }}
+              >
+                <Settings2 size={16} /> <span className="desktop-only">Settings</span>
+              </button>
             </div>
           </div>
         </header>
@@ -736,49 +692,22 @@ function App({ onGoHome }: AppProps = {}) {
                     </p>
                   </div>
                 </div>
-
-                {/* App Tracking Mode was moved to the header */}
-                <button 
-                  onClick={() => handleSetAuthMode('unauthenticated')}
-                  className="btn btn-outline"
-                  style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem', marginTop: '0.25rem' }}
-                >
-                  <LogOut size={14} /> Sign Out
-                </button>
                 
-                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-                  <button 
-                    className="btn btn-outline" 
-                    onClick={handleExportData} 
-                    title={authMode === 'guest' ? 'Guests cannot export data' : 'Export Profile Data'}
-                    disabled={authMode === 'guest'}
-                    style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem' }}
-                  >
-                    <Download size={14} /> Export
-                  </button>
-                  <button 
-                    className="btn btn-outline" 
-                    onClick={() => fileInputRef.current?.click()} 
-                    title={authMode === 'guest' ? 'Guests cannot import data' : 'Import Profile Data'}
-                    disabled={authMode === 'guest'}
-                    style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '0.55rem', fontSize: '0.85rem' }}
-                  >
-                    <Upload size={14} /> Import
-                  </button>
-                  <input 
-                    type="file" 
-                    accept=".json" 
-                    ref={fileInputRef} 
-                    style={{ display: 'none' }} 
-                    onChange={handleFileChange}
-                  />
-                </div>
+                <input 
+                  type="file" 
+                  accept=".json" 
+                  ref={fileInputRef} 
+                  style={{ display: 'none' }} 
+                  onChange={handleFileChange}
+                />
               </div>
             </div>
           </aside>
 
           <main 
             className="main-content"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading module...</div>}>
               <div>
@@ -1017,6 +946,17 @@ function App({ onGoHome }: AppProps = {}) {
           )
         })}
       </nav>
+
+      <SettingsModal 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)}
+        onSignOut={() => handleSetAuthMode('unauthenticated')}
+        onExportData={handleExportData}
+        onImportClick={() => {
+          setIsSettingsOpen(false)
+          fileInputRef.current?.click()
+        }}
+      />
     </div>
   )
 }
@@ -1042,51 +982,6 @@ function SliderField({ label, helper, value, min, max, onChange }: { label: stri
         <span className="slider-value">{value}</span>
       </div>
     </label>
-  )
-}
-
-function ThemeSwitcher({ mode, appMode, onChange }: { mode: ThemeMode; appMode: 'cycle' | 'pregnancy' | 'postpartum'; onChange: (mode: ThemeMode) => void }) {
-  const [transitionState, setTransitionState] = useState<{
-    isActive: boolean;
-    targetTheme: ThemeMode;
-  }>({ isActive: false, targetTheme: mode });
-
-  const handleThemeChange = (targetMode: ThemeMode) => {
-    if (mode === targetMode || transitionState.isActive) return;
-    setTransitionState({
-      isActive: true,
-      targetTheme: targetMode
-    });
-  };
-
-  const toggleMode = () => {
-    const targetMode: ThemeMode = mode === 'light' ? 'dark' : 'light';
-    handleThemeChange(targetMode);
-  };
-
-  return (
-    <>
-      {transitionState.isActive && (
-        <GooeyBloodTransition
-          isActive={transitionState.isActive}
-          targetTheme={transitionState.targetTheme}
-          targetAppMode={appMode}
-          onSwitch={() => onChange(transitionState.targetTheme)}
-          onComplete={() => setTransitionState(prev => ({ ...prev, isActive: false }))}
-        />
-      )}
-      <div className="theme-switcher">
-        {(Object.keys(themeModeLabels) as ThemeMode[]).map((option) => (
-          <button key={option} type="button" onClick={() => handleThemeChange(option)} className={`theme-btn desktop-only ${mode === option ? 'active' : ''}`}>
-            {option === 'light' ? <SunMedium className="w-4 h-4" /> : option === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
-            <span className="theme-btn-text">{themeModeLabels[option]}</span>
-          </button>
-        ))}
-        <button type="button" onClick={toggleMode} className="theme-btn mobile-only active" title={`Theme: ${themeModeLabels[mode]}`}>
-          {mode === 'light' ? <SunMedium className="w-4 h-4" /> : mode === 'dark' ? <MoonStar className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
-        </button>
-      </div>
-    </>
   )
 }
 

@@ -2,6 +2,7 @@ import { StrictMode, useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 import { LandingPage } from './components/LandingPage'
+import { ToastContainer } from './components/ToastContainer'
 import { useAppStore } from './store'
 import './index.css'
 
@@ -29,10 +30,20 @@ function Root() {
   }
 
   if (showApp) {
-    return <App onGoHome={() => setShowApp(false)} />
+    return (
+      <>
+        <App onGoHome={() => setShowApp(false)} />
+        <ToastContainer />
+      </>
+    )
   }
 
-  return <LandingPage onGoToApp={navigateToApp} />
+  return (
+    <>
+      <LandingPage onGoToApp={navigateToApp} />
+      <ToastContainer />
+    </>
+  )
 }
 
 createRoot(document.getElementById('root')!).render(

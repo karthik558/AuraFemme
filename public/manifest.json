@@ -1,0 +1,21 @@
+{
+  "name": "Aura Femme | Ovulation Tracker & Sexual Health Dashboard",
+  "short_name": "Aura Femme",
+  "description": "Private, offline-first ovulation tracker and sexual health dashboard.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#c52233",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

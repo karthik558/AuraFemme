@@ -41,30 +41,30 @@
 }
 
 .header-content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
   gap: 1rem;
+  width: 100%;
 }
 
-@media (min-width: 1024px) {
-  .header-content {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+.header-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .header-brand {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 1rem;
 }
 
-@media (max-width: 1023px) {
-  .header-brand {
-    justify-content: center;
-    width: 100%;
-  }
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
 }
 
 .brand-logo-img {
@@ -98,11 +98,7 @@
   }
 }
 
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+
 
 .today-badge {
   display: flex;
@@ -271,10 +267,7 @@
     display: none !important;
   }
   
-  .header-actions {
-    width: 100%;
-    justify-content: space-between;
-  }
+
   
   .app-nav {
     display: none;
@@ -1029,34 +1022,6 @@
   }
 }
 
-/* Responsive Header Utilities */
-.header-content-responsive {
-  width: 100%;
-}
-.header-left {
-  display: flex;
-}
-
-@media (max-width: 1023px) {
-  .header-content-responsive {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-content-responsive .header-left {
-    flex: 1;
-    justify-content: flex-start;
-  }
-  .header-content-responsive .header-brand {
-    flex: 1;
-    justify-content: center;
-  }
-  .header-content-responsive .header-actions {
-    flex: 1;
-    justify-content: flex-end;
-  }
-}
 
 /* New Premium Desktop Nav UI */
 .nav-active-bg {

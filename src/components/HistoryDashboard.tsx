@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Activity } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
@@ -78,9 +78,12 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
 
       <div className="history-feed" ref={feedRef}>
         {filteredLogs.length === 0 ? (
-          <div className="glass-card empty-state">
-            <p className="empty-title">No logs found</p>
-            <p className="empty-desc">You haven't recorded any symptoms or notes for this timeframe.</p>
+          <div className="glass-card empty-state" style={{ textAlign: 'center', padding: '4rem 2rem', background: 'var(--bg-inset)' }}>
+            <div style={{ width: '64px', height: '64px', background: 'var(--bg-card)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
+              <Activity className="w-8 h-8" style={{ color: 'var(--accent-primary)', opacity: 0.8 }} />
+            </div>
+            <p className="empty-title" style={{ fontWeight: 600, fontSize: '1.25rem', color: 'var(--text-strong)', marginBottom: '0.5rem' }}>No logs found</p>
+            <p className="empty-desc" style={{ color: 'var(--text-muted)' }}>You haven't recorded any symptoms or notes for this timeframe. <br/>Your body's story starts here.</p>
           </div>
         ) : (
           filteredLogs.map((log) => (

@@ -5,6 +5,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import type { UserProfile, ThemeMode } from '../types'
 import { utcTodayIso, addUtcDays } from '../utils/calculator'
+import { useAppStore } from '../store'
 import logo from '../assets/favicon.png'
 import './OnboardingModal.css'
 
@@ -18,6 +19,7 @@ interface OnboardingModalProps {
 }
 
 export function OnboardingModal({ onComplete, onGuest, onImportProfile, onCancel, themeMode }: OnboardingModalProps) {
+  const store = useAppStore()
   const [step, setStep] = useState(1)
   
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -73,10 +75,10 @@ export function OnboardingModal({ onComplete, onGuest, onImportProfile, onCancel
       if (parsed && parsed.userProfile) {
         onImportProfile(parsed)
       } else {
-        alert('Invalid data format. Could not find a valid user profile.')
+        store.addToast('Invalid data format. Could not find a valid user profile.', 'error')
       }
     } catch (err) {
-      alert('Failed to parse the backup file.')
+      store.addToast('Failed to parse the backup file.', 'error')
     }
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
