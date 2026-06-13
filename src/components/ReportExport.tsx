@@ -301,27 +301,54 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         </div>
 
         {!isPregnancyMode && cycles.length > 0 && (
-          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
-            <span className="report-config-label" style={{ display: 'block', marginBottom: '10px' }}>{t(lang, 'cycle_map')} Selection</span>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px' }}>
+              <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
+              <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)' }}>
+                {t(lang, 'cycle_map')} Selection
+              </span>
+            </div>
+            
+            <div style={{ 
+              display: 'flex', 
+              gap: '12px', 
+              overflowX: 'auto',
+              paddingBottom: '10px', /* space for scrollbar */
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'thin'
+            }}>
               {cycles.map(c => {
                 const isSelected = selectedCycleIsos.includes(c.startIso);
-                let label = `Started ${formatUtcDateLabel(c.startIso)}`;
-                if (c.startIso === currentCycleStart) label = `Current (${formatUtcDateLabel(c.startIso)})`;
+                let title = c.startIso === currentCycleStart ? 'Current Cycle' : 'Past Cycle';
+                let dateStr = formatUtcDateLabel(c.startIso);
+                
                 return (
                   <button 
                     key={c.startIso}
                     onClick={() => toggleCycle(c.startIso)}
-                    className="legend-badge"
                     style={{
-                      background: isSelected ? 'var(--primary)' : 'var(--panel-bg)',
-                      color: isSelected ? '#fff' : 'var(--text-main)',
-                      borderColor: isSelected ? 'var(--primary)' : 'var(--border-subtle)',
+                      flexShrink: 0,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      justifyContent: 'center',
+                      background: isSelected ? 'var(--bg-inset)' : 'var(--panel-bg)',
+                      color: isSelected ? 'var(--text-strong)' : 'var(--text-main)',
+                      border: isSelected ? '2px solid var(--text-strong)' : '1px solid var(--border-subtle)',
                       cursor: 'pointer',
-                      transition: 'all 0.2s ease'
+                      transition: 'all 0.15s ease',
+                      padding: isSelected ? 'calc(0.75rem - 1px) calc(1rem - 1px)' : '0.75rem 1rem',
+                      borderRadius: '12px',
+                      boxShadow: 'none',
+                      minWidth: '150px'
                     }}
                   >
-                    {label}
+                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.8, marginBottom: '4px' }}>
+                      {title}
+                    </span>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 700 }}>
+                      {dateStr}
+                    </span>
                   </button>
                 )
               })}

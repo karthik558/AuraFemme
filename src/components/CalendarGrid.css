@@ -24,8 +24,8 @@
 /* Header & Nav */
 .calendar-header {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  flex-direction: column-reverse;
+  gap: 1rem;
 }
 
 @media (min-width: 768px) {
@@ -67,21 +67,43 @@
 .calendar-nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  gap: 0.25rem;
+  background: var(--panel-bg);
+  padding: 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .calendar-nav {
+    width: auto;
+    justify-content: flex-end;
+  }
 }
 
 .calendar-month-label {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-strong);
   margin: 0;
-  min-width: 140px;
+  flex: 1;
   text-align: center;
+  letter-spacing: -0.02em;
+}
+
+@media (min-width: 768px) {
+  .calendar-month-label {
+    min-width: 140px;
+    flex: none;
+  }
 }
 
 .nav-btn {
-  background: var(--panel-bg);
-  border: 1px solid var(--border-subtle);
+  background: transparent;
+  border: none;
   color: var(--text-main);
   border-radius: 50%;
   width: 36px;
@@ -96,7 +118,6 @@
 .nav-btn:hover {
   background: var(--bg-inset);
   color: var(--text-strong);
-  transform: scale(1.05);
 }
 
 .btn-today {
@@ -104,6 +125,21 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-inset);
+  border: 1px solid transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-today:hover {
+  background: var(--panel-bg);
+  border-color: var(--border-subtle);
+  color: var(--text-strong);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 /* Calendar Grid Layout */

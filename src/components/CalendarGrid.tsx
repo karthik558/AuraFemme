@@ -41,6 +41,12 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile }: Ca
   const goToToday = () => {
     const today = new Date()
     setCurrentMonth(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1)))
+    
+    const todayIso = toUtcIso(today)
+    const todayInfo = days.find(d => d.dateIso === todayIso)
+    if (todayInfo) {
+      onSelectDay(todayInfo)
+    }
   }
 
   const calendarCells = useMemo(() => {
