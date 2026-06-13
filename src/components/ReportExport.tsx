@@ -298,13 +298,12 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               <span className="toggle-slider"></span>
             </div>
           </label>
-        </div>
 
         {!isPregnancyMode && cycles.length > 0 && (
-          <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+          <div className="report-config-item" style={{ gridColumn: '1 / -1', background: 'rgba(236, 72, 153, 0.05)', borderColor: 'rgba(236, 72, 153, 0.2)', display: 'block', padding: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px' }}>
               <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
-              <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)' }}>
+              <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--primary)' }}>
                 {t(lang, 'cycle_map')} Selection
               </span>
             </div>
@@ -355,6 +354,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             </div>
           </div>
         )}
+        </div>
       </div>
 
       {/* The Printable Document */}
