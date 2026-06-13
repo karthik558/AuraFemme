@@ -1,5 +1,5 @@
 .calendar-grid-section {
-  padding: 1.5rem;
+  padding: 1rem;
   background: var(--bg-panel);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -7,6 +7,12 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .calendar-grid-section {
+    padding: 1.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -126,7 +132,7 @@
 .calendar-days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 @media (min-width: 768px) {
@@ -138,10 +144,11 @@
 /* Day Cells */
 .calendar-day-cell {
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: auto;
+  min-height: 48px;
   background: var(--ring-bg, var(--panel-bg));
-  border-radius: 1rem;
-  padding: 0.5rem;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -154,7 +161,10 @@
 
 @media (min-width: 768px) {
   .calendar-day-cell {
+    border-radius: 1rem;
     padding: 0.75rem;
+    aspect-ratio: 1;
+    min-height: auto;
   }
 }
 
@@ -195,17 +205,23 @@
 
 .cell-top {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
 }
 
+@media (min-width: 768px) {
+  .cell-top {
+    justify-content: space-between;
+  }
+}
+
 .day-number-small {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-strong);
   background: var(--panel-bg);
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -229,15 +245,22 @@
 }
 
 .cycle-day-badge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: rgba(0,0,0,0.03);
-  padding: 0.15rem 0.35rem;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .cycle-day-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: rgba(0,0,0,0.03);
+    padding: 0.15rem 0.35rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
 }
 
 .calendar-day-cell.active .cycle-day-badge {
@@ -247,16 +270,28 @@
 
 .cell-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-end;
   min-height: 20px;
   width: 100%;
 }
 
+@media (min-width: 768px) {
+  .cell-content {
+    justify-content: space-between;
+  }
+}
+
 .day-phase-indicator {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .day-phase-indicator {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
 }
 
 .day-phase-text {
@@ -277,36 +312,66 @@
 .day-icons-small {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   flex-shrink: 0;
-  margin-left: 0.25rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .day-icons-small {
+    justify-content: flex-end;
+    margin-left: 0.25rem;
+    width: auto;
+  }
 }
 
 .day-icon-dot {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
 }
 
+@media (min-width: 768px) {
+  .day-icon-dot {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+.day-icon-star, .day-icon-drop {
+  width: 10px;
+  height: 10px;
+}
+
+@media (min-width: 768px) {
+  .day-icon-star, .day-icon-drop {
+    width: 14px;
+    height: 14px;
+  }
+}
+
 .day-icon-star {
-  width: 14px;
-  height: 14px;
   color: #fbbf24;
   filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
 }
 
 .day-icon-drop {
-  width: 14px;
-  height: 14px;
   color: #f43f5e;
   filter: drop-shadow(0 0 6px rgba(244, 63, 94, 0.6));
 }
 
 .day-icon-empty {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
+}
+
+@media (min-width: 768px) {
+  .day-icon-empty {
+    width: 6px;
+    height: 6px;
+  }
 }
 
 /* Phase Variables */

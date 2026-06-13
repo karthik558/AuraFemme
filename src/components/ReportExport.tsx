@@ -71,12 +71,15 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
   }, [days]);
 
   const currentCycleStart = metrics.cycleStartIso;
-  const [selectedCycleIso, setSelectedCycleIso] = useState<string>(currentCycleStart);
+  const [selectedCycleIsos, setSelectedCycleIsos] = useState<string[]>([currentCycleStart]);
 
-  const selectedCycleDays = useMemo(() => {
-    const cycle = cycles.find(c => c.startIso === selectedCycleIso);
-    return cycle ? cycle.days : (cycles.length > 0 ? cycles[cycles.length - 1].days : []);
-  }, [cycles, selectedCycleIso]);
+  const toggleCycle = (iso: string) => {
+    setSelectedCycleIsos(prev => 
+      prev.includes(iso) 
+        ? prev.filter(i => i !== iso)
+        : [...prev, iso]
+    );
+  };
 
   // Process logs
   const { totalLogs, frequentSymptoms, recentLogs } = useMemo(() => {
@@ -296,6 +299,35 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             </div>
           </label>
         </div>
+
+        {!isPregnancyMode && cycles.length > 0 && (
+          <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)' }}>
+            <span className="report-config-label" style={{ display: 'block', marginBottom: '10px' }}>{t(lang, 'cycle_map')} Selection</span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              {cycles.map(c => {
+                const isSelected = selectedCycleIsos.includes(c.startIso);
+                let label = `Started ${formatUtcDateLabel(c.startIso)}`;
+                if (c.startIso === currentCycleStart) label = `Current (${formatUtcDateLabel(c.startIso)})`;
+                return (
+                  <button 
+                    key={c.startIso}
+                    onClick={() => toggleCycle(c.startIso)}
+                    className="legend-badge"
+                    style={{
+                      background: isSelected ? 'var(--primary)' : 'var(--panel-bg)',
+                      color: isSelected ? '#fff' : 'var(--text-main)',
+                      borderColor: isSelected ? 'var(--primary)' : 'var(--border-subtle)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* The Printable Document */}
@@ -383,50 +415,44 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         </div>
 
         {/* Calendar Grid Visual */}
-        {!isPregnancyMode && selectedCycleDays && selectedCycleDays.length > 0 && (
+        {!isPregnancyMode && selectedCycleIsos.length > 0 && (
           <div style={{ marginBottom: '40px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '15px' }}>
-              <h2 style={{ fontSize: '18px', margin: 0, color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
-                {t(lang, 'cycle_map')}
-              </h2>
-              {cycles.length > 1 && (
-                <select 
-                  className="report-lang-select" 
-                  value={selectedCycleIso} 
-                  onChange={(e) => setSelectedCycleIso(e.target.value)}
-                  style={{ background: '#f9fafb', fontSize: '13px' }}
-                >
-                  {cycles.map((c, i) => {
-                    let label = `Cycle starting ${formatUtcDateLabel(c.startIso)}`;
-                    if (c.startIso === currentCycleStart) label = `Current Cycle (${formatUtcDateLabel(c.startIso)})`;
-                    return <option key={c.startIso} value={c.startIso}>{label}</option>;
-                  })}
-                </select>
-              )}
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-              {selectedCycleDays.map((day) => {
-                let bg = '#e5e7eb'; // default grey
-                let color = '#4b5563';
-                if (day.phase === 'menstruation') { bg = '#ffe4e6'; color = '#e11d48'; }
-                else if (day.phase === 'follicular') { bg = '#cffafe'; color = '#0891b2'; }
-                else if (day.phase === 'ovulation') { bg = '#fef3c7'; color = '#d97706'; }
-                else if (day.phase === 'luteal') { bg = '#fae8ff'; color = '#c026d3'; }
+            <h2 style={{ fontSize: '18px', margin: '0 0 15px 0', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
+              {t(lang, 'cycle_map')}
+            </h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {cycles.filter(c => selectedCycleIsos.includes(c.startIso)).map(c => (
+                <div key={c.startIso}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#666', margin: '0 0 8px 0' }}>
+                    {c.startIso === currentCycleStart ? 'Current Cycle' : `Cycle starting ${formatUtcDateLabel(c.startIso)}`}
+                  </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                    {c.days.map((day) => {
+                      let bg = '#e5e7eb'; // default grey
+                      let color = '#4b5563';
+                      if (day.phase === 'menstruation') { bg = '#ffe4e6'; color = '#e11d48'; }
+                      else if (day.phase === 'follicular') { bg = '#cffafe'; color = '#0891b2'; }
+                      else if (day.phase === 'ovulation') { bg = '#fef3c7'; color = '#d97706'; }
+                      else if (day.phase === 'luteal') { bg = '#fae8ff'; color = '#c026d3'; }
 
-                return (
-                  <div key={day.cycleDay} style={{
-                    width: '32px', height: '32px', borderRadius: '6px', 
-                    background: bg, color: color, 
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '12px', fontWeight: 600,
-                    border: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `2px solid ${color}` : '1px solid transparent',
-                    boxShadow: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `0 0 0 2px white, 0 0 0 4px ${color}` : 'none'
-                  }}>
-                    {parseInt(day.dateIso.split('-')[2], 10)}
+                      return (
+                        <div key={day.cycleDay} style={{
+                          width: '32px', height: '32px', borderRadius: '6px', 
+                          background: bg, color: color, 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: '12px', fontWeight: 600,
+                          border: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `2px solid ${color}` : '1px solid transparent',
+                          boxShadow: metrics.cycleDay === day.cycleDay && day.dateIso === metrics.todayIso ? `0 0 0 2px white, 0 0 0 4px ${color}` : 'none'
+                        }}>
+                          {parseInt(day.dateIso.split('-')[2], 10)}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
             <div style={{ display: 'flex', gap: '15px', marginTop: '15px', fontSize: '11px', color: '#666', fontWeight: 500 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ffe4e6' }}></div> {t(lang, 'bleeding')}</span>
