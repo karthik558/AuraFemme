@@ -105,19 +105,15 @@ export function KnowledgeBase({ onArticleChange }: { onArticleChange?: (isOpen: 
         ref={topicRef}
         className="article-view-wrapper"
       >
-        {/* Sticky Header with Progress */}
-        <div className="article-sticky-header">
-          <div className="article-progress-track">
-            <div className="article-progress-bar" style={{ width: `${scrollProgress}%` }} />
-          </div>
-          <div className="article-sticky-nav">
-            <button className="article-glass-back-btn" onClick={() => handleSetArticle(null)}>
-              <ArrowLeft className="w-4 h-4" />
-              <span>Library</span>
-            </button>
-            <span className="article-sticky-title hide-on-mobile">{activeTopicData.title}</span>
-          </div>
+        {/* Fixed Progress Bar at the very top of window */}
+        <div className="article-global-progress">
+          <div className="article-progress-bar" style={{ width: `${scrollProgress}%` }} />
         </div>
+
+        {/* Simple Back Button */}
+        <button className="article-simple-back-btn" onClick={() => handleSetArticle(null)} aria-label="Back to Library">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
 
         <div className="article-reading-container">
           <div className="article-hero-premium">
