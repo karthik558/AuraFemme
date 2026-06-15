@@ -271,6 +271,7 @@ export default function SystemAnatomyTracker({ metrics, userProfile, gestational
                   <div style={{ flex: 1, height: '4px', background: 'var(--bg-panel)', borderRadius: '2px', overflow: 'hidden' }}>
                     <div style={{ width: `${sys.intensity}%`, height: '100%', background: sys.color, borderRadius: '2px' }} />
                   </div>
+                  <span style={{ fontSize: '0.65rem', color: sys.color, fontWeight: 700, minWidth: '24px', textAlign: 'right' }}>{sys.intensity}%</span>
                 </div>
               </div>
             </div>
