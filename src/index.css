@@ -18,6 +18,9 @@
   --accent-hover: #8f1320;
   
   --border-subtle: rgba(197, 34, 51, 0.1);
+
+  --bg-main: #fffdfd;
+  --bg-inset: rgba(0, 0, 0, 0.04);
   
   /* Shared Variables */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -51,6 +54,9 @@
   --accent-hover: #ff8792;
   
   --border-subtle: rgba(255, 255, 255, 0.08);
+
+  --bg-main: #140d0e;
+  --bg-inset: rgba(255, 255, 255, 0.04);
 }
 
 :root[data-app-mode='pregnancy'] {
@@ -62,6 +68,9 @@
   --text-main: #2e1065;
   --text-strong: #1e0a45;
   --border-subtle: rgba(139, 92, 246, 0.15);
+
+  --bg-main: #faf5ff;
+  --bg-inset: rgba(139, 92, 246, 0.04);
 }
 
 :root[data-theme='dark'][data-app-mode='pregnancy'] {
@@ -73,6 +82,9 @@
   --text-main: #ede9fe;
   --text-strong: #f5f3ff;
   --border-subtle: rgba(167, 139, 250, 0.1);
+
+  --bg-main: #120b22;
+  --bg-inset: rgba(255, 255, 255, 0.04);
 }
 
 /* Base Styles */

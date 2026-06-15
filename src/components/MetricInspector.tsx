@@ -71,8 +71,8 @@ export function MetricInspector({ isOpen, onClose, metricType, metrics, qualityS
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '1rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '0.5rem', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-              <Info className="w-5 h-5" style={{ color: '#10b981', flexShrink: 0 }} />
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '1rem', background: 'var(--accent-soft)', borderRadius: '0.75rem', border: '1px solid var(--border-subtle)' }}>
+              <Info className="w-5 h-5" style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
                 Your model assumes a fixed luteal phase. If you log consistent basal body temperatures (BBT) showing a temperature shift earlier or later, the algorithm will adapt this constant in future cycles.
               </p>
@@ -107,8 +107,8 @@ export function MetricInspector({ isOpen, onClose, metricType, metrics, qualityS
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '0.5rem', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-              <Info className="w-5 h-5" style={{ color: '#f59e0b', flexShrink: 0 }} />
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start', padding: '1rem', background: 'var(--accent-soft)', borderRadius: '0.75rem', border: '1px solid var(--border-subtle)' }}>
+              <Info className="w-5 h-5" style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
               <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
                 Currently, you are on <strong>Day {metrics.cycleDay}</strong>. The countdown is calculated as the difference between today and the expected next period.
               </p>
