@@ -125,8 +125,7 @@ interface AppProps {
 
 function App({ onGoHome }: AppProps = {}) {
   const appRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef<number>(0);
-  const touchStartY = useRef<number>(0);
+
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isArticleOpen, setIsArticleOpen] = useState(false)
@@ -423,45 +422,7 @@ function App({ onGoHome }: AppProps = {}) {
   }, [calendarDays, selectedDay])
 
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const deltaX = touchStartX.current - touchEndX;
-    const deltaY = touchStartY.current - touchEndY;
-    
-    if (Math.abs(deltaX) > 60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-      const tabOrder: TabKey[] = (Object.keys(tabCopy) as TabKey[]).filter(tab => !(userProfile?.appMode === 'pregnancy' && tab === 'safety'));
-      const currentIndex = tabOrder.indexOf(activeTab);
-      if (deltaX > 0 && currentIndex < tabOrder.length - 1) {
-        setActiveTab(tabOrder[currentIndex + 1]);
-      } else if (deltaX < 0 && currentIndex > 0) {
-        setActiveTab(tabOrder[currentIndex - 1]);
-      }
-    }
-  };
-
-  // New functionality for mobile nav: swipe to switch tabs on the bar itself
-  let navTouchStartX = 0;
-  const handleNavTouchStart = (e: React.TouchEvent) => {
-    navTouchStartX = e.touches[0].clientX;
-  };
-  const handleNavTouchEnd = (e: React.TouchEvent) => {
-    const navTouchEndX = e.changedTouches[0].clientX;
-    const delta = navTouchStartX - navTouchEndX;
-    if (Math.abs(delta) > 40) {
-      const currentIndex = visibleTabs.indexOf(activeTab);
-      if (delta > 0 && currentIndex < visibleTabs.length - 1) {
-        setActiveTab(visibleTabs[currentIndex + 1]);
-      } else if (delta < 0 && currentIndex > 0) {
-        setActiveTab(visibleTabs[currentIndex - 1]);
-      }
-    }
-  };
 
   // Long press functionality update: long press a tab for quick innovative actions
   let longPressTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -788,11 +749,7 @@ function App({ onGoHome }: AppProps = {}) {
             </div>
           </aside>
 
-          <main 
-            className="main-content"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
+          <main className="main-content">
             <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>Loading module...</div>}>
               <div>
                 <div className="tab-panel-container">
@@ -1004,11 +961,7 @@ function App({ onGoHome }: AppProps = {}) {
         </footer>
       </div>
 
-      <nav 
-        className={`mobile-bottom-nav ${!isNavVisible ? 'nav-hidden' : ''}`}
-        onTouchStart={handleNavTouchStart}
-        onTouchEnd={handleNavTouchEnd}
-      >
+      <nav className={`mobile-bottom-nav ${!isNavVisible ? 'nav-hidden' : ''}`}>
         {visibleTabs.map((tab) => {
           const isActive = activeTab === tab;
           return (
