@@ -1054,7 +1054,8 @@ function SliderField({ label, helper, value, min, max, onChange }: { label: stri
         />
       </div>
       <div className="slider-range-labels">
-        <span>{min} <span className="slider-range-unit">{helper}</span></span>
+        <span>{min}</span>
+        <span className="slider-range-unit">{helper}</span>
         <span>{max}</span>
       </div>
     </label>
