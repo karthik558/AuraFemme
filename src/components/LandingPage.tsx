@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import HormoneWave3D from './HormoneWave3D';
+import DataCore3D from './DataCore3D';
 import { CinematicPreloader } from './CinematicPreloader';
 import { useAppStore } from '../store';
 import auraLogo from '../assets/icon-color.png';
@@ -289,13 +289,13 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
             <div className="glass-card panel" style={{ padding: 0, overflow: 'hidden' }}>
               <div className="panel-header" style={{ padding: '1.5rem 1.5rem 0' }}>
                 <div>
-                  <p className="panel-label">Live Hormone Visualization</p>
-                  <h3 className="panel-title" style={{ fontSize: '1.25rem', marginTop: '0.25rem' }}>Interactive 3D Cycle Map</h3>
+                  <p className="panel-label">Local-First Architecture</p>
+                  <h3 className="panel-title" style={{ fontSize: '1.25rem', marginTop: '0.25rem' }}>Zero-Knowledge Data Core</h3>
                 </div>
-                <div className="metric-icon"><Heart size={20} /></div>
+                <div className="metric-icon"><ShieldAlert size={20} /></div>
               </div>
               <div className="lp-3d-float" style={{ width: '100%', height: '350px', padding: '1rem' }}>
-                <HormoneWave3D day={14} mode="cycle" style={{ width: '100%', height: '100%' }} />
+                <DataCore3D style={{ width: '100%', height: '100%' }} />
               </div>
             </div>
 
