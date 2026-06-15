@@ -1,0 +1,166 @@
+/* DateTriplet.css - Custom Calendar Picker */
+
+.date-picker-container {
+  position: relative;
+  width: 100%;
+}
+
+.date-picker-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-strong);
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  margin-top: 0.25rem;
+}
+
+:root[data-theme='dark'] .date-picker-trigger {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.date-picker-trigger:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+:root[data-theme='dark'] .date-picker-trigger:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.date-picker-trigger.active {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.date-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: transparent;
+}
+
+.date-picker-modal {
+  width: 280px;
+  padding: 1.25rem;
+  border-radius: var(--radius-xl);
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--panel-shadow);
+  animation: fadeInDown 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+:root[data-theme='dark'] .date-picker-modal {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.dp-month-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-strong);
+}
+
+.dp-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.dp-nav-btn:hover {
+  background: var(--bg-inset);
+  color: var(--text-main);
+}
+
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.dp-weekday {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.dp-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dp-cell.padding {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dp-cell:hover:not(.padding):not(.selected) {
+  background: var(--accent-soft);
+  color: var(--accent-primary);
+}
+
+.dp-cell.today:not(.selected) {
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.dp-cell.selected {
+  background: var(--accent-primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px var(--accent-soft);
+  font-weight: 700;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
