@@ -596,7 +596,7 @@
 .theme-btn.active {
   background: var(--accent-primary);
   color: white;
-  box-shadow: 0 10px 20px rgba(197, 34, 51, 0.18);
+  box-shadow: 0 4px 15px var(--accent-soft);
 }
 
 /* Custom Select & Date Pickers */

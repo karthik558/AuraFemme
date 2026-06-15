@@ -167,11 +167,11 @@ html, body {
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-full);
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all var(--transition-normal);
   border: none;
   outline: none;
 }
@@ -179,13 +179,13 @@ html, body {
 .btn-primary {
   background: var(--accent-primary);
   color: white;
-  box-shadow: 0 4px 14px rgba(197, 34, 51, 0.3);
+  box-shadow: 0 4px 15px var(--accent-soft);
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(197, 34, 51, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--accent-soft);
 }
 
 .btn-outline {
@@ -198,6 +198,30 @@ html, body {
   background: var(--accent-soft);
   border-color: var(--accent-primary);
   color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--accent-soft);
+}
+
+.btn-icon-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-icon-sm:hover {
+  background: var(--panel-bg);
+  border-color: var(--border-subtle);
+  color: var(--accent-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--accent-soft);
 }
 
 /* Form Elements */

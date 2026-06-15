@@ -320,7 +320,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <span className="kpi-label">Ovulation</span>
                 </div>
                 {onInspectMetric && (
-                  <button onClick={() => onInspectMetric('ovulation')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                  <button className="btn-icon-sm" onClick={() => onInspectMetric('ovulation')} aria-label="Inspect ovulation">
                     <Info className="w-4 h-4" />
                   </button>
                 )}
@@ -336,7 +336,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <span className="kpi-label">Next Period Due</span>
                 </div>
                 {onInspectMetric && (
-                  <button onClick={() => onInspectMetric('period')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                  <button className="btn-icon-sm" onClick={() => onInspectMetric('period')} aria-label="Inspect period">
                     <Info className="w-4 h-4" />
                   </button>
                 )}
@@ -352,7 +352,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                   <span className="kpi-label">Data Quality</span>
                 </div>
                 {onInspectMetric && (
-                  <button onClick={() => onInspectMetric('quality')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>
+                  <button className="btn-icon-sm" onClick={() => onInspectMetric('quality')} aria-label="Inspect data quality">
                     <Info className="w-4 h-4" />
                   </button>
                 )}
@@ -643,7 +643,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           <div className="chart-wrapper" style={{ minHeight: '350px' }}>
             <ResponsiveContainer width="100%" height={350}>
               <AreaChart 
-                data={activeHormoneData} 
+                data={activeHormoneData as any[]} 
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
                 onMouseMove={(e: any) => {
                   if (e.activePayload && e.activePayload.length) {
