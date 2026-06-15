@@ -257,23 +257,30 @@ function RangeField({
   unit: string
   onChange: (value: number) => void
 }) {
+  const percent = ((value - min) / (max - min)) * 100;
   return (
     <label className="control-field">
       <div className="range-header">
         <span className="control-label">{label}</span>
-        <span className="range-value">
+        <span className="slider-value-badge">
           {value} {unit}
         </span>
       </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        onChange={(event) => onChange(clampNumber(Number(event.target.value), min, max))}
-      />
-      <div className="range-footer">
-        <span>{min}</span>
+      <div className="slider-track-wrapper">
+        <div className="slider-track-bg">
+          <div className="slider-track-fill" style={{ width: `${percent}%` }} />
+        </div>
+        <input
+          type="range"
+          className="slider-input"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(event) => onChange(clampNumber(Number(event.target.value), min, max))}
+        />
+      </div>
+      <div className="slider-range-labels">
+        <span>{min} {unit}</span>
         <span>{max}</span>
       </div>
     </label>

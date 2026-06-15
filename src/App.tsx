@@ -1029,15 +1029,29 @@ function InfoTile({ label, value }: { label: string; value: string }) {
 }
 
 function SliderField({ label, helper, value, min, max, onChange }: { label: string; helper: string; value: number; min: number; max: number; onChange: (val: number) => void }) {
+  const percent = ((value - min) / (max - min)) * 100;
   return (
     <label className="field-group">
       <div className="field-header">
         <span className="field-label">{label}</span>
-        <span className="field-helper">{helper}</span>
+        <span className="slider-value-badge">{value}</span>
       </div>
-      <div className="slider-wrapper">
-        <input type="range" min={min} max={max} value={value} onChange={(e) => onChange(clampNumber(Number(e.target.value), min, max))} />
-        <span className="slider-value">{value}</span>
+      <div className="slider-track-wrapper">
+        <div className="slider-track-bg">
+          <div className="slider-track-fill" style={{ width: `${percent}%` }} />
+        </div>
+        <input
+          type="range"
+          min={min}
+          max={max}
+          value={value}
+          onChange={(e) => onChange(clampNumber(Number(e.target.value), min, max))}
+          className="slider-input"
+        />
+      </div>
+      <div className="slider-range-labels">
+        <span>{min} <span className="slider-range-unit">{helper}</span></span>
+        <span>{max}</span>
       </div>
     </label>
   )

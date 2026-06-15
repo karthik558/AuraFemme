@@ -284,13 +284,23 @@ export function OnboardingModal({ onComplete, onGuest, onImportProfile, onCancel
                       <Activity size={18} className="bio-icon text-muted" />
                       <label>Average Cycle Length <span className="bio-value">{cycleLength} days</span></label>
                     </div>
-                    <input 
-                      type="range" 
-                      min="21" 
-                      max="35" 
-                      value={cycleLength}
-                      onChange={e => setCycleLength(Number(e.target.value))}
-                    />
+                    <div className="slider-track-wrapper">
+                      <div className="slider-track-bg">
+                        <div className="slider-track-fill" style={{ width: `${((cycleLength - 21) / (35 - 21)) * 100}%` }} />
+                      </div>
+                      <input 
+                        type="range" 
+                        className="slider-input"
+                        min="21" 
+                        max="35" 
+                        value={cycleLength}
+                        onChange={e => setCycleLength(Number(e.target.value))}
+                      />
+                    </div>
+                    <div className="slider-range-labels">
+                      <span>21 days</span>
+                      <span>35</span>
+                    </div>
                   </div>
 
                   <div className="bio-field">
@@ -298,13 +308,23 @@ export function OnboardingModal({ onComplete, onGuest, onImportProfile, onCancel
                       <Droplet size={18} className="bio-icon text-muted" style={{ color: 'var(--tone-danger)' }} />
                       <label>Average Bleeding Duration <span className="bio-value">{bleedingDuration} days</span></label>
                     </div>
-                    <input 
-                      type="range" 
-                      min="2" 
-                      max="10" 
-                      value={bleedingDuration}
-                      onChange={e => setBleedingDuration(Number(e.target.value))}
-                    />
+                    <div className="slider-track-wrapper">
+                      <div className="slider-track-bg">
+                        <div className="slider-track-fill" style={{ width: `${((bleedingDuration - 2) / (10 - 2)) * 100}%` }} />
+                      </div>
+                      <input 
+                        type="range" 
+                        className="slider-input"
+                        min="2" 
+                        max="10" 
+                        value={bleedingDuration}
+                        onChange={e => setBleedingDuration(Number(e.target.value))}
+                      />
+                    </div>
+                    <div className="slider-range-labels">
+                      <span>2 days</span>
+                      <span>10</span>
+                    </div>
                   </div>
                 </>
               )}
