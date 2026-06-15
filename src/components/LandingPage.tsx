@@ -21,6 +21,7 @@ import DataCore3D from './DataCore3D';
 import { CinematicPreloader } from './CinematicPreloader';
 import { useAppStore } from '../store';
 import auraLogo from '../assets/icon-color.png';
+import pregnancyLogo from '../assets/icon-color-purple.png';
 import './LandingPage.css';
 
 interface LandingPageProps {
@@ -121,7 +122,7 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
         <header className="app-header">
           <div className="header-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row' }}>
             <div className="header-brand" style={{ cursor: 'default' }}>
-              <img src={auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
+              <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
             </div>
 
             <div className="header-actions">

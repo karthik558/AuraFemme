@@ -1,5 +1,7 @@
 import auraLogo from './assets/icon-color.png'
 import pregnancyLogo from './assets/icon-color-purple.png'
+import faviconRed from './assets/favicon.png'
+import faviconBlue from './assets/favicon-gradient-blue.png'
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import {
@@ -177,6 +179,13 @@ function App({ onGoHome }: AppProps = {}) {
     lastIntercourseDate, setLastIntercourseDate,
     pastPeriodDates, setPastPeriodDates
   } = store
+  
+  useEffect(() => {
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    if (favicon) {
+      favicon.href = userProfile?.appMode === 'pregnancy' ? faviconBlue : faviconRed;
+    }
+  }, [userProfile?.appMode]);
   
   const [draftLastPeriodDate, setDraftLastPeriodDate] = useState(lastPeriodDate)
   const [draftCycleLength, setDraftCycleLength] = useState(cycleLength)

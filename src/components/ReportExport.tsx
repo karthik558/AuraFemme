@@ -5,7 +5,7 @@ import { jsPDF } from 'jspdf';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, AreaChart, Area, ReferenceLine } from 'recharts';
 import type { CaseStudyResult, DailyLog, UserProfile, CycleDayInfo } from '../types';
 import { buildPregnancyMetrics, formatUtcDateLabel } from '../utils/calculator';
-import faviconGradient from '../assets/favicon-gradient.png';
+import auraLogo from '../assets/icon-color.png';
 import pregnancyLogo from '../assets/icon-color-purple.png';
 import { useAppStore } from '../store';
 import { t, languageNames } from '../utils/translations';
@@ -381,7 +381,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img src={isPregnancyMode ? pregnancyLogo : faviconGradient} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
+            <img src={isPregnancyMode ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
             <div>
               <h1 style={{ margin: 0, fontSize: '24px', color: '#1a1a1a' }}>
                 {isPregnancyMode ? t(lang, 'clinical_pregnancy_report') : t(lang, 'clinical_cycle_report')}
