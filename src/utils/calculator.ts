@@ -66,19 +66,19 @@ export function diffUtcDays(laterIso: string, earlierIso: string): number {
 }
 
 export function formatUtcDateLabel(iso: string): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-GB', {
     timeZone: 'UTC',
-    month: 'short',
     day: 'numeric',
-    weekday: 'short',
+    month: 'short',
+    year: 'numeric'
   }).format(parseUtcIso(iso))
 }
 
 export function formatUtcShortDate(iso: string): string {
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('en-GB', {
     timeZone: 'UTC',
-    month: 'short',
     day: 'numeric',
+    month: 'short',
   }).format(parseUtcIso(iso))
 }
 
