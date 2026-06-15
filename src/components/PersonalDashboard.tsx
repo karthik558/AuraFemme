@@ -204,52 +204,59 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
       ref={containerRef}
       className="personal-dashboard-container"
     >
-      <div className="dashboard-header-premium">
-        <h2 className="dashboard-greeting-premium">
-          {greeting}
-        </h2>
-        <p className="dashboard-subtitle-premium">Here's a look at your cycle insights today.</p>
-      </div>
-
-      <div className="bio-fact-card liquid-aurora" style={{
-        position: 'relative',
-        borderRadius: '1.5rem',
-        padding: '2rem',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        background: 'var(--bg-panel)',
-        border: '1px solid var(--border-subtle)',
-        overflow: 'hidden',
-        boxShadow: '0 12px 40px rgba(0,0,0,0.04)'
-      }}>
-        {/* Organic background blobs */}
-        <div style={{
-          position: 'absolute', top: '-50%', left: '-10%', width: '300px', height: '300px',
-          background: 'var(--accent-primary)', opacity: 0.08, filter: 'blur(50px)', borderRadius: '50%',
-          pointerEvents: 'none'
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-50%', right: '-10%', width: '250px', height: '250px',
-          background: 'var(--text-main)', opacity: 0.05, filter: 'blur(50px)', borderRadius: '50%',
-          pointerEvents: 'none'
-        }} />
-        
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
-              <div style={{ background: 'var(--accent-soft)', padding: '0.4rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Dna className="w-4 h-4" style={{ color: 'var(--accent-primary)', animation: 'biologicalPulse 3s infinite' }} />
-              </div>
-              <h4 style={{ margin: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)', fontWeight: 800 }}>
-                Biological Insight
-              </h4>
-            </div>
-            <p style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-strong)', lineHeight: 1.6, fontWeight: 500, fontStyle: 'italic', letterSpacing: '-0.01em' }}>
-              "{getBiologicalFact(isPregnancyMode, metrics.cycleDay, pMetrics?.gestationalWeeks || 0, metrics.currentPhase)}"
-            </p>
+      <div className="dashboard-top-section" style={{ display: 'flex', gap: '2rem', alignItems: 'stretch', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column' }}>
+          <div className="dashboard-header-premium" style={{ marginBottom: '1.5rem' }}>
+            <h2 className="dashboard-greeting-premium">
+              {greeting}
+            </h2>
+            <p className="dashboard-subtitle-premium">Here's a look at your cycle insights today.</p>
           </div>
+
+          <div className="bio-fact-card liquid-aurora" style={{
+            position: 'relative',
+            borderRadius: '1.5rem',
+            padding: '2rem',
+            marginBottom: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            background: 'var(--bg-panel)',
+            border: '1px solid var(--border-subtle)',
+            overflow: 'hidden',
+            boxShadow: '0 12px 40px rgba(0,0,0,0.04)',
+            flex: 1
+          }}>
+            {/* Organic background blobs */}
+            <div style={{
+              position: 'absolute', top: '-50%', left: '-10%', width: '300px', height: '300px',
+              background: 'var(--accent-primary)', opacity: 0.08, filter: 'blur(50px)', borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+            
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.85rem' }}>
+                <div style={{ background: 'var(--accent-soft)', padding: '0.4rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Dna className="w-4 h-4" style={{ color: 'var(--accent-primary)', animation: 'biologicalPulse 3s infinite' }} />
+                </div>
+                <h4 style={{ margin: 0, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--text-muted)', fontWeight: 800 }}>
+                  Biological Insight
+                </h4>
+              </div>
+              <p style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-strong)', lineHeight: 1.6, fontWeight: 500, fontStyle: 'italic', letterSpacing: '-0.01em', maxWidth: '700px' }}>
+                "{getBiologicalFact(isPregnancyMode, metrics.cycleDay, pMetrics?.gestationalWeeks || 0, metrics.currentPhase)}"
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="dashboard-hero-image hide-on-mobile" style={{ flex: '1 1 300px', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+           <div style={{
+             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px',
+             background: 'var(--accent-primary)', opacity: 0.15, filter: 'blur(80px)', borderRadius: '50%',
+             pointerEvents: 'none'
+           }} />
+           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 40px var(--accent-soft))', position: 'relative', zIndex: 1 }} />
         </div>
       </div>
 
@@ -367,7 +374,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         )}
       </div>
 
-      <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+      <div className="dashboard-content dashboard-3col-row" style={{ marginTop: '1.5rem' }}>
         {userProfile?.appMode === 'pregnancy' ? (
           <>
             <div className="phase-summary highlight" style={{ background: 'var(--accent-soft)', borderColor: 'var(--border-subtle)' }}>
@@ -410,48 +417,43 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             </div>
           </>
         ) : (
-          <div className="phase-summary highlight">
-            <p className="panel-label">Phase summary</p>
-            <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
-            <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
-              <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
-              <span className="badge">Ovulation day {metrics.ovulationDay}</span>
-              <span className="badge">Cycle length {metrics.cycleLength}</span>
+          <>
+            <div className="phase-summary highlight">
+              <p className="panel-label">Phase summary</p>
+              <h3 className="panel-title" style={{ fontSize: '1.25rem' }}>{metrics.currentPhaseLabel}</h3>
+              <p className="metric-helper">The current cycle anchor has been projected using UTC math to avoid locale shifts. The dashboard now reads the active cycle, fertile span, and period forecast as a unified model.</p>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1rem' }}>
+                <span className="badge">Fertile starts day {metrics.fertileWindowStart}</span>
+                <span className="badge">Ovulation day {metrics.ovulationDay}</span>
+                <span className="badge">Cycle length {metrics.cycleLength}</span>
+              </div>
             </div>
-          </div>
-        )}
 
-        {!isPregnancyMode && (
-          <div className="phase-summary">
-            <p className="panel-label">Phase split</p>
-            <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem', display: 'flex', flexDirection: 'column' }}>
-              {reportPhaseSplit.map((segment) => (
-                <div key={segment.label}>
-                  <div className="progress-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span className="field-label" style={{ fontSize: '0.85rem', fontWeight: 600 }}>{segment.label}</span>
-                    <span className="field-helper" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{segment.value} days</span>
+            <div className="phase-summary">
+              <p className="panel-label">Phase split</p>
+              <div className="progress-container" style={{ marginTop: '1rem', gap: '1rem', display: 'flex', flexDirection: 'column' }}>
+                {reportPhaseSplit.map((segment) => (
+                  <div key={segment.label}>
+                    <div className="progress-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span className="field-label" style={{ fontSize: '0.85rem', fontWeight: 600 }}>{segment.label}</span>
+                      <span className="field-helper" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{segment.value} days</span>
+                    </div>
+                    <div className="progress-track" style={{ marginTop: '0.35rem', background: 'var(--bg-inset)', height: '6px', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div className={`progress-bar ${segment.tone}`} style={{ height: '100%', width: `${Math.max(8, (segment.value / metrics.cycleLength) * 100)}%` }} />
+                    </div>
                   </div>
-                  <div className="progress-track" style={{ marginTop: '0.35rem', background: 'var(--bg-inset)', height: '6px', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div className={`progress-bar ${segment.tone}`} style={{ height: '100%', width: `${Math.max(8, (segment.value / metrics.cycleLength) * 100)}%` }} />
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
 
-      {!isPregnancyMode && (
-        <div className="dashboard-content" style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: '1fr', marginTop: '1.5rem' }}>
-          <div className="phase-summary highlight">
-            <p className="panel-label">Goal Strategy</p>
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
-              <h3 className="panel-title" style={{ fontSize: '1.25rem', margin: 0 }}>{goal === 'conceive' ? 'Conception Planning' : goal === 'avoid' ? 'Pregnancy Prevention' : 'Neutral Tracking'}</h3>
-            </div>
+            <div className="phase-summary highlight">
+              <p className="panel-label">Goal Strategy</p>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.25rem' }}>
+                <Target className="w-5 h-5 text-accent-primary" style={{ color: 'var(--accent-primary)' }} />
+                <h3 className="panel-title" style={{ fontSize: '1.25rem', margin: 0 }}>{goal === 'conceive' ? 'Conception Planning' : goal === 'avoid' ? 'Pregnancy Prevention' : 'Neutral Tracking'}</h3>
+              </div>
             {goal === 'conceive' && (
-              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Intercourse Timing</p>
                   <p className="metric-helper" style={{ margin: 0 }}>Target intercourse every 1-2 days during the 5-day fertile window leading up to peak ovulation day ({metrics.ovulationDay}) for maximum probability. 
@@ -473,7 +475,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               </div>
             )}
             {goal === 'avoid' && (
-              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Strict Abstinence Window</p>
                   <p className="metric-helper" style={{ margin: 0 }}>Sperm can survive up to 5 days in fertile cervical mucus. Use primary barriers or abstain strictly from day {Math.max(1, metrics.fertileWindowStart - 1)} through day {metrics.fertileWindowEnd + 1}.
@@ -495,7 +497,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               </div>
             )}
             {goal === 'track' && (
-              <div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div>
                   <p className="field-label" style={{ fontWeight: 700, marginBottom: '0.25rem', color: 'var(--text-strong)' }}>Baseline Mapping</p>
                   <p className="metric-helper" style={{ margin: 0 }}>Consistent daily logging of symptoms, bleeding, and mood helps the algorithm understand your unique hormonal baseline.</p>
@@ -506,9 +508,10 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      )}
+            </div>
+          </>
+        )}
+      </div>
 
       <div className="dashboard-grid">
         {/* Cycle History Chart vs Fetal Growth Chart */}
@@ -614,7 +617,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         </div>
 
         {/* Today's Anatomy & Systems */}
-        <div className="chart-card chart-card-full">
+        <div className="chart-card">
           <div className="chart-header">
             <div>
               <h3 className="chart-title">Anatomy & Systems Tracker</h3>
@@ -622,7 +625,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             </div>
             <Activity className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
-          <div className="chart-wrapper" style={{ padding: '0 1rem' }}>
+          <div className="chart-wrapper" style={{ padding: '0 1rem', height: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
             <SystemAnatomyTracker 
               metrics={metrics}
               userProfile={userProfile}
