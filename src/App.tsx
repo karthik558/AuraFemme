@@ -129,19 +129,28 @@ function App({ onGoHome }: AppProps = {}) {
   const [isCreatingProfile, setIsCreatingProfile] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isArticleOpen, setIsArticleOpen] = useState(false)
-  const [isNavVisible, setIsNavVisible] = useState(true)
+  const mobileNavRef = useRef<HTMLElement>(null);
   const [inspectorMetric, setInspectorMetric] = useState<'ovulation' | 'period' | 'quality' | 'phase' | null>(null);
   const lastScrollY = useRef(0)
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setIsNavVisible(false)
-      } else if (currentScrollY < lastScrollY.current) {
-        setIsNavVisible(true)
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+          if (mobileNavRef.current) {
+            if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+              mobileNavRef.current.classList.add('nav-hidden')
+            } else if (currentScrollY < lastScrollY.current) {
+              mobileNavRef.current.classList.remove('nav-hidden')
+            }
+          }
+          lastScrollY.current = currentScrollY
+          ticking = false;
+        });
+        ticking = true;
       }
-      lastScrollY.current = currentScrollY
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
@@ -961,7 +970,7 @@ function App({ onGoHome }: AppProps = {}) {
         </footer>
       </div>
 
-      <nav className={`mobile-bottom-nav ${!isNavVisible ? 'nav-hidden' : ''}`}>
+      <nav ref={mobileNavRef} className="mobile-bottom-nav">
         {visibleTabs.map((tab) => {
           const isActive = activeTab === tab;
           return (
