@@ -250,7 +250,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           </div>
         </div>
 
-        <div className="dashboard-hero-image hide-on-mobile" style={{ flex: '1 1 300px', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+        <div className="dashboard-hero-image hide-on-mobile" style={{ flex: '1 1 300px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'relative' }}>
            <div style={{
              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px',
              background: 'var(--accent-primary)', opacity: 0.15, filter: 'blur(80px)', borderRadius: '50%',
