@@ -82,6 +82,8 @@
   gap: 0.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .kpi-card:hover {
@@ -116,6 +118,9 @@
 .kpi-helper {
   font-size: 0.85rem;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* New 3 Column Row */
