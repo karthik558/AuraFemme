@@ -470,12 +470,14 @@ input:disabled + .toggle-slider {
 }
 
 /* Sidebar Nav Icons Breathe when Active */
-.nav-item.active .nav-item-content svg {
+.nav-item.active .nav-item-content svg,
+.goal-nav-item.active .nav-item-content svg {
   animation: biologicalBreathe 4s ease-in-out infinite;
 }
 
 /* Sidebar Nav Icons Pulse on Hover */
-.nav-item:hover:not(.active) .nav-item-content svg {
+.nav-item:hover:not(.active) .nav-item-content svg,
+.goal-nav-item:hover:not(.active) .nav-item-content svg {
   animation: biologicalPulse 1.2s ease-in-out infinite;
 }
 

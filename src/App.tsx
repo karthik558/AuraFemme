@@ -113,10 +113,10 @@ const getMobileNavTitle = (tab: TabKey) => {
   }
 }
 
-const goalOptions: Array<{ value: CycleGoal; label: string; tone: string }> = [
-  { value: 'track', label: 'Track setup', tone: 'active' },
-  { value: 'conceive', label: 'Conceive', tone: 'active' },
-  { value: 'avoid', label: 'Avoid pregnancy', tone: 'active' },
+const goalOptions: Array<{ value: CycleGoal; label: string; tone: string; icon: React.ReactNode; desc: string }> = [
+  { value: 'track', label: 'Track', tone: 'active', icon: <Activity size={16} />, desc: 'Neutral cycle logging & insights' },
+  { value: 'conceive', label: 'Conceive', tone: 'active', icon: <Heart size={16} />, desc: 'Optimize fertile window timing' },
+  { value: 'avoid', label: 'Avoid', tone: 'active', icon: <ShieldAlert size={16} />, desc: 'Higher caution & risk alerts' },
 ]
 
 interface AppProps {
@@ -610,7 +610,7 @@ function App({ onGoHome }: AppProps = {}) {
           <aside 
             className={`sidebar ${activeTab !== 'overview' ? 'mobile-hidden' : ''} ${(activeTab === 'reference' && isArticleOpen) ? 'desktop-hidden' : ''}`}
           >
-            <div className="glass-card panel">
+            <div className="premium-glass panel">
               <div className="panel-header">
                 <div>
                   <h2 className="panel-title" style={{ fontSize: '1.25rem' }}>Clinical Profile</h2>
@@ -631,34 +631,40 @@ function App({ onGoHome }: AppProps = {}) {
 
                     <div className="field-group">
                       <p className="field-label">Primary goal</p>
-                      <div className="goal-options">
+                      <div className="goal-nav">
                         {goalOptions.map((option) => (
                           <button
                             key={option.value}
                             type="button"
                             onClick={() => setDraftGoal(option.value)}
-                            className={`goal-btn ${draftGoal === option.value ? 'active' : ''}`}
+                            className={`goal-nav-item ${draftGoal === option.value ? 'active' : ''}`}
                           >
-                            <span className="goal-btn-title">{option.label}</span>
-                            <span className="goal-btn-desc">
-                              {option.value === 'track' ? 'Neutral logging' : option.value === 'conceive' ? 'Optimize fertile timing' : 'Higher caution mode'}
+                            {draftGoal === option.value && (
+                              <div className="nav-active-bg" />
+                            )}
+                            <span className="nav-item-content" style={{ justifyContent: 'center' }}>
+                              <span style={{ display: 'flex', alignItems: 'center' }}>{option.icon}</span>
+                              <span className="nav-item-text desktop-only">{option.label}</span>
                             </span>
                           </button>
                         ))}
                       </div>
+                      <p className="goal-active-desc">
+                        {goalOptions.find(o => o.value === draftGoal)?.desc}
+                      </p>
                     </div>
                     
                     <div className="field-group" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-subtle)' }}>
                       <p className="field-label" style={{ marginBottom: '0.75rem' }}>Historical Periods</p>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+                      <div className="date-pill-container">
                         {pastPeriodDates.length === 0 ? (
                           <p className="metric-helper" style={{ margin: 0, fontStyle: 'italic' }}>No past periods logged yet.</p>
                         ) : (
                           pastPeriodDates.map(date => (
-                            <div key={date} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-inset)', padding: '0.5rem 0.75rem', borderRadius: '8px' }}>
-                              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{date}</span>
-                              <button type="button" onClick={() => handleRemovePastDate(date)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
-                                <X className="w-4 h-4" />
+                            <div key={date} className="date-pill">
+                              <span>{date}</span>
+                              <button type="button" onClick={() => handleRemovePastDate(date)} className="date-pill-remove">
+                                <X className="w-3 h-3" />
                               </button>
                             </div>
                           ))
@@ -723,31 +729,29 @@ function App({ onGoHome }: AppProps = {}) {
               </div>
             </div>
 
-            <div className="glass-card panel" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', justifyContent: 'space-between', height: '100%' }}>
-              <div className="sidebar-section" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
-                <div style={{ marginTop: '0.125rem', padding: '0.65rem', background: 'var(--accent-soft)', borderRadius: '0.85rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div className={`premium-glass advisory-card advisory-${userProfile?.appMode === 'pregnancy' ? 'pregnancy' : draftGoal}`} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', justifyContent: 'space-between', height: '100%' }}>
+              <div>
+                <div className="advisory-icon-wrapper">
                   {advisory.icon}
                 </div>
                 <div>
                   <p className="panel-label" style={{ marginBottom: '0.35rem' }}>Goal advisory</p>
                   <h3 className="panel-title" style={{ fontSize: '1.15rem', lineHeight: 1.3, marginBottom: '0.5rem' }}>{advisory.title}</h3>
-                  <p className="metric-helper" style={{ lineHeight: 1.6 }}>{advisory.body}</p>
+                  <p className="metric-helper" style={{ lineHeight: 1.6, margin: 0 }}>{advisory.body}</p>
                 </div>
               </div>
 
-              <div style={{ padding: '1.15rem', background: 'rgba(0, 0, 0, 0.02)', borderRadius: '1rem', border: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold', fontSize: '1.125rem', boxShadow: '0 4px 12px rgba(197, 34, 51, 0.25)' }}>
-                    {authMode === 'guest' ? 'G' : userProfile?.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
-                      {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Personal Account' : 'Managed Account')}
-                    </p>
-                    <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: '0.15rem 0 0 0', fontSize: '0.95rem' }}>
-                      {authMode === 'guest' ? 'Guest User' : userProfile?.name}
-                    </p>
-                  </div>
+              <div className="user-badge" onClick={() => fileInputRef.current?.click()} style={{ cursor: 'pointer' }} title="Click to import data">
+                <div className="user-avatar">
+                  {authMode === 'guest' ? 'G' : userProfile?.name.charAt(0).toUpperCase()}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
+                    {authMode === 'guest' ? 'Guest Mode' : (userProfile?.managementType === 'self' ? 'Personal Account' : 'Managed Account')}
+                  </p>
+                  <p style={{ fontWeight: 600, color: 'var(--text-strong)', margin: '0.15rem 0 0 0', fontSize: '0.95rem' }}>
+                    {authMode === 'guest' ? 'Guest User' : userProfile?.name}
+                  </p>
                 </div>
                 
                 <input 
