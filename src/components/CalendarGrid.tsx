@@ -152,9 +152,10 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draf
 
             let cardClass = phaseClasses[day.phase]
             let pregnancyWeeks = 0
+            let pMetrics = null
             
             if (isPregnancyMode && (draftLastPeriodDate || userProfile?.lastPeriodDate)) {
-              const pMetrics = buildPregnancyMetrics(draftLastPeriodDate || userProfile!.lastPeriodDate, day.dateIso)
+              pMetrics = buildPregnancyMetrics(draftLastPeriodDate || userProfile!.lastPeriodDate, day.dateIso)
               cardClass = `phase-trimester-${pMetrics.trimester}`
               pregnancyWeeks = pMetrics.gestationalWeeks
             }
@@ -165,7 +166,7 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draf
                 type="button"
                 onClick={() => onSelectDay(day)}
                 className={`calendar-day-cell ${cardClass} ${active ? 'active' : ''}`}
-                title={`${formatUtcDateLabel(day.dateIso)} - ${day.phaseLabel}`}
+                title={`${formatUtcDateLabel(day.dateIso)} - ${isPregnancyMode && pMetrics ? `Trimester ${pMetrics.trimester}` : day.phaseLabel}`}
               >
                 <div className="cell-top">
                   <span className="day-number-small">{cell.dateNumber}</span>
@@ -176,7 +177,9 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draf
                 
                 <div className="cell-content">
                   <div className="day-phase-indicator">
-                    <span className="day-phase-text">{phaseLabel[day.phase] || day.phaseLabel}</span>
+                    <span className="day-phase-text">
+                      {isPregnancyMode && pMetrics ? `Trimester ${pMetrics.trimester}` : phaseLabel[day.phase] || day.phaseLabel}
+                    </span>
                   </div>
                   <div className="day-icons-small">
                     {!isPregnancyMode && day.isPeak ? (
