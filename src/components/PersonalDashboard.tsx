@@ -254,9 +254,10 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
            <div style={{
              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px',
              background: 'var(--accent-primary)', opacity: 0.15, filter: 'blur(80px)', borderRadius: '50%',
-             pointerEvents: 'none'
+             pointerEvents: 'none',
+             animation: 'pulseGlow 3s ease-in-out infinite'
            }} />
-           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 40px var(--accent-soft))', position: 'relative', zIndex: 1 }} />
+           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 20px var(--accent-soft))', position: 'relative', zIndex: 1, animation: 'shimmerSparkle 4s ease-in-out infinite' }} />
         </div>
       </div>
 
