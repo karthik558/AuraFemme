@@ -1,4 +1,4 @@
-import { useMemo, memo, useRef } from 'react';
+import { useMemo, memo, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { CalendarDays, Clock3, MoonStar, Activity, Baby, Target, Dna, Info } from 'lucide-react';
@@ -10,7 +10,8 @@ import {
 import type { UserProfile, CycleMetrics } from '../types';
 import { formatUtcDateLabel, buildPregnancyMetrics, diffUtcDays } from '../utils/calculator';
 import { useAppStore } from '../store';
-import HormoneWave3D from './HormoneWave3D';
+import SystemAnatomyTracker from './SystemAnatomyTracker';
+
 import './PersonalDashboard.css';
 
 interface PersonalDashboardProps {
@@ -103,6 +104,9 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
     return Math.max(0, Math.floor((today.getTime() - intercourseDate.getTime()) / (1000 * 60 * 60 * 24)));
   }, [lastIntercourseDate]);
   
+  const [hoveredPhase, setHoveredPhase] = useState<string | null>(null);
+  const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
+
   const pMetrics = useMemo(() => isPregnancyMode ? buildPregnancyMetrics(userProfile?.lastPeriodDate || metrics.cycleStartIso) : null, [isPregnancyMode, userProfile?.lastPeriodDate, metrics.cycleStartIso]);
 
   const activeHormoneData = useMemo(() => {
@@ -112,7 +116,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         const hcg = i < 12 ? Math.pow(i / 10, 2) * 100 : Math.max(10, 100 - (i - 12) * 2);
         const estrogen = Math.pow(i / 40, 1.5) * 80 + 10;
         const progesterone = Math.pow(i / 40, 1.2) * 90 + 5;
-        data.push({ day: `Wk ${i}`, Estrogen: estrogen, Progesterone: progesterone, hCG: hcg });
+        data.push({ day: `Wk ${i}`, weekIndex: i, Estrogen: estrogen, Progesterone: progesterone, hCG: hcg });
       }
       return data;
     } else {
@@ -129,11 +133,20 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         // Progesterone is very low in follicular phase, rises sharply after ovulation, peaks mid-luteal, drops before period
         const progesterone = i > oDay ? Math.sin(((i - oDay) / (cLength - oDay)) * Math.PI) * 100 + 5 : 5;
         
-        data.push({ day: `Day ${i}`, Estrogen: estrogen, Progesterone: progesterone });
+        let phase = 'menstruation';
+        const bleeding = userProfile?.bleedingDuration || 5;
+        if (i <= bleeding) phase = 'menstruation';
+        else if (i < oDay - 3) phase = 'follicular';
+        else if (i <= oDay + 1) phase = 'ovulation';
+        else phase = 'luteal';
+        
+        data.push({ day: `Day ${i}`, dayIndex: i, phase, Estrogen: estrogen, Progesterone: progesterone });
       }
       return data;
     }
   }, [isPregnancyMode, metrics.cycleLength, metrics.ovulationDay]);
+
+
 
   const pastPeriodDates = useAppStore(state => state.pastPeriodDates) || [];
   const lastPeriodDate = useAppStore(state => state.lastPeriodDate);
@@ -600,22 +613,22 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           </div>
         </div>
 
-        {/* 3D Interactive Hormone Visualization */}
+        {/* Today's Anatomy & Systems */}
         <div className="chart-card chart-card-full">
           <div className="chart-header">
             <div>
-              <h3 className="chart-title">3D Hormonal Wave</h3>
-              <p className="chart-subtitle">Interactive continuous flow of Estrogen, Progesterone, LH, and FSH. Drag to rotate.</p>
+              <h3 className="chart-title">Anatomy & Systems Tracker</h3>
+              <p className="chart-subtitle">How your active biological phase is impacting your physical body today.</p>
             </div>
             <Activity className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
-          <div className="chart-wrapper" style={{ minHeight: '300px', padding: '1rem 0', background: 'var(--bg-card-raised)', borderRadius: 'var(--radius-xl)', boxShadow: 'inset 0 2px 20px rgba(0,0,0,0.05)' }}>
-             <HormoneWave3D 
-               day={userProfile?.appMode === 'pregnancy' ? buildPregnancyMetrics(userProfile.lastPeriodDate).gestationalDays : metrics.cycleDay} 
-               mode={userProfile?.appMode || 'cycle'} 
-               cycleLength={metrics.cycleLength}
-               ovulationDay={metrics.ovulationDay}
-             />
+          <div className="chart-wrapper" style={{ padding: '0 1rem' }}>
+            <SystemAnatomyTracker 
+              metrics={metrics}
+              userProfile={userProfile}
+              gestationalWeeks={hoveredWeek !== null ? hoveredWeek : (isPregnancyMode && pMetrics ? pMetrics.gestationalWeeks : undefined)}
+              overridePhase={hoveredPhase || undefined}
+            />
           </div>
         </div>
 
@@ -623,13 +636,30 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
         <div className="chart-card chart-card-full" style={{ marginTop: '1rem' }}>
           <div className="chart-header">
             <div>
-              <h3 className="chart-title">Hormonal Profile Simulation (2D)</h3>
+              <h3 className="chart-title">Hormonal Profile Simulation</h3>
               <p className="chart-subtitle">{isPregnancyMode ? 'Estimated hCG, Estrogen, and Progesterone over 40 weeks' : 'Estimated estrogen and progesterone levels across an average 28-day cycle'}</p>
             </div>
           </div>
           <div className="chart-wrapper" style={{ minHeight: '350px' }}>
             <ResponsiveContainer width="100%" height={350}>
-              <AreaChart data={activeHormoneData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart 
+                data={activeHormoneData} 
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+                onMouseMove={(e: any) => {
+                  if (e.activePayload && e.activePayload.length) {
+                    const data = e.activePayload[0].payload;
+                    if (isPregnancyMode) {
+                      setHoveredWeek(data.weekIndex);
+                    } else {
+                      setHoveredPhase(data.phase);
+                    }
+                  }
+                }}
+                onMouseLeave={() => {
+                  setHoveredPhase(null);
+                  setHoveredWeek(null);
+                }}
+              >
                 <defs>
                   <linearGradient id="colorEstrogen" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.6}/>

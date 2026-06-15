@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Sphere, Icosahedron, Float, Sparkles, MeshTransmissionMaterial } from '@react-three/drei';
+import { OrbitControls, Sphere, Icosahedron, Float, MeshTransmissionMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface DataCoreProps {
@@ -68,7 +68,7 @@ function CoreElements() {
         </mesh>
 
         {/* Local Data Particles */}
-        <Sparkles count={150} scale={5} size={2} speed={0.4} opacity={0.6} color="#ffa6b5" />
+
       </Float>
     </group>
   );
