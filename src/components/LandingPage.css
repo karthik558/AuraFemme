@@ -94,7 +94,6 @@
 }
 
 .lp-hover-card:hover {
-  transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(197, 34, 51, 0.12);
   border-color: rgba(197, 34, 51, 0.2);
 }
