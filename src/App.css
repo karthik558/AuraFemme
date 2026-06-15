@@ -362,18 +362,7 @@
   }
 
   .mobile-nav-label {
-    font-size: 0.52rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-  }
-
-  .mobile-nav-item.active .mobile-nav-label {
-    opacity: 1;
-    font-weight: 700;
-    color: var(--accent-primary);
+    display: none;
   }
   
   .report-grid-3, .report-grid-2 {
