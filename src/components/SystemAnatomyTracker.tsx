@@ -1,7 +1,7 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Brain, Heart, Shield, Flame, Droplets, Activity, Baby, Target } from 'lucide-react';
+import { Brain, Heart, Shield, Flame, Droplets, Activity, Baby, Target, ChevronDown, ChevronUp } from 'lucide-react';
 import type { CycleMetrics, UserProfile } from '../types';
 
 interface SystemAnatomyTrackerProps {
@@ -22,9 +22,11 @@ interface BodySystem {
 }
 
 export default function SystemAnatomyTracker({ metrics, userProfile, gestationalWeeks, overridePhase }: SystemAnatomyTrackerProps) {
+
   const containerRef = useRef<HTMLDivElement>(null);
   const isPregnancyMode = userProfile?.appMode === 'pregnancy';
   const phase = overridePhase || metrics.currentPhase;
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   // Determine bodily effects based on phase or pregnancy
   const systems = useMemo<BodySystem[]>(() => {
@@ -248,31 +250,45 @@ export default function SystemAnatomyTracker({ metrics, userProfile, gestational
 
             {/* Right Column: Content Box */}
             <div style={{ flex: 1, paddingBottom: index < systems.length - 1 ? '1.5rem' : '0', minWidth: 0 }}>
-              <div style={{ 
-                background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)',
-                borderRadius: '16px', padding: '1.25rem', boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-              }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                  <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{sys.name}</h4>
-                  <span style={{ 
-                    fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
-                    color: sys.color, background: `${sys.color}15`, padding: '0.2rem 0.6rem', borderRadius: '999px'
-                  }}>
-                    {sys.status}
-                  </span>
-                </div>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                  {sys.description}
-                </p>
-                
-                {/* Intensity meter */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}>
-                  <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>System Intensity</span>
-                  <div style={{ flex: 1, height: '4px', background: 'var(--bg-panel)', borderRadius: '2px', overflow: 'hidden' }}>
-                    <div style={{ width: `${sys.intensity}%`, height: '100%', background: sys.color, borderRadius: '2px' }} />
+              <div 
+                onClick={() => setExpandedId(expandedId === sys.id ? null : sys.id)}
+                style={{ 
+                  background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)',
+                  borderRadius: '16px', padding: '1.25rem', boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
+                  cursor: 'pointer', transition: 'all 0.2s ease'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: expandedId === sys.id ? '0.75rem' : '0' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{sys.name}</h4>
+                    <span style={{ 
+                      fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
+                      color: sys.color, background: `${sys.color}15`, padding: '0.2rem 0.6rem', borderRadius: '999px'
+                    }}>
+                      {sys.status}
+                    </span>
                   </div>
-                  <span style={{ fontSize: '0.65rem', color: sys.color, fontWeight: 700, minWidth: '24px', textAlign: 'right' }}>{sys.intensity}%</span>
+                  <div style={{ color: 'var(--text-muted)' }}>
+                    {expandedId === sys.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  </div>
                 </div>
+                
+                {expandedId === sys.id && (
+                  <div className="system-details-content" style={{ animation: 'fadeIn 0.3s ease' }}>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                      {sys.description}
+                    </p>
+                    
+                    {/* Intensity meter */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}>
+                      <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>System Intensity</span>
+                      <div style={{ flex: 1, height: '4px', background: 'var(--bg-panel)', borderRadius: '2px', overflow: 'hidden' }}>
+                        <div style={{ width: `${sys.intensity}%`, height: '100%', background: sys.color, borderRadius: '2px' }} />
+                      </div>
+                      <span style={{ fontSize: '0.65rem', color: sys.color, fontWeight: 700, minWidth: '24px', textAlign: 'right' }}>{sys.intensity}%</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
