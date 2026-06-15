@@ -426,8 +426,12 @@ function App({ onGoHome }: AppProps = {}) {
 
   const activeDay = useMemo(() => {
     if (!calendarDays.length) return null
-    if (!selectedDay) return calendarDays[0]
-    return calendarDays.find((day) => day.dateIso === selectedDay.dateIso) ?? calendarDays[0]
+    if (selectedDay) {
+      return calendarDays.find((day) => day.dateIso === selectedDay.dateIso) ?? null
+    }
+    // Default to today
+    const todayIso = utcTodayIso()
+    return calendarDays.find((day) => day.dateIso === todayIso) ?? calendarDays[0]
   }, [calendarDays, selectedDay])
 
 
