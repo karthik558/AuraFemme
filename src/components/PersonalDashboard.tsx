@@ -518,7 +518,6 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                 <h3 className="chart-title">Fetal Growth Tracker</h3>
                 <p className="chart-subtitle">Average weight progression</p>
               </div>
-              <Activity className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
             </div>
             <div className="chart-wrapper">
               <ResponsiveContainer width="100%" height={300}>
@@ -545,7 +544,6 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
                 <h3 className="chart-title">{hasRealHistory ? 'Cycle Length History' : 'Cycle Variance Projection'}</h3>
                 <p className="chart-subtitle">{hasRealHistory ? 'Actual recorded variance' : 'Expected baseline fluctuations'}</p>
               </div>
-              <CalendarDays className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
             </div>
             <div className="chart-wrapper">
               {hasRealHistory ? (
@@ -591,7 +589,6 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               <h3 className="chart-title">Symptom Frequency</h3>
               <p className="chart-subtitle">Most common logs</p>
             </div>
-            <Activity className="w-5 h-5" style={{ color: 'var(--text-muted)' }} />
           </div>
           <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height={300}>
@@ -619,7 +616,6 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               <h3 className="chart-title">Anatomy & Systems Tracker</h3>
               <p className="chart-subtitle">How your active biological phase is impacting your physical body today.</p>
             </div>
-            <Activity className="w-5 h-5" style={{ color: 'var(--accent-primary)' }} />
           </div>
           <div className="chart-wrapper" style={{ padding: '0 1rem', height: '300px', overflowY: 'auto', paddingRight: '0.5rem' }}>
             <SystemAnatomyTracker 
