@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { X, Moon, Sun, Download, Upload, LogOut, Settings as SettingsIcon } from 'lucide-react';
+import { X, Moon, Sun, Download, Upload, LogOut, Settings as SettingsIcon, ChevronDown, ChevronRight } from 'lucide-react';
 import { useAppStore } from '../store';
 import { GooeyBloodTransition } from './GooeyBloodTransition';
 import type { ThemeMode } from '../types';
@@ -28,6 +28,8 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
     isActive: boolean;
     targetTheme: ThemeMode;
   }>({ isActive: false, targetTheme: themeMode });
+
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
   const handleThemeChange = (targetMode: ThemeMode) => {
     if (themeMode === targetMode || transitionState.isActive) return;
@@ -218,6 +220,43 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
                 </button>
               </div>
             </div>
+          </div>
+
+          {/* Keyboard Shortcuts Section */}
+          <div className="settings-section">
+            <button 
+              onClick={() => setIsShortcutsOpen(!isShortcutsOpen)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'none', border: 'none', padding: 0, cursor: 'pointer', width: '100%', outline: 'none' }}
+              aria-expanded={isShortcutsOpen}
+            >
+              <div className="settings-section-title" style={{ margin: 0 }}>Keyboard Shortcuts</div>
+              {isShortcutsOpen ? <ChevronDown size={14} color="var(--text-muted)" /> : <ChevronRight size={14} color="var(--text-muted)" />}
+            </button>
+            
+            {isShortcutsOpen && (
+              <div className="shortcuts-grid" style={{ marginTop: '0.25rem' }}>
+                <div className="shortcut-row">
+                  <span>Open Settings</span>
+                  <div className="shortcut-keys"><kbd>⌘/Ctrl</kbd> + <kbd>,</kbd></div>
+                </div>
+                <div className="shortcut-row">
+                  <span>Navigate Tabs</span>
+                  <div className="shortcut-keys"><kbd>1</kbd> - <kbd>6</kbd></div>
+                </div>
+                <div className="shortcut-row">
+                  <span>Export Data</span>
+                  <div className="shortcut-keys"><kbd>⌘/Ctrl</kbd> + <kbd>E</kbd></div>
+                </div>
+                <div className="shortcut-row">
+                  <span>Import Data</span>
+                  <div className="shortcut-keys"><kbd>⌘/Ctrl</kbd> + <kbd>I</kbd></div>
+                </div>
+                <div className="shortcut-row">
+                  <span>Close Modals</span>
+                  <div className="shortcut-keys"><kbd>Esc</kbd></div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Account Section */}

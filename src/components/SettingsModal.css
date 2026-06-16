@@ -424,6 +424,47 @@
   background: rgba(239, 74, 93, 0.18);
 }
 
+/* Keyboard Shortcuts */
+.shortcuts-grid {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-xl);
+  padding: 0.25rem 0;
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.shortcut-row:last-child {
+  border-bottom: none;
+}
+
+.shortcut-keys {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+kbd {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-strong);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
 /* Footer note */
 .settings-footer-note {
   text-align: center;

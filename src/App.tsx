@@ -378,6 +378,48 @@ function App({ onGoHome }: AppProps = {}) {
     }
   }
 
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input or textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+
+      // Settings
+      if ((e.metaKey || e.ctrlKey) && e.key === ',') {
+        e.preventDefault();
+        setIsSettingsOpen(true);
+      }
+      if (e.key === '?' && e.shiftKey) {
+        e.preventDefault();
+        setIsSettingsOpen(true);
+      }
+      
+      // Tab Switching (1-6)
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        switch (e.key) {
+          case '1': setActiveTab('overview'); break;
+          case '2': setActiveTab('calendar'); break;
+          case '3': setActiveTab('safety'); break;
+          case '4': setActiveTab('reports'); break;
+          case '5': setActiveTab('history'); break;
+          case '6': setActiveTab('reference'); break;
+        }
+      }
+      
+      // Export/Import
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        handleExportData();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'i') {
+        e.preventDefault();
+        fileInputRef.current?.click();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setActiveTab, handleExportData]);
+
 
 
 
