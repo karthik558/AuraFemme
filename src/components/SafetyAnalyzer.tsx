@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { ArrowRightLeft, Radar, Settings2 } from 'lucide-react'
+import { ArrowRightLeft, Settings2 } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import { useMemo } from 'react'
 import type { CaseStudyResult } from '../types'
@@ -104,13 +104,13 @@ export function SafetyAnalyzer({
             label="Last period date"
             value={lastPeriodDate}
             onChange={onLastPeriodDateChange}
-            helper="The cycle baseline used for the model."
+            helper="Baseline for all calculations"
           />
           <DateTriplet
             label="Last intercourse date"
             value={lastIntercourseDate}
             onChange={onLastIntercourseDateChange}
-            helper="The risk level is calculated relative to this date."
+            helper="Risk level relative to this date"
           />
           <RangeField
             label="Cycle length"
@@ -131,8 +131,9 @@ export function SafetyAnalyzer({
         </div>
 
         <div className={`risk-badge-pill ${riskStyles[result.riskLevel]}`}>
-          <span className="risk-pill-label">Safety Risk Assessment:</span>
-          <span className="risk-pill-value">{result.riskLabel}</span>
+          <div className="risk-pill-label" style={{ marginBottom: '0.25rem', opacity: 0.7 }}>SAFETY RISK ASSESSMENT</div>
+          <div className="risk-pill-value">{result.riskLabel}</div>
+          <p className="risk-pill-desc">Based on current inputs, the theoretical risk of fertilization is {result.riskLevel}.</p>
         </div>
 
         <div className="summary-box">
@@ -180,13 +181,12 @@ export function SafetyAnalyzer({
       </div>
 
       <div className="glass-card analyzer-panel">
-        <div className="analyzer-header" style={{ alignItems: 'center' }}>
+        <div className="analyzer-header" style={{ alignItems: 'flex-start', borderBottom: 'none', paddingBottom: 0, marginBottom: '1.5rem' }}>
           <div className="analyzer-title-wrap">
-            <p className="analyzer-subtitle">
-              <Radar className="analyzer-icon" />
-              Biological timeline
+            <h3 className="analyzer-title" style={{ fontSize: '1.25rem' }}>Biological Timeline</h3>
+            <p className="analyzer-subtitle" style={{ letterSpacing: 'normal', textTransform: 'none', fontSize: '0.9rem', color: 'var(--text-strong)', marginTop: '0.25rem' }}>
+              Step-by-step assessment
             </p>
-            <h3 className="analyzer-title" style={{ fontSize: '1.25rem' }}>Step-by-step assessment</h3>
           </div>
           <div className="confidence-badge">
             Confidence {Math.round(result.confidence * 100)}%

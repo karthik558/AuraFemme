@@ -20,7 +20,6 @@ import {
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import DataCore3D from './DataCore3D';
 import { CinematicPreloader } from './CinematicPreloader';
 import { useAppStore } from '../store';
 import auraLogo from '../assets/icon-color.png';
