@@ -135,10 +135,13 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
     setIsExporting(true);
     
     try {
+      const theme = document.documentElement.getAttribute('data-theme') || 'light';
+      const pdfBgColor = theme === 'dark' ? '#0f1115' : '#ffffff';
+
       const canvas = await html2canvas(reportRef.current, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff',
+        backgroundColor: pdfBgColor,
         windowWidth: 1024,
         onclone: (clonedDoc) => {
           const el = clonedDoc.getElementById('pdf-report-container');
@@ -362,8 +365,8 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         id="pdf-report-container"
         ref={reportRef} 
         style={{
-          background: '#ffffff',
-          color: '#1a1a1a',
+          background: 'var(--bg-main)',
+          color: 'var(--text-main)',
           padding: 'clamp(15px, 5vw, 40px)',
           borderRadius: '12px',
           boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
@@ -379,22 +382,14 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         }}
       >
         {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid #f0f0f0', paddingBottom: '20px', marginBottom: '30px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderBottom: '2px solid var(--border-subtle)', paddingBottom: '20px', marginBottom: '30px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img src={isPregnancyMode ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" style={{ height: '48px', width: 'auto', filter: 'drop-shadow(0 4px 8px rgba(197, 34, 51, 0.3))' }} />
-            <div>
-              <h1 style={{ margin: 0, fontSize: '24px', color: '#1a1a1a' }}>
-                {isPregnancyMode ? t(lang, 'clinical_pregnancy_report') : t(lang, 'clinical_cycle_report')}
-              </h1>
-              <p style={{ margin: '4px 0 0', fontSize: '14px', color: '#666' }}>
-                {isPregnancyMode ? t(lang, 'preg_desc') : t(lang, 'cycle_desc')}
-              </p>
-            </div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>{t(lang, 'user')}: <strong style={{ color: '#1a1a1a' }}>{userName}</strong></p>
-            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#666' }}>{t(lang, 'generated')}: <strong style={{ color: '#1a1a1a' }}>{new Date().toLocaleString()}</strong></p>
-            <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>{t(lang, 'aura_id')}: <strong style={{ color: '#1a1a1a' }}>{auraId}</strong></p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: 'var(--text-muted)' }}>{t(lang, 'user')}: <strong style={{ color: 'var(--text-strong)' }}>{userName}</strong></p>
+            <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: 'var(--text-muted)' }}>{t(lang, 'generated')}: <strong style={{ color: 'var(--text-strong)' }}>{new Date().toLocaleString()}</strong></p>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{t(lang, 'aura_id')}: <strong style={{ color: 'var(--text-strong)' }}>{auraId}</strong></p>
           </div>
         </div>
 
@@ -402,40 +397,40 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '15px', marginBottom: '30px' }}>
           {!isPregnancyMode && (
             <>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'last_period')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#c52233' }}>{metrics.cycleStartIso ? formatUtcDateLabel(metrics.cycleStartIso) : '-'}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'last_period')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: 'var(--accent-primary)' }}>{metrics.cycleStartIso ? formatUtcDateLabel(metrics.cycleStartIso) : '-'}</p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'next_period_short')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>{metrics.nextPeriodIso ? formatUtcDateLabel(metrics.nextPeriodIso) : '-'}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'next_period_short')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-strong)' }}>{metrics.nextPeriodIso ? formatUtcDateLabel(metrics.nextPeriodIso) : '-'}</p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'phase_split')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a', textTransform: 'capitalize' }}>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'phase_split')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-strong)', textTransform: 'capitalize' }}>
                   {metrics.currentPhaseLabel} ({t(lang, 'day_label')} {metrics.cycleDay})
                 </p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'ovulation_day')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: '#1a1a1a' }}>{t(lang, 'day_label')} {metrics.ovulationDay}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'ovulation_day')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '15px', fontWeight: 600, color: 'var(--text-strong)' }}>{t(lang, 'day_label')} {metrics.ovulationDay}</p>
               </div>
             </>
           )}
 
           {isPregnancyMode && (
             <>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'gestational_age')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>{pMetrics?.gestationalWeeks} {t(lang, 'week')}, {pMetrics?.gestationalDays} {t(lang, 'days')}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'gestational_age')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: 'var(--text-strong)' }}>{pMetrics?.gestationalWeeks} {t(lang, 'week')}, {pMetrics?.gestationalDays} {t(lang, 'days')}</p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'trimester')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>{pMetrics?.trimester}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'trimester')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: 'var(--text-strong)' }}>{pMetrics?.trimester}</p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '11px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'estimated_due_date')}</p>
-                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: '#1a1a1a' }}>{pMetrics ? formatUtcDateLabel(pMetrics.estimatedDueDate) : '-'}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'estimated_due_date')}</p>
+                <p style={{ margin: '5px 0 0', fontSize: '18px', fontWeight: 600, color: 'var(--text-strong)' }}>{pMetrics ? formatUtcDateLabel(pMetrics.estimatedDueDate) : '-'}</p>
               </div>
             </>
           )}
@@ -444,25 +439,25 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Calendar Grid Visual */}
         {!isPregnancyMode && selectedCycleIsos.length > 0 && (
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '18px', margin: '0 0 15px 0', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CalendarDays size={18} style={{ color: 'var(--primary)' }} />
+            <h2 style={{ fontSize: '18px', margin: '0 0 15px 0', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', color: 'var(--text-strong)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <CalendarDays size={18} style={{ color: 'var(--accent-primary)' }} />
               {t(lang, 'cycle_map')}
             </h2>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {cycles.filter(c => selectedCycleIsos.includes(c.startIso)).map(c => (
                 <div key={c.startIso}>
-                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#666', margin: '0 0 8px 0' }}>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', margin: '0 0 8px 0' }}>
                     {c.startIso === currentCycleStart ? t(lang, 'current_cycle') : `${t(lang, 'cycle_map')} (${formatUtcDateLabel(c.startIso)})`}
                   </p>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                     {c.days.map((day) => {
-                      let bg = '#e5e7eb'; // default grey
-                      let color = '#4b5563';
-                      if (day.phase === 'menstruation') { bg = '#ffe4e6'; color = '#e11d48'; }
-                      else if (day.phase === 'follicular') { bg = '#cffafe'; color = '#0891b2'; }
-                      else if (day.phase === 'ovulation') { bg = '#fef3c7'; color = '#d97706'; }
-                      else if (day.phase === 'luteal') { bg = '#fae8ff'; color = '#c026d3'; }
+                      let bg = 'rgba(150,150,150,0.1)'; // default grey
+                      let color = 'var(--text-muted)';
+                      if (day.phase === 'menstruation') { bg = 'rgba(225, 29, 72, 0.15)'; color = '#e11d48'; }
+                      else if (day.phase === 'follicular') { bg = 'rgba(8, 145, 178, 0.15)'; color = '#06b6d4'; }
+                      else if (day.phase === 'ovulation') { bg = 'rgba(217, 119, 6, 0.15)'; color = '#f59e0b'; }
+                      else if (day.phase === 'luteal') { bg = 'rgba(192, 38, 211, 0.15)'; color = '#d946ef'; }
 
                       return (
                         <div key={day.cycleDay} style={{
@@ -481,11 +476,11 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', gap: '15px', marginTop: '15px', fontSize: '11px', color: '#666', fontWeight: 500 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#ffe4e6' }}></div> {t(lang, 'bleeding')}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#cffafe' }}></div> {t(lang, 'follicular')}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#fef3c7' }}></div> {t(lang, 'fertile')}</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: '#fae8ff' }}></div> {t(lang, 'luteal')}</span>
+            <div style={{ display: 'flex', gap: '15px', marginTop: '15px', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 500 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'rgba(225, 29, 72, 0.15)' }}></div> {t(lang, 'bleeding')}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'rgba(8, 145, 178, 0.15)' }}></div> {t(lang, 'follicular')}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'rgba(217, 119, 6, 0.15)' }}></div> {t(lang, 'fertile')}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '12px', height: '12px', borderRadius: '3px', background: 'rgba(192, 38, 211, 0.15)' }}></div> {t(lang, 'luteal')}</span>
             </div>
           </div>
         )}
@@ -493,14 +488,14 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Cycle Analysis */}
         {!isPregnancyMode && includeSafety && (
           <>
-            <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Activity size={18} style={{ color: '#c52233' }} />
+            <h2 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-strong)' }}>
+              <Activity size={18} style={{ color: 'var(--accent-primary)' }} />
               {caseStudy ? t(lang, 'safety_case_study') : t(lang, 'active_cycle_analysis')}
             </h2>
             
             {caseStudy && (
                <>
-                 <div style={{ padding: '15px', background: '#fff5f5', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid #c52233', wordBreak: 'break-word' }}>
+                 <div style={{ padding: '15px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '8px', marginBottom: '20px', borderLeft: '4px solid var(--accent-primary)', wordBreak: 'break-word', color: 'var(--text-main)' }}>
                     <p style={{ margin: 0, fontSize: '14px', lineHeight: '1.6' }}><strong>{t(lang, 'summary')}:</strong> {riskSummaryText}</p>
                  </div>
                  
@@ -514,10 +509,15 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                          </linearGradient>
                        </defs>
                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(150,150,150,0.15)" vertical={false} />
-                       <XAxis dataKey="day" stroke="#666" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `Day ${val}`} />
-                       <YAxis stroke="#666" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}%`} />
+                       <XAxis dataKey="day" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `Day ${val}`} />
+                       <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}%`} />
+                       <Tooltip 
+                         contentStyle={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--border-subtle)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                         itemStyle={{ color: 'var(--text-strong)', fontWeight: 600 }}
+                         labelStyle={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}
+                       />
                        <Area type="monotone" dataKey="Risk" name="Risk Level" stroke={caseStudy.riskLevel === 'elevated' ? '#ef4444' : caseStudy.riskLevel === 'low' ? '#f59e0b' : '#10b981'} strokeWidth={3} fillOpacity={1} fill="url(#pdfColorRisk)" />
-                       <ReferenceLine x={caseStudy.intercourseCycleDay} stroke="#333" strokeWidth={2} strokeDasharray="4 4" label={{ position: 'top', value: 'Intercourse', fill: '#333', fontSize: 12, fontWeight: 600 }} />
+                       <ReferenceLine x={caseStudy.intercourseCycleDay} stroke="var(--text-strong)" strokeWidth={2} strokeDasharray="4 4" label={{ position: 'top', value: 'Intercourse', fill: 'var(--text-strong)', fontSize: 12, fontWeight: 600 }} />
                      </AreaChart>
                    </ResponsiveContainer>
                  </div>
@@ -525,21 +525,21 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
             )}
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '15px', marginBottom: '40px' }}>
-              <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
-                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#c52233' }}>{caseStudy ? t(lang, 'intercourse_date') : t(lang, 'safe_dates')}</h3>
-                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
+              <div style={{ border: '1px solid var(--border-subtle)', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: 'var(--accent-primary)' }}>{caseStudy ? t(lang, 'intercourse_date') : t(lang, 'safe_dates')}</h3>
+                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500, color: 'var(--text-strong)' }}>
                    {caseStudy ? new Date(caseStudy.input.intercourseDate).toLocaleDateString() : `${metrics.fertileWindowStart} - ${metrics.fertileWindowEnd}`}
                 </p>
-                <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
                    {caseStudy ? `${t(lang, 'cycle_day')} ${caseStudy.intercourseCycleDay}` : t(lang, 'safe_dates_desc')}
                 </p>
               </div>
-              <div style={{ border: '1px solid #eaeaea', padding: '20px', borderRadius: '8px' }}>
-                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: '#059669' }}>{caseStudy ? t(lang, 'ovulation_day') : t(lang, 'next_period')}</h3>
-                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500 }}>
+              <div style={{ border: '1px solid var(--border-subtle)', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px', fontSize: '14px', color: 'var(--success)' }}>{caseStudy ? t(lang, 'ovulation_day') : t(lang, 'next_period')}</h3>
+                <p style={{ margin: 0, fontSize: '16px', fontWeight: 500, color: 'var(--text-strong)' }}>
                   {caseStudy ? `${t(lang, 'cycle_day')} ${caseStudy.ovulationDay}` : (metrics.isOverdue ? t(lang, 'overdue') : `${t(lang, 'expected_in')} ${metrics.nextPeriodCountdown} ${t(lang, 'days')}`)}
                 </p>
-                <p style={{ margin: '8px 0 0', fontSize: '13px', color: '#666' }}>
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
                   {caseStudy ? `${t(lang, 'fertile_window_spans')} ${caseStudy.fertileWindowStart} - ${caseStudy.fertileWindowEnd}` : `${t(lang, 'based_on_cycle')} ${activeCycleLength} ${t(lang, 'day_cycle_model')}`}
                 </p>
               </div>
@@ -548,16 +548,16 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
 
             {caseStudy && caseStudy.timeline && caseStudy.timeline.length > 0 && (
               <div style={{ marginBottom: '40px' }}>
-                <h3 style={{ fontSize: '15px', color: '#1a1a1a', marginBottom: '15px' }}>{t(lang, 'timeline_events')}</h3>
+                <h3 style={{ fontSize: '15px', color: 'var(--text-strong)', marginBottom: '15px' }}>{t(lang, 'timeline_events')}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {caseStudy.timeline.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', gap: '15px', padding: '12px', background: '#f9fafb', borderRadius: '8px', borderLeft: `4px solid ${item.tone === 'danger' ? '#ef4444' : item.tone === 'warning' ? '#f59e0b' : item.tone === 'success' ? '#10b981' : '#3b82f6'}` }}>
+                    <div key={i} style={{ display: 'flex', gap: '15px', padding: '12px', background: 'var(--bg-inset)', borderRadius: '8px', borderLeft: `4px solid ${item.tone === 'danger' ? 'var(--accent-primary)' : item.tone === 'warning' ? 'var(--warning)' : item.tone === 'success' ? 'var(--success)' : 'var(--info)'}`, border: '1px solid var(--border-subtle)' }}>
                       <div style={{ flexShrink: 0, width: '60px' }}>
-                        <span style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase', fontWeight: 600 }}>Day {item.cycleDay}</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Day {item.cycleDay}</span>
                       </div>
                       <div>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', color: '#1a1a1a' }}>{item.title}</h4>
-                        <p style={{ margin: 0, fontSize: '12px', color: '#666', lineHeight: 1.4 }}>{item.detail}</p>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-strong)' }}>{item.title}</h4>
+                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.4 }}>{item.detail}</p>
                       </div>
                     </div>
                   ))}
@@ -570,28 +570,28 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Aggregated Symptom Analytics */}
         {includeAnalytics && (
           <>
-            <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <ListChecks size={18} style={{ color: '#06b6d4' }} />
+            <h2 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-strong)' }}>
+              <ListChecks size={18} style={{ color: 'var(--info)' }} />
               {t(lang, 'symptom_analytics')}
             </h2>
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '15px', marginBottom: '30px' }}>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'total_logs')}</p>
-                <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#1a1a1a' }}>{totalLogs}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(lang, 'total_logs')}</p>
+                <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: 'var(--text-strong)' }}>{totalLogs}</p>
               </div>
-              <div style={{ background: '#f9fafb', padding: '15px', borderRadius: '8px', gridColumn: 'span 2' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: '#666', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>{t(lang, 'most_frequent_symptoms')}</p>
+              <div style={{ background: 'var(--bg-inset)', padding: '15px', borderRadius: '8px', gridColumn: 'span 2', border: '1px solid var(--border-subtle)' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '10px' }}>{t(lang, 'most_frequent_symptoms')}</p>
                 {frequentSymptoms.length > 0 ? (
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     {frequentSymptoms.map((sym, i) => (
-                      <span key={i} style={{ background: '#e0e7ff', color: '#3730a3', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 600 }}>
+                      <span key={i} style={{ background: 'rgba(55, 48, 163, 0.15)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', fontWeight: 600 }}>
                         {sym.name} ({sym.count})
                       </span>
                     ))}
                   </div>
                 ) : (
-                  <p style={{ margin: 0, fontSize: '14px', color: '#999', fontStyle: 'italic' }}>{t(lang, 'no_symptoms_logged')}</p>
+                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', fontStyle: 'italic' }}>{t(lang, 'no_symptoms_logged')}</p>
                 )}
               </div>
             </div>
@@ -601,29 +601,29 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Detailed Symptom Ledger */}
         {includeNotes && !includeFullData && recentLogs.length > 0 && (
           <>
-            <h3 style={{ fontSize: '16px', marginBottom: '15px', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CalendarDays size={16} />
+            <h3 style={{ fontSize: '16px', marginBottom: '15px', color: 'var(--text-strong)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <CalendarDays size={16} style={{ color: 'var(--accent-primary)' }} />
               {t(lang, 'recent_clinical_notes')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '40px' }}>
               {recentLogs.map((log) => (
-                <div key={log.dateIso} style={{ borderLeft: '3px solid #c52233', paddingLeft: '15px', paddingBottom: '15px' }}>
-                  <p style={{ margin: '0 0 5px 0', fontSize: '13px', fontWeight: 600, color: '#666' }}>
+                <div key={log.dateIso} style={{ borderLeft: '3px solid var(--accent-primary)', paddingLeft: '15px', paddingBottom: '15px' }}>
+                  <p style={{ margin: '0 0 5px 0', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>
                     {new Date(log.dateIso).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
-                    {log.mood && <span style={{ marginLeft: '10px', color: '#059669' }}>Mood: {log.mood}</span>}
+                    {log.mood && <span style={{ marginLeft: '10px', color: 'var(--success)' }}>Mood: {log.mood}</span>}
                   </p>
                   {log.symptoms.length > 0 && (
-                    <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: '#1a1a1a' }}>
-                      <strong style={{ color: '#444' }}>Symptoms:</strong> {log.symptoms.join(', ')}
+                    <p style={{ margin: '0 0 5px 0', fontSize: '14px', color: 'var(--text-strong)' }}>
+                      <strong style={{ color: 'var(--text-muted)' }}>Symptoms:</strong> {log.symptoms.join(', ')}
                     </p>
                   )}
                   {log.notes && (
-                    <p style={{ margin: 0, fontSize: '13px', color: '#666', fontStyle: 'italic' }}>"{log.notes}"</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', fontStyle: 'italic' }}>"{log.notes}"</p>
                   )}
                 </div>
               ))}
               {totalLogs > 14 && (
-                <p style={{ fontSize: '12px', color: '#999', fontStyle: 'italic' }}>* Displaying 14 most recent logs of {totalLogs} total.</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>* Displaying 14 most recent logs of {totalLogs} total.</p>
               )}
             </div>
           </>
@@ -632,13 +632,13 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Comprehensive Health Data (Full Table) */}
         {includeFullData && (
           <>
-            <h3 style={{ fontSize: '16px', marginBottom: '15px', color: '#1a1a1a', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '20px' }}>
-              <ListChecks size={16} />
+            <h3 style={{ fontSize: '16px', marginBottom: '15px', color: 'var(--text-strong)', display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '20px' }}>
+              <ListChecks size={16} style={{ color: 'var(--success)' }} />
               {t(lang, 'comprehensive_health_data')}
             </h3>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', textAlign: 'left', marginBottom: '40px' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #eaeaea', backgroundColor: '#f9fafb' }}>
+                <tr style={{ borderBottom: '2px solid var(--border-subtle)', backgroundColor: 'var(--bg-inset)', color: 'var(--text-strong)' }}>
                   <th style={{ padding: '10px' }}>{t(lang, 'date')}</th>
                   <th style={{ padding: '10px' }}>{t(lang, 'mood')}</th>
                   <th style={{ padding: '10px' }}>{t(lang, 'symptoms')}</th>
@@ -647,7 +647,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
               </thead>
               <tbody>
                 {Object.values(logs).sort((a, b) => b.dateIso.localeCompare(a.dateIso)).map((log) => (
-                  <tr key={log.dateIso} style={{ borderBottom: '1px solid #f0f0f0' }}>
+                  <tr key={log.dateIso} style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-main)' }}>
                     <td style={{ padding: '10px', whiteSpace: 'nowrap' }}>{formatUtcDateLabel(log.dateIso)}</td>
                     <td style={{ padding: '10px' }}>{log.mood || '-'}</td>
                     <td style={{ padding: '10px' }}>{log.symptoms.length > 0 ? log.symptoms.join(', ') : '-'}</td>
@@ -656,7 +656,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                 ))}
                 {Object.keys(logs).length === 0 && (
                   <tr>
-                    <td colSpan={4} style={{ padding: '15px', textAlign: 'center', color: '#999', fontStyle: 'italic' }}>{t(lang, 'no_symptoms_logged')}</td>
+                    <td colSpan={4} style={{ padding: '15px', textAlign: 'center', color: 'var(--text-muted)', fontStyle: 'italic' }}>{t(lang, 'no_symptoms_logged')}</td>
                   </tr>
                 )}
               </tbody>
@@ -667,24 +667,25 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         {/* Clinical Graph */}
         {includeHormone && (
           <>
-            <h2 style={{ fontSize: '18px', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '20px' }}>{t(lang, 'endocrine_profile_model')}</h2>
-        <p style={{ fontSize: '13px', color: '#666', marginBottom: '20px' }}>
+            <h2 style={{ fontSize: '18px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '10px', marginBottom: '20px', color: 'var(--text-strong)' }}>{t(lang, 'endocrine_profile_model')}</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '20px' }}>
           {isPregnancyMode 
             ? t(lang, 'endocrine_desc_preg') 
             : <>{t(lang, 'endocrine_desc_cycle_1')}{activeCycleLength}{t(lang, 'endocrine_desc_cycle_2')}{activeLuteal}{t(lang, 'endocrine_desc_cycle_3')}</>}
         </p>
         
-        <div style={{ width: '100%', height: '350px', minWidth: 0, minHeight: 0, marginBottom: '40px', background: '#fcfcfc', borderRadius: '12px', padding: '15px' }}>
+        <div style={{ width: '100%', height: '350px', minWidth: 0, minHeight: 0, marginBottom: '40px', background: 'var(--bg-inset)', borderRadius: '12px', padding: '15px', border: '1px solid var(--border-subtle)' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={hormoneData as any[]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
-              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#666' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(150,150,150,0.15)" vertical={false} />
+              <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+              <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
               <Tooltip 
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                labelStyle={{ fontWeight: 'bold', color: '#333' }}
+                contentStyle={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--border-subtle)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                itemStyle={{ color: 'var(--text-strong)', fontWeight: 600 }}
+                labelStyle={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}
               />
-              <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+              <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px', color: 'var(--text-muted)' }} />
               <Line type="monotone" dataKey="Estrogen" name={t(lang, 'estrogen')} stroke="#06b6d4" strokeWidth={3} dot={false} />
               <Line type="monotone" dataKey="Progesterone" name={t(lang, 'progesterone')} stroke="#d946ef" strokeWidth={3} dot={false} />
               {isPregnancyMode ? (
@@ -699,15 +700,15 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         )}
 
         {/* Medical Disclaimer */}
-        <div style={{ background: '#fffbeb', border: '1px solid #fde68a', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-          <p style={{ margin: 0, fontSize: '12px', color: '#92400e', lineHeight: 1.5 }}>
+        <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: 'var(--warning)', lineHeight: 1.5 }}>
             <strong>{t(lang, 'clinical_disclaimer_title')}</strong> {t(lang, 'clinical_disclaimer')}
           </p>
         </div>
 
         {/* Footer Note */}
-        <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid #eee', textAlign: 'center' }}>
-          <p style={{ margin: 0, fontSize: '12px', color: '#999' }}>{t(lang, 'footer_note')}</p>
+        <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-subtle)', textAlign: 'center' }}>
+          <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{t(lang, 'footer_note')}</p>
         </div>
       </div>
     </div>

@@ -156,7 +156,7 @@ export function SafetyAnalyzer({
                   <XAxis dataKey="day" stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `Day ${val}`} />
                   <YAxis stroke="var(--text-muted)" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `${val}%`} />
                   <RechartsTooltip 
-                    contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--border-subtle)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ backgroundColor: 'var(--panel-bg)', borderColor: 'var(--border-subtle)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                     itemStyle={{ color: 'var(--text-strong)', fontWeight: 600 }}
                     labelStyle={{ color: 'var(--text-muted)', marginBottom: '0.25rem' }}
                   />
