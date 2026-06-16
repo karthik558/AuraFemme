@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ArrowLeft, Clock, Globe, ChevronDown, Flame } from 'lucide-react';
+import { ArrowLeft, Clock, Globe, ChevronDown } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
 
@@ -58,7 +58,7 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
   const [lang, setLang] = useState<SupportedLanguage>('en');
 
   const reportsData = REPORTS_MAP[lang] || REPORTS_MAP['en'];
-  
+
   const localizedTopics = KNOWLEDGE_TOPICS.map(baseTopic => {
     if (lang === 'en' || !TOPICS_MAP[lang]) return baseTopic;
     const localized = TOPICS_MAP[lang].find((t: any) => t.id === baseTopic.id);
@@ -67,22 +67,22 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
 
   const getRecommendedTopics = () => {
     if (!userProfile || !metrics) return [];
-    
+
     const scoredTopics = localizedTopics.map(topic => {
       let score = 0;
-      
+
       if (userProfile.appMode === 'pregnancy') {
         if (['pregnancy', 'youre-pregnant-now-what'].includes(topic.id)) score += 5;
         if (['childbirth-and-beyond', 'getting-ready-for-baby'].includes(topic.id)) score += 3;
       }
-      
+
       if (userProfile.appMode !== 'pregnancy') {
         if (metrics.goal === 'conceive' && ['ovulation-calculator', 'before-you-get-pregnant'].includes(topic.id)) score += 4;
         if (metrics.goal === 'avoid' && ['ovulation-calculator'].includes(topic.id)) score += 2;
       }
 
       if (metrics.currentPhase === 'menstruation' && ['features-and-fact-sheets'].includes(topic.id)) score += 2;
-      
+
       if (qualityScore !== undefined && qualityScore < 50 && ['features-and-fact-sheets'].includes(topic.id)) score += 3;
 
       return { ...topic, score };
@@ -113,18 +113,18 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
   // Scroll Progress Tracking
   useEffect(() => {
     if (!activeTopicData) return;
-    
+
     const handleScroll = (e: Event) => {
       const target = e.target as HTMLElement;
       // We are looking for the main scrolling container
       if (!target.scrollHeight || target.scrollHeight <= target.clientHeight) return;
-      
+
       const progress = target.scrollTop / (target.scrollHeight - target.clientHeight);
       if (progress >= 0 && progress <= 1) {
-         setScrollProgress(progress * 100);
+        setScrollProgress(progress * 100);
       }
     };
-    
+
     window.addEventListener('scroll', handleScroll, true);
     return () => window.removeEventListener('scroll', handleScroll, true);
   }, [activeTopicData]);
@@ -138,7 +138,7 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
 
   if (activeTopicData) {
     return (
-      <div 
+      <div
         ref={topicRef}
         className="article-view-wrapper"
       >
@@ -182,9 +182,9 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
         </div>
         <div className="premium-lang-switcher">
           <Globe className="w-4 h-4 icon-glow" />
-          <select 
+          <select
             className="lang-select-hidden"
-            value={lang} 
+            value={lang}
             onChange={(e) => setLang(e.target.value as SupportedLanguage)}
           >
             <option value="en">English</option>
@@ -204,7 +204,7 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-strong)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               Top Read
             </h3>
-            <button 
+            <button
               className="reference-card-premium"
               onClick={() => handleSetArticle(localizedTopics[0].id)}
               style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'linear-gradient(135deg, var(--bg-inset) 0%, transparent 100%)', border: '1px solid var(--accent-soft)', padding: '2rem', textAlign: 'left' }}
@@ -228,7 +228,7 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
             <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '1rem' }}>Recommended For You</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
               {recommendations.map((topic, i) => (
-                <button 
+                <button
                   key={`rec-${topic.id}`}
                   className="reference-card-premium"
                   onClick={() => handleSetArticle(topic.id)}
@@ -252,25 +252,25 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
           </div>
         )}
         {localizedTopics.slice(1).map((topic, i) => (
-            <button 
-              key={topic.id}
-              className="reference-card-premium"
-              onClick={() => handleSetArticle(topic.id)}
-              style={{ animationDelay: `${i * 0.05}s` }}
-            >
-              <div className="card-top-row">
-                <div className="card-icon-wrapper-premium">
-                  {topic.icon}
-                </div>
-                <div className="card-reading-time">
-                  <Clock className="w-3 h-3" />
-                  <span>{getReadingTime(topic.id)}</span>
-                </div>
+          <button
+            key={topic.id}
+            className="reference-card-premium"
+            onClick={() => handleSetArticle(topic.id)}
+            style={{ animationDelay: `${i * 0.05}s` }}
+          >
+            <div className="card-top-row">
+              <div className="card-icon-wrapper-premium">
+                {topic.icon}
               </div>
-              <h3 className="card-title-premium">{topic.title}</h3>
-              <p className="card-excerpt-premium">{topic.content}</p>
-            </button>
-          ))}
+              <div className="card-reading-time">
+                <Clock className="w-3 h-3" />
+                <span>{getReadingTime(topic.id)}</span>
+              </div>
+            </div>
+            <h3 className="card-title-premium">{topic.title}</h3>
+            <p className="card-excerpt-premium">{topic.content}</p>
+          </button>
+        ))}
       </div>
     </div>
   );
