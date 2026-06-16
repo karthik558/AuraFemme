@@ -18,6 +18,7 @@ import {
   Settings2,
   X,
   Heart,
+  Plus,
 } from 'lucide-react'
 import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react'
 import { GooeyBloodTransition } from './components/GooeyBloodTransition'
@@ -193,6 +194,7 @@ function App({ onGoHome }: AppProps = {}) {
   const [draftGoal, setDraftGoal] = useState(goal)
   const [draftLutealPhaseLength, setDraftLutealPhaseLength] = useState(lutealPhaseLength)
   const [newPastDate, setNewPastDate] = useState(utcTodayIso())
+  const [isAddingPastPeriod, setIsAddingPastPeriod] = useState(false)
 
   const handleAddPastDate = () => {
     if (newPastDate) {
@@ -740,21 +742,47 @@ function App({ onGoHome }: AppProps = {}) {
                         )}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <DateTriplet 
-                          label="Add past period" 
-                          value={newPastDate} 
-                          onChange={setNewPastDate} 
-                          helper="Select the start date" 
-                        />
-                        <button 
-                          type="button" 
-                          onClick={handleAddPastDate}
-                          className="btn btn-outline"
-                          style={{ padding: '0.5rem 1rem', width: '100%' }}
-                          disabled={!newPastDate}
-                        >
-                          Add Date
-                        </button>
+                        {!isAddingPastPeriod ? (
+                          <button 
+                            type="button" 
+                            onClick={() => setIsAddingPastPeriod(true)}
+                            className="btn btn-outline"
+                            style={{ padding: '0.5rem 1rem', width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', alignItems: 'center', background: 'transparent' }}
+                          >
+                            <Plus size={16} /> Add past period
+                          </button>
+                        ) : (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', background: 'var(--bg-inset)', padding: '1rem', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                            <DateTriplet 
+                              label="" 
+                              value={newPastDate} 
+                              onChange={setNewPastDate} 
+                              helper="Select the start date" 
+                            />
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                              <button 
+                                type="button" 
+                                onClick={() => setIsAddingPastPeriod(false)}
+                                className="btn"
+                                style={{ padding: '0.5rem', flex: 1, border: '1px solid var(--border-subtle)', background: 'transparent', color: 'var(--text-main)', borderRadius: '8px' }}
+                              >
+                                Cancel
+                              </button>
+                              <button 
+                                type="button" 
+                                onClick={() => {
+                                  handleAddPastDate();
+                                  setIsAddingPastPeriod(false);
+                                }}
+                                className="btn"
+                                style={{ padding: '0.5rem', flex: 1, background: 'var(--bg-panel)', color: 'var(--text-strong)', border: '1px solid var(--border-subtle)', borderRadius: '8px' }}
+                                disabled={!newPastDate}
+                              >
+                                Add Date
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
