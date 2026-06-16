@@ -260,12 +260,21 @@ function App({ onGoHome }: AppProps = {}) {
   const [selectedDay, setSelectedDay] = useState<CycleDayInfo | null>(null)
 
   const handleSaveLog = store.addLog
-  const handleDeleteLog = store.removeLog
-
   const handleSetAuthMode = setAuthMode
+
+  const handleDeleteLog = store.removeLog;
+  const handleInspectMetric = React.useCallback((metric: 'ovulation' | 'period' | 'quality' | 'phase') => setInspectorMetric(metric), []);
+  const handleCloseLog = React.useCallback(() => setSelectedDay(null), []);
+  const handleDeleteDailyLog = React.useCallback(() => {
+    if (selectedDay) {
+      store.removeLog(selectedDay.dateIso);
+      setSelectedDay(null);
+    }
+  }, [selectedDay, store]);
   
-
-
+  const handleSelectDay = React.useCallback((day: CycleDayInfo) => {
+    setSelectedDay(day);
+  }, []);
   useEffect(() => {
     if (userProfile?.appMode === 'pregnancy' && activeTab === 'safety') {
       setActiveTab('overview')
@@ -888,14 +897,16 @@ function App({ onGoHome }: AppProps = {}) {
                         className="tab-content fade-transition"
                         style={{ display: activeTab === 'overview' ? 'block' : 'none' }}
                       >
-                        <PersonalDashboard 
-                          userProfile={userProfile} 
-                          metrics={metrics} 
-                          authMode={authMode} 
-                          goal={draftGoal}
-                          lastIntercourseDate={lastIntercourseDate}
-                          onInspectMetric={(metric) => setInspectorMetric?.(metric)}
-                        />
+                        {activeTab === 'overview' && (
+                          <PersonalDashboard 
+                            userProfile={userProfile} 
+                            metrics={metrics} 
+                            authMode={authMode} 
+                            goal={draftGoal}
+                            lastIntercourseDate={lastIntercourseDate}
+                            onInspectMetric={handleInspectMetric}
+                          />
+                        )}
                       </div>
 
                       {/* Calendar Terminal */}
@@ -905,7 +916,7 @@ function App({ onGoHome }: AppProps = {}) {
                       >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
-                          <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={setSelectedDay} userProfile={userProfile} draftLastPeriodDate={draftLastPeriodDate} />
+                          <CalendarGrid days={calendarDays} selectedDay={activeDay} onSelectDay={handleSelectDay} userProfile={userProfile} draftLastPeriodDate={draftLastPeriodDate} />
                           {activeDay && (
                             <section className="phase-summary">
                               <div className="panel-header">
@@ -961,13 +972,11 @@ function App({ onGoHome }: AppProps = {}) {
                                   dateIso={activeDay.dateIso} 
                                   existingLog={activeLogs[activeDay.dateIso] || null} 
                                   onSave={handleSaveLog} 
-                                  onDelete={() => handleDeleteLog(activeDay.dateIso)}
+                                  onDelete={handleDeleteDailyLog}
                                   isGuest={authMode === 'guest'}
-                                  onClose={() => setSelectedDay(null)}
+                                  onClose={handleCloseLog}
                                   userProfile={userProfile}
                                 />
-
-
                             </section>
                           )}
                         </div>
@@ -978,17 +987,19 @@ function App({ onGoHome }: AppProps = {}) {
                         className="tab-content fade-transition"
                         style={{ display: activeTab === 'safety' ? 'block' : 'none' }}
                       >
-                        <SafetyAnalyzer 
-                          lastPeriodDate={draftLastPeriodDate}
-                          onLastPeriodDateChange={setDraftLastPeriodDate}
-                          cycleLength={draftCycleLength}
-                          onCycleLengthChange={setDraftCycleLength}
-                          lutealPhaseLength={draftLutealPhaseLength}
-                          onLutealPhaseLengthChange={setDraftLutealPhaseLength}
-                          lastIntercourseDate={lastIntercourseDate}
-                          onLastIntercourseDateChange={setLastIntercourseDate}
-                          onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
-                        />
+                        {activeTab === 'safety' && (
+                          <SafetyAnalyzer 
+                            lastPeriodDate={draftLastPeriodDate}
+                            onLastPeriodDateChange={setDraftLastPeriodDate}
+                            cycleLength={draftCycleLength}
+                            onCycleLengthChange={setDraftCycleLength}
+                            lutealPhaseLength={draftLutealPhaseLength}
+                            onLutealPhaseLengthChange={setDraftLutealPhaseLength}
+                            lastIntercourseDate={lastIntercourseDate}
+                            onLastIntercourseDateChange={setLastIntercourseDate}
+                            onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
+                          />
+                        )}
                       </div>
 
                       {/* History Section */}
@@ -1011,16 +1022,18 @@ function App({ onGoHome }: AppProps = {}) {
                         <div style={{ width: '100%', maxWidth: '100%', minWidth: 0, boxSizing: 'border-box' }}>
 
 
-                          <ReportExport 
-                            metrics={metrics} 
-                            cycleLength={userProfile?.cycleLength || 28} 
-                            lutealPhaseLength={lutealPhaseLength} 
-                            userName={userProfile?.name || 'Ayana'} 
-                            logs={activeLogs} 
-                            userProfile={userProfile} 
-                            caseStudy={sharedCaseStudy}
-                            days={calendarDays}
-                          />
+                          {activeTab === 'reports' && (
+                            <ReportExport 
+                              metrics={metrics} 
+                              cycleLength={userProfile?.cycleLength || 28} 
+                              lutealPhaseLength={lutealPhaseLength} 
+                              userName={userProfile?.name || 'Ayana'} 
+                              logs={activeLogs} 
+                              userProfile={userProfile} 
+                              caseStudy={sharedCaseStudy}
+                              days={calendarDays}
+                            />
+                          )}
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1.5rem' }}>
                             <div className="phase-summary">

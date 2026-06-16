@@ -531,7 +531,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
               </div>
             </div>
             <div className="chart-wrapper">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={300} minWidth={1} minHeight={1}>
                 <AreaChart data={Array.from({length: 40}, (_, i) => ({ week: i+1, weight: Math.pow(i/10, 3) * 50 }))} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
                   <XAxis dataKey="week" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} />
@@ -558,7 +558,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             </div>
             <div className="chart-wrapper">
               {hasRealHistory ? (
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width="100%" height={300} minWidth={1} minHeight={1}>
                   <BarChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
                     <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} />
@@ -602,7 +602,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             </div>
           </div>
           <div className="chart-wrapper">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={300} minWidth={1} minHeight={1}>
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={mockSymptoms}>
                 <PolarGrid stroke="rgba(255,255,255,0.1)" />
                 <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-main)', fontSize: 12 }} />
@@ -647,7 +647,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             </div>
           </div>
           <div className="chart-wrapper" style={{ minHeight: '350px' }}>
-            <ResponsiveContainer width="100%" height={350}>
+            <ResponsiveContainer width="100%" height={350} minWidth={1} minHeight={1}>
               <AreaChart 
                 data={activeHormoneData as any[]} 
                 margin={{ top: 10, right: 10, left: -20, bottom: 0 }}

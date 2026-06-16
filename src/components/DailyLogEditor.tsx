@@ -1,5 +1,5 @@
 import { CalendarPlus, Trash2, X } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './DailyLogEditor.css'
@@ -18,7 +18,7 @@ const SYMPTOMS = ['Cramps', 'Headache', 'Bloating', 'Fatigue', 'Spotting', 'Tend
 const PREGNANCY_SYMPTOMS = ['Morning Sickness', 'Fatigue', 'Baby Kicks', 'Cravings', 'Heartburn', 'Backache', 'Frequent Urination', 'Prenatal Vitamins', 'Folic Acid']
 const MOODS = ['Calm', 'Happy', 'Energetic', 'Anxious', 'Sad', 'Irritable', 'Sensitive']
 
-export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest, userProfile }: DailyLogEditorProps) {
+export const DailyLogEditor = React.memo(function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose, isGuest, userProfile }: DailyLogEditorProps) {
   const [symptoms, setSymptoms] = useState<string[]>(existingLog?.symptoms || [])
   const [mood, setMood] = useState<string | null>(existingLog?.mood || null)
   const [notes, setNotes] = useState(existingLog?.notes || '')
@@ -123,4 +123,4 @@ export function DailyLogEditor({ dateIso, existingLog, onSave, onDelete, onClose
         </div>
     </div>
   )
-}
+})

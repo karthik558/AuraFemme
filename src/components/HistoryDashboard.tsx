@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Trash2, Activity } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import type { DailyLog } from '../types'
 import { formatUtcDateLabel } from '../utils/calculator'
 import './HistoryDashboard.css'
@@ -15,7 +15,7 @@ interface HistoryDashboardProps {
 
 type FilterOption = 'all' | 'this_cycle' | 'last_7_days'
 
-export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: HistoryDashboardProps) {
+export const HistoryDashboard = React.memo(function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: HistoryDashboardProps) {
   const [filter, setFilter] = useState<FilterOption>('this_cycle')
 
   const filteredLogs = useMemo(() => {
@@ -130,4 +130,4 @@ export function HistoryDashboard({ logs, currentCycleStartIso, onDeleteLog }: Hi
       </div>
     </section>
   )
-}
+})

@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { Download, Activity, ListChecks, CalendarDays } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -22,7 +22,7 @@ interface ReportExportProps {
   days?: CycleDayInfo[];
 }
 
-export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [] }: ReportExportProps) {
+export const ReportExport = React.memo(function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName, caseStudy, logs = {}, userProfile, days = [] }: ReportExportProps) {
   const reportRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [lang, setLang] = useState<SupportedLanguage>('en');
@@ -500,7 +500,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
                  </div>
                  
                  <div style={{ width: '100%', height: '220px', minWidth: 0, minHeight: 0, marginBottom: '30px' }}>
-                   <ResponsiveContainer width="100%" height="100%">
+                   <ResponsiveContainer width="100%" height={220}>
                      <AreaChart data={caseStudyChartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
                        <defs>
                          <linearGradient id="pdfColorRisk" x1="0" y1="0" x2="0" y2="1">
@@ -675,7 +675,7 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
         </p>
         
         <div style={{ width: '100%', height: '350px', minWidth: 0, minHeight: 0, marginBottom: '40px', background: 'var(--bg-inset)', borderRadius: '12px', padding: '15px', border: '1px solid var(--border-subtle)' }}>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={350}>
             <LineChart data={hormoneData as any[]} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(150,150,150,0.15)" vertical={false} />
               <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
@@ -713,4 +713,4 @@ export function ReportExport({ metrics, cycleLength, lutealPhaseLength, userName
       </div>
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Star, Droplet, ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react'
@@ -28,7 +28,7 @@ const phaseLabel: Record<CycleDayInfo['phase'], string> = {
   luteal: 'Luteal',
 }
 
-export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draftLastPeriodDate }: CalendarGridProps) {
+export const CalendarGrid = React.memo(function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draftLastPeriodDate }: CalendarGridProps) {
   const isPregnancyMode = userProfile?.appMode === 'pregnancy'
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -201,7 +201,7 @@ export function CalendarGrid({ days, selectedDay, onSelectDay, userProfile, draf
       </div>
     </section>
   )
-}
+});
 
 function LegendDot({ label, color }: { label: string; color: string }) {
   return (

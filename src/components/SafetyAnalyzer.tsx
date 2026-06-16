@@ -144,7 +144,7 @@ export function SafetyAnalyzer({
             </div>
             
             <div style={{ width: '100%', height: '200px', minWidth: 0, minHeight: 0, marginBottom: '20px' }}>
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height={200}>
                 <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorRisk" x1="0" y1="0" x2="0" y2="1">

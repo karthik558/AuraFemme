@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatUtcDateLabel, toUtcIso, parseUtcIso } from '../utils/calculator';
@@ -11,7 +11,7 @@ interface DateTripletProps {
   helper?: string;
 }
 
-export function DateTriplet({ value, onChange, label = "Date", helper }: DateTripletProps) {
+export const DateTriplet = React.memo(function DateTriplet({ value, onChange, label = "Date", helper }: DateTripletProps) {
   const [isOpen, setIsOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
@@ -126,4 +126,4 @@ export function DateTriplet({ value, onChange, label = "Date", helper }: DateTri
       )}
     </div>
   );
-}
+});
