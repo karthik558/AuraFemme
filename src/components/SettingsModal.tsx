@@ -252,6 +252,14 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
                   <div className="shortcut-keys"><kbd>⌘/Ctrl</kbd> + <kbd>I</kbd></div>
                 </div>
                 <div className="shortcut-row">
+                  <span>Toggle Dark Mode</span>
+                  <div className="shortcut-keys"><kbd>Shift</kbd> + <kbd>D</kbd></div>
+                </div>
+                <div className="shortcut-row">
+                  <span>Toggle Pregnancy Mode</span>
+                  <div className="shortcut-keys"><kbd>Shift</kbd> + <kbd>P</kbd></div>
+                </div>
+                <div className="shortcut-row">
                   <span>Close Modals</span>
                   <div className="shortcut-keys"><kbd>Esc</kbd></div>
                 </div>

@@ -415,6 +415,24 @@ function App({ onGoHome }: AppProps = {}) {
         e.preventDefault();
         fileInputRef.current?.click();
       }
+
+      // Toggles
+      if (e.key === 'D' && e.shiftKey && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        const currentTheme = useAppStore.getState().themeMode;
+        useAppStore.getState().setThemeMode(currentTheme === 'light' ? 'dark' : 'light');
+      }
+      
+      if (e.key === 'P' && e.shiftKey && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault();
+        const state = useAppStore.getState();
+        if (state.userProfile) {
+          state.setUserProfile({
+            ...state.userProfile,
+            appMode: state.userProfile.appMode === 'pregnancy' ? 'cycle' : 'pregnancy'
+          });
+        }
+      }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
