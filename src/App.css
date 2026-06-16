@@ -625,7 +625,7 @@
   transition: all var(--transition-fast);
   color: var(--text-muted);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   cursor: pointer;
   z-index: 1;
 }
@@ -633,34 +633,38 @@
 .goal-nav-item:hover:not(.active) {
   color: var(--text-main);
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
 }
 
 .goal-nav-item.active {
-  color: white;
-  background: transparent;
-}
-
-.goal-active-bg {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius-full);
-  z-index: 0;
-  animation: fadeIn 0.25s ease-out forwards;
+  color: var(--text-strong);
 }
 
 .bg-track {
-  background: #10b981; /* Emerald Green */
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.bg-track .nav-item-content svg {
+  color: #10b981;
 }
 
 .bg-conceive {
-  background: #d946ef; /* Vibrant Fuchsia/Purple */
-  box-shadow: 0 4px 16px rgba(217, 70, 239, 0.3);
+  background: rgba(217, 70, 239, 0.15);
+  border: 1px solid rgba(217, 70, 239, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.bg-conceive .nav-item-content svg {
+  color: #d946ef;
 }
 
 .bg-avoid {
-  background: #ef4444; /* Red for high severity/alert */
-  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.bg-avoid .nav-item-content svg {
+  color: #ef4444;
 }
 
 .goal-active-desc {

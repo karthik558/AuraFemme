@@ -13,6 +13,7 @@ import { useAppStore } from '../store';
 import SystemAnatomyTracker from './SystemAnatomyTracker';
 
 import './PersonalDashboard.css';
+import './LandingPage.css';
 
 interface PersonalDashboardProps {
   userProfile: UserProfile | null;
@@ -250,9 +251,19 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           </div>
         </div>
 
-        <div className="dashboard-hero-image">
-           <div className="dashboard-hero-image-glow" />
-           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" />
+        <div className="dashboard-hero-image" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="lp-3d-float" style={{ transform: 'scale(1.2)' }}>
+            <div className="css-orb-container">
+              <div className="css-orb-core"></div>
+              <div className="css-orb-ring ring-1"></div>
+              <div className="css-orb-ring ring-2"></div>
+              <div className="css-orb-particle p1"></div>
+              <div className="css-orb-particle p2"></div>
+              <div className="css-orb-particle p3"></div>
+              <div className="css-orb-particle p4"></div>
+              <div className="css-orb-particle p5"></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -548,7 +559,7 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
             <div className="chart-wrapper">
               {hasRealHistory ? (
                 <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <BarChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
                     <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} dy={10} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)' }} domain={[0, 'auto']} />

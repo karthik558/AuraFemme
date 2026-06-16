@@ -708,11 +708,8 @@ function App({ onGoHome }: AppProps = {}) {
                             key={option.value}
                             type="button"
                             onClick={() => setDraftGoal(option.value)}
-                            className={`goal-nav-item ${draftGoal === option.value ? 'active' : ''}`}
+                            className={`goal-nav-item ${draftGoal === option.value ? `active bg-${option.value}` : ''}`}
                           >
-                            {draftGoal === option.value && (
-                              <div className={`goal-active-bg bg-${option.value}`} />
-                            )}
                             <span className="nav-item-content" style={{ justifyContent: 'center' }}>
                               <span style={{ display: 'flex', alignItems: 'center' }}>{option.icon}</span>
                               <span className="nav-item-text desktop-only">{option.label}</span>
