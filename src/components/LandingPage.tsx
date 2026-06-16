@@ -12,8 +12,11 @@ import {
   FileText,
   Zap,
   Shield,
-  BarChart3,
-  CheckCircle2
+  CheckCircle2,
+  CloudOff,
+  Cpu,
+  ServerOff,
+  Code2
 } from 'lucide-react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -227,6 +230,41 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
                 </p>
               </div>
             </div>
+
+            {/* Quote Card */}
+            <div className="glass-card panel lp-hover-card" style={{ padding: '1.5rem' }}>
+              <p style={{ color: 'var(--accent-primary)', fontSize: '1.25rem', lineHeight: 1, margin: '0 0 0.5rem 0', fontFamily: 'serif', fontStyle: 'italic', fontWeight: 'bold' }}>
+                "
+              </p>
+              <p style={{ color: 'var(--text-strong)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1rem', fontWeight: 500 }}>
+                Finally, an app that respects my privacy and actually understands my body.
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.15rem', marginBottom: '0.5rem' }}>
+                {[1, 2, 3, 4, 5].map((_, i) => (
+                  <svg key={i} style={{ width: '12px', height: '12px' }} viewBox="0 0 24 24" fill="var(--accent-primary)">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="metric-helper" style={{ margin: 0, fontSize: '0.8rem' }}>– Verified User</p>
+            </div>
+
+            {/* Feature Bullets Card */}
+            <div className="glass-card panel lp-hover-card">
+              <div className="panel-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {[
+                  { label: 'Works Offline', icon: <CloudOff className="w-5 h-5" /> },
+                  { label: 'On-Device Processing', icon: <Cpu className="w-5 h-5" /> },
+                  { label: 'No Cloud Sync', icon: <ServerOff className="w-5 h-5" /> },
+                  { label: 'Open Source', icon: <Code2 className="w-5 h-5" /> }
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--text-strong)', fontWeight: 500 }}>
+                    <div style={{ color: 'var(--accent-primary)', opacity: 0.8 }}>{item.icon}</div>
+                    {item.label}
+                  </div>
+                ))}
+              </div>
+            </div>
           </aside>
 
           {/* MAIN CONTENT */}
@@ -247,11 +285,11 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
                 "A clinical-grade menstrual health dashboard built on absolute privacy. Just powerful biological intelligence running entirely on your device."
               </p>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', flexWrap: 'wrap' }}>
-                <div className="clinical-badge">
+                <div className="clinical-badge badge-green">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>Clinical math online</span>
                 </div>
-                <div className="clinical-badge" style={{ background: 'var(--bg-panel)' }}>
+                <div className="clinical-badge badge-green" style={{ background: 'var(--bg-panel)' }}>
                   <Shield className="w-4 h-4" />
                   <span>Zero Trackers</span>
                 </div>
@@ -259,7 +297,7 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
             </div>
 
             {/* Metrics Grid (Stats) */}
-            <div className="metrics-grid">
+            <div className="metrics-grid lp-metrics-4col">
               <div className="metric-card lp-hover-card">
                 <div>
                   <p className="metric-label">Local Storage</p>
@@ -282,21 +320,53 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
                   <p className="metric-value"><AnimatedValue value={28} /> days</p>
                   <p className="metric-helper">Phase-by-phase mapping</p>
                 </div>
-                <div className="metric-icon"><BarChart3 size={20} /></div>
+                <div className="metric-icon"><Activity size={20} /></div>
+              </div>
+              <div className="metric-card lp-hover-card">
+                <div>
+                  <p className="metric-label">Architecture</p>
+                  <p className="metric-value">Zero-Knowledge</p>
+                  <p className="metric-helper">Data never leaves your device</p>
+                </div>
+                <div className="metric-icon"><Lock size={20} /></div>
               </div>
             </div>
 
-            {/* 3D Map Panel */}
+            {/* CSS Orb Panel */}
             <div className="glass-card panel" style={{ padding: 0, overflow: 'hidden' }}>
-              <div className="panel-header" style={{ padding: '1.5rem 1.5rem 0' }}>
-                <div>
-                  <p className="panel-label">Local-First Architecture</p>
-                  <h3 className="panel-title" style={{ fontSize: '1.25rem', marginTop: '0.25rem' }}>Zero-Knowledge Data Core</h3>
+              <div className="lp-datacore-grid">
+                <div style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem', justifyContent: 'center' }}>
+                  <div>
+                    <p className="panel-label" style={{ marginBottom: '0.5rem' }}>Local-First Architecture</p>
+                    <h3 className="panel-title" style={{ fontSize: '1.75rem', marginTop: '0.25rem', marginBottom: '0.75rem' }}>Zero-Knowledge Data Core</h3>
+                    <p className="metric-helper" style={{ fontSize: '0.95rem' }}>Your data stays with you. Always.</p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {[
+                      'End-to-end encryption',
+                      'No telemetry collection',
+                      'No data sharing',
+                      '100% local processing'
+                    ].map((text, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-strong)', fontWeight: 500, fontSize: '0.95rem' }}>
+                        <CheckCircle2 className="w-5 h-5 text-green-500" style={{ color: '#10b981' }} />
+                        {text}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="metric-icon"><ShieldAlert size={20} /></div>
-              </div>
-              <div className="lp-3d-float" style={{ width: '100%', height: '350px', padding: '1rem' }}>
-                <DataCore3D style={{ width: '100%', height: '100%' }} />
+                <div className="lp-3d-float" style={{ width: '100%', height: '350px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                  <div className="css-orb-container">
+                    <div className="css-orb-core"></div>
+                    <div className="css-orb-ring ring-1"></div>
+                    <div className="css-orb-ring ring-2"></div>
+                    <div className="css-orb-particle p1"></div>
+                    <div className="css-orb-particle p2"></div>
+                    <div className="css-orb-particle p3"></div>
+                    <div className="css-orb-particle p4"></div>
+                    <div className="css-orb-particle p5"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -308,7 +378,7 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
                   <h3 className="panel-title">Everything you need. Nothing you don't.</h3>
                 </div>
               </div>
-              <div className="panel-body lp-features-list">
+              <div className="panel-body lp-features-grid">
                 {[
                   { icon: <CalendarDays size={18} />, title: 'Cycle & Pregnancy', desc: 'Switch seamlessly between cycle tracking and fetal development.' },
                   { icon: <Brain size={18} />, title: 'Clinical Intelligence', desc: 'Algorithms adapt to your baseline, analyzing luteal phase lengths.' },
@@ -337,18 +407,21 @@ export function LandingPage({ onGoToApp }: LandingPageProps) {
                 </div>
               </div>
               <div className="panel-body">
-                <div className="lp-timeline">
+                <div className="lp-timeline-row">
                   {[
                     { num: '01', title: 'Open the App', desc: 'Click "Start Tracking". AuraFemme runs entirely in your browser — no sign-up.' },
                     { num: '02', title: 'Set Your Baseline', desc: 'Enter the date of your last period. Our algorithms calculate your phase immediately.' },
                     { num: '03', title: 'Log & Analyze', desc: 'Log symptoms daily to update the 3D visualizer and receive clinical guidance.' },
                   ].map((step, i) => (
-                    <div key={i} className="lp-timeline-item">
-                      <div className="lp-timeline-marker">{step.num}</div>
-                      <div className="lp-timeline-content">
-                        <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '0.25rem' }}>{step.title}</h4>
-                        <p className="metric-helper">{step.desc}</p>
+                    <div key={i} className="lp-timeline-item-wrapper">
+                      <div className="glass-card lp-timeline-card">
+                        <div className="lp-timeline-marker">{step.num}</div>
+                        <div className="lp-timeline-content">
+                          <h4 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '0.25rem' }}>{step.title}</h4>
+                          <p className="metric-helper">{step.desc}</p>
+                        </div>
                       </div>
+                      {i < 2 && <ArrowRight className="lp-timeline-arrow" size={24} />}
                     </div>
                   ))}
                 </div>
