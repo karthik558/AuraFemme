@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { ArrowLeft, Clock, Globe, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Clock, Globe, ChevronDown, Flame } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { KNOWLEDGE_TOPICS } from '../data/knowledgeBaseData';
 
@@ -198,6 +198,31 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
         </div>
       </div>
       <div className="reference-grid" ref={topicRef}>
+        {/* Pinned Top Read Section */}
+        {localizedTopics.length > 0 && (
+          <div style={{ gridColumn: '1 / -1', marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-strong)', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              Top Read
+            </h3>
+            <button 
+              className="reference-card-premium"
+              onClick={() => handleSetArticle(localizedTopics[0].id)}
+              style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem', background: 'linear-gradient(135deg, var(--bg-inset) 0%, transparent 100%)', border: '1px solid var(--accent-soft)', padding: '2rem', textAlign: 'left' }}
+            >
+              <div className="card-top-row" style={{ width: '100%' }}>
+                <div className="card-icon-wrapper-premium" style={{ background: 'var(--accent-primary)', color: 'white', transform: 'scale(1.15)', transformOrigin: 'left center' }}>
+                  {localizedTopics[0].icon}
+                </div>
+                <div className="card-reading-time" style={{ background: 'var(--bg-panel)', padding: '0.4rem 0.8rem', borderRadius: '999px', border: '1px solid var(--border-subtle)' }}>
+                  <Clock className="w-3 h-3" />
+                  <span>{getReadingTime(localizedTopics[0].id)}</span>
+                </div>
+              </div>
+              <h3 className="card-title-premium" style={{ fontSize: '1.5rem', marginTop: '0.5rem' }}>{localizedTopics[0].title}</h3>
+              <p className="card-excerpt-premium" style={{ fontSize: '1rem', opacity: 0.9, maxWidth: '800px', lineHeight: 1.6 }}>{localizedTopics[0].content}</p>
+            </button>
+          </div>
+        )}
         {recommendations.length > 0 && (
           <div style={{ gridColumn: '1 / -1', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)', marginBottom: '1rem' }}>Recommended For You</h3>
@@ -226,7 +251,7 @@ export function KnowledgeBase({ onArticleChange, userProfile, metrics, qualitySc
             <h3 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-strong)', marginTop: '2.5rem', marginBottom: '0.5rem' }}>All Topics</h3>
           </div>
         )}
-        {localizedTopics.map((topic, i) => (
+        {localizedTopics.slice(1).map((topic, i) => (
             <button 
               key={topic.id}
               className="reference-card-premium"
