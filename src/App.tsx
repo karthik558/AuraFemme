@@ -750,7 +750,7 @@ function App({ onGoHome }: AppProps = {}) {
                 </div>
               </div>
 
-              <div className="user-badge" onClick={() => fileInputRef.current?.click()} style={{ cursor: 'pointer' }} title="Click to import data">
+              <div className="user-badge" onClick={() => setIsSettingsOpen(true)} style={{ cursor: 'pointer' }} title="Open Settings">
                 <div className="user-avatar">
                   {authMode === 'guest' ? 'G' : userProfile?.name.charAt(0).toUpperCase()}
                 </div>
