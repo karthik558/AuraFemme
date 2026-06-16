@@ -649,7 +649,7 @@ function App({ onGoHome }: AppProps = {}) {
                             className={`goal-nav-item ${draftGoal === option.value ? 'active' : ''}`}
                           >
                             {draftGoal === option.value && (
-                              <div className="nav-active-bg" />
+                              <div className={`goal-active-bg bg-${option.value}`} />
                             )}
                             <span className="nav-item-content" style={{ justifyContent: 'center' }}>
                               <span style={{ display: 'flex', alignItems: 'center' }}>{option.icon}</span>

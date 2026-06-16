@@ -640,6 +640,29 @@
   background: transparent;
 }
 
+.goal-active-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-full);
+  z-index: 0;
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.bg-track {
+  background: #10b981; /* Emerald Green */
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.bg-conceive {
+  background: #d946ef; /* Vibrant Fuchsia/Purple */
+  box-shadow: 0 4px 16px rgba(217, 70, 239, 0.3);
+}
+
+.bg-avoid {
+  background: #ef4444; /* Red for high severity/alert */
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
+}
+
 .goal-active-desc {
   margin-top: 0.75rem;
   font-size: 0.85rem;
