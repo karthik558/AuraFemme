@@ -204,8 +204,8 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
       ref={containerRef}
       className="personal-dashboard-container"
     >
-      <div className="dashboard-top-section" style={{ display: 'flex', gap: '2rem', alignItems: 'stretch', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column' }}>
+      <div className="dashboard-top-section">
+        <div className="dashboard-hero-content">
           <div className="dashboard-header-premium" style={{ marginBottom: '1.5rem' }}>
             <h2 className="dashboard-greeting-premium">
               {greeting}
@@ -250,14 +250,9 @@ export const PersonalDashboard = memo(function PersonalDashboard({ userProfile, 
           </div>
         </div>
 
-        <div className="dashboard-hero-image hide-on-mobile" style={{ flex: '1 1 300px', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', position: 'relative' }}>
-           <div style={{
-             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '250px', height: '250px',
-             background: 'var(--accent-primary)', opacity: 0.15, filter: 'blur(80px)', borderRadius: '50%',
-             pointerEvents: 'none',
-             animation: 'pulseGlow 3s ease-in-out infinite'
-           }} />
-           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" style={{ width: '100%', maxWidth: '400px', height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 20px var(--accent-soft))', position: 'relative', zIndex: 1, animation: 'shimmerSparkle 4s ease-in-out infinite' }} />
+        <div className="dashboard-hero-image">
+           <div className="dashboard-hero-image-glow" />
+           <img src="/celestial_biology_insight.png" alt="Celestial Biology Insight" />
         </div>
       </div>
 

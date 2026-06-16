@@ -262,8 +262,9 @@ export default function SystemAnatomyTracker({ metrics, userProfile, gestational
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
                     <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text-strong)' }}>{sys.name}</h4>
                     <span style={{ 
-                      fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em',
-                      color: sys.color, background: `${sys.color}15`, padding: '0.2rem 0.6rem', borderRadius: '999px'
+                      fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em',
+                      color: sys.color, background: `${sys.color}15`, padding: '0.3rem 0.6rem', borderRadius: '12px',
+                      whiteSpace: 'normal', display: 'inline-block', lineHeight: 1.2, wordBreak: 'break-word', textAlign: 'left'
                     }}>
                       {sys.status}
                     </span>
