@@ -33,11 +33,7 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
 
   const handleThemeChange = (targetMode: ThemeMode) => {
     if (themeMode === targetMode || transitionState.isActive) return;
-    
-    // Visually hide the modal immediately
-    gsap.to(overlayRef.current, { opacity: 0, duration: 0.18 });
-    gsap.to(modalRef.current, { y: 16, opacity: 0, scale: 0.97, duration: 0.18 });
-    
+
     setTransitionState({
       isActive: true,
       targetTheme: targetMode
@@ -97,7 +93,11 @@ export function SettingsModal({ isOpen, onClose, onSignOut, onExportData, onImpo
           isActive={transitionState.isActive}
           targetTheme={transitionState.targetTheme}
           targetAppMode={userProfile?.appMode || 'cycle'}
-          onSwitch={() => setThemeMode(transitionState.targetTheme)}
+          onSwitch={() => {
+            setThemeMode(transitionState.targetTheme);
+            if (overlayRef.current) overlayRef.current.style.opacity = '0';
+            if (modalRef.current) modalRef.current.style.opacity = '0';
+          }}
           onComplete={() => {
             setTransitionState(prev => ({ ...prev, isActive: false }));
             onClose();

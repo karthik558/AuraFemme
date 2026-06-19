@@ -1,36 +1,128 @@
 .gooey-transition-wrapper {
+  --liquid-color: #ef4a5d;
+  --liquid-dark: #b91c2b;
+  --liquid-light: #ff8fa0;
   position: fixed;
   inset: 0;
   z-index: 9999999;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0;
+  background: transparent;
+  contain: layout paint;
 }
 
-.gooey-filter-container {
-  width: 100%;
-  height: 100%;
-  /* Removed heavy SVG filter to prevent severe lag during transition */
-  /* transform: translateZ(0); */
-}
-
-.blood-wipe {
+.liquid-sheet {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  /* We use 120vh so it covers fully before the drips hit the bottom */
-  height: 120vh;
+  inset: -18vh 0 auto;
+  height: 136vh;
+  will-change: transform;
+  filter: url("#gooey-transition-filter");
 }
 
-.blood-solid-block {
-  width: 100%;
-  height: 100%;
+.liquid-front {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.liquid-body {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.2), transparent 18%),
+    linear-gradient(135deg, var(--liquid-light), var(--liquid-color) 42%, var(--liquid-dark));
+  box-shadow:
+    0 28px 70px rgba(91, 12, 24, 0.28),
+    inset 0 -30px 60px rgba(80, 0, 12, 0.2),
+    inset 0 24px 54px rgba(255, 255, 255, 0.16);
+}
+
+.liquid-surface {
+  position: absolute;
+  left: -8vw;
+  right: -8vw;
+  bottom: -9vh;
+  height: 24vh;
+  border-radius: 48% 52% 48% 52% / 42% 44% 56% 58%;
+  background:
+    radial-gradient(circle at 24% 30%, rgba(255, 255, 255, 0.28), transparent 18%),
+    linear-gradient(180deg, var(--liquid-light), var(--liquid-color));
+  box-shadow:
+    0 22px 42px rgba(91, 12, 24, 0.24),
+    inset 0 -16px 30px rgba(80, 0, 12, 0.2);
+  will-change: transform;
+}
+
+.liquid-highlight {
+  position: absolute;
+  top: 18vh;
+  left: 8vw;
+  width: 42vw;
+  height: 18vh;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.26), transparent);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  z-index: 3;
+  will-change: transform, opacity;
 }
 
 .blood-drip {
   position: absolute;
-  bottom: 0;
-  /* Shift down so half of it hangs out of the solid block */
-  transform: translateY(50%);
+  bottom: -16vh;
+  border-radius: 0 0 999px 999px;
+  background:
+    radial-gradient(circle at 50% 76%, var(--liquid-light), transparent 22%),
+    linear-gradient(180deg, var(--liquid-color), var(--liquid-dark));
+  box-shadow:
+    0 20px 35px rgba(91, 12, 24, 0.22),
+    inset 0 -16px 26px rgba(80, 0, 12, 0.18),
+    inset 10px 0 18px rgba(255, 255, 255, 0.09);
+  will-change: transform;
+}
+
+.blood-drip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  width: 55%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
   border-radius: 50%;
+  background: linear-gradient(145deg, var(--liquid-light), var(--liquid-color) 50%, var(--liquid-dark));
+}
+
+.blood-droplet {
+  position: absolute;
+  top: 70vh;
+  border-radius: 55% 45% 58% 42% / 50% 45% 55% 50%;
+  background: linear-gradient(145deg, var(--liquid-light), var(--liquid-color) 48%, var(--liquid-dark));
+  box-shadow:
+    0 12px 24px rgba(91, 12, 24, 0.22),
+    inset 0 -5px 10px rgba(80, 0, 12, 0.18);
+  will-change: transform, opacity;
+}
+
+.gooey-transition-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.08), transparent 30%),
+    rgba(20, 0, 4, 0.04);
+  opacity: 0.7;
+}
+
+.gooey-transition-wrapper svg {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gooey-transition-wrapper {
+    display: none;
+  }
 }
