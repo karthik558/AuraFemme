@@ -138,17 +138,34 @@
 .app-nav {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  background: var(--panel-bg);
-  border: 1px solid var(--panel-border);
-  border-radius: var(--radius-full);
-  padding: 0.35rem;
+  gap: 0.35rem;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.42)),
+    var(--panel-bg);
+  border: 1px solid rgba(255, 255, 255, 0.64);
+  border-radius: 1.35rem;
+  padding: 0.45rem;
   width: max-content;
   max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 16px 40px rgba(91, 38, 48, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(26px) saturate(150%);
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  min-width: 0;
+}
+
+:root[data-theme='dark'] .app-nav {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025)),
+    var(--panel-bg);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .app-nav::-webkit-scrollbar {
@@ -159,20 +176,24 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  border-radius: var(--radius-full);
-  padding: 0.5rem 1rem;
+  border-radius: 1rem;
+  padding: 0.65rem 1.05rem;
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: all var(--transition-fast);
   color: var(--text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
   z-index: 1;
+  white-space: nowrap;
+  isolation: isolate;
 }
 
 .nav-item:hover {
-  color: var(--text-main);
+  color: var(--text-strong);
+  background: rgba(255, 255, 255, 0.46);
+  box-shadow: inset 0 0 0 1px var(--border-subtle);
 }
 
 .nav-item.active {
@@ -186,50 +207,41 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    background: var(--panel-bg);
-    border: 1px solid var(--panel-border);
-    border-radius: var(--radius-full);
-    padding: 0.35rem;
-    gap: 0.25rem;
+    border-radius: 1.4rem;
+    padding: 0.45rem;
+    gap: 0.35rem;
     width: max-content;
     max-width: 100%;
     margin: 0 auto;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 1rem;
     z-index: 50;
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-  }
-
-  :root[data-theme='dark'] .app-nav {
-    background: var(--panel-bg);
   }
 
   .nav-item {
     flex-direction: row;
-    padding: 0.5rem 1.25rem;
+    min-height: 2.75rem;
+    padding: 0.65rem 1.15rem;
     font-size: 0.9rem;
-    border-radius: var(--radius-full);
+    border-radius: 1rem;
     background: transparent;
     border: none;
-    box-shadow: none;
     backdrop-filter: none;
   }
 
   .nav-item:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.48);
+    color: var(--text-strong);
   }
 
   .nav-item-content {
     flex-direction: row;
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
 
   .nav-item-content svg {
-    width: 1.1rem !important;
-    height: 1.1rem !important;
+    width: 1.05rem !important;
+    height: 1.05rem !important;
     margin-bottom: 0;
   }
 }
@@ -277,33 +289,45 @@
   .mobile-bottom-nav {
     display: flex;
     position: fixed;
-    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
     left: 50%;
     transform: translateX(-50%);
-    width: 94vw;
-    max-width: 400px;
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 2rem;
-    padding: 0.25rem 0.4rem;
+    width: min(92vw, 400px);
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.62)),
+      var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 1.35rem;
+    padding: 0.3rem;
     justify-content: space-between;
     align-items: center;
     z-index: 50;
-    backdrop-filter: blur(30px) saturate(200%);
-    -webkit-backdrop-filter: blur(30px) saturate(200%);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     box-shadow: 
-      0 12px 40px rgba(0, 0, 0, 0.12), 
-      0 4px 12px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      0 14px 36px rgba(91, 38, 48, 0.14), 
+      0 4px 12px rgba(91, 38, 48, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.75);
   }
 
   :root[data-theme='dark'] .mobile-bottom-nav {
-    background: rgba(18, 14, 16, 0.82);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background:
+      linear-gradient(135deg, rgba(34, 28, 31, 0.9), rgba(22, 15, 17, 0.76)),
+      var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     box-shadow: 
       0 12px 40px rgba(0, 0, 0, 0.4), 
       0 4px 12px rgba(0, 0, 0, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  :root[data-theme='dark'] .mobile-nav-item:hover:not(.active),
+  :root[data-theme='dark'] .mobile-nav-item.active {
+    color: #ef4a5d;
+  }
+
+  :root[data-theme='dark'] .mobile-nav-item.active::after {
+    background: #ef4a5d;
   }
 
   .mobile-nav-item {
@@ -314,54 +338,75 @@
     align-items: center;
     justify-content: center;
     min-width: 0;
-    padding: 0.35rem 0.1rem 0.25rem;
+    min-height: 2.9rem;
+    padding: 0.45rem 0.1rem 0.55rem;
     background: transparent;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
     outline: none;
     touch-action: manipulation;
-    border-radius: 1rem;
+    border-radius: 0.95rem;
     -webkit-tap-highlight-color: transparent;
-    transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: color 0.2s ease, background 0.2s ease, transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .mobile-nav-item:active {
-    transform: scale(0.9);
+    transform: scale(0.96);
   }
 
   .mobile-nav-item:hover:not(.active) {
-    color: var(--text-main);
+    color: #ef4a5d;
+    background: transparent;
   }
 
   .mobile-nav-item.active {
-    color: var(--accent-primary);
+    color: #ef4a5d;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .mobile-nav-item.active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0.32rem;
+    width: 1.15rem;
+    height: 0.18rem;
+    border-radius: 999px;
+    background: #ef4a5d;
+    transform: translateX(-50%);
+    box-shadow: 0 3px 10px rgba(239, 74, 93, 0.24);
   }
 
   .icon-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.1rem;
-    height: 2.1rem;
-    border-radius: 999px;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.85rem;
     background: transparent;
-    transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
-    margin-bottom: 0.1rem;
+    transition: color 0.2s ease, transform 0.2s ease;
+    margin-bottom: 0;
   }
 
   .mobile-nav-item.active .icon-wrapper {
-    background: var(--accent-soft);
-    box-shadow: 0 3px 10px rgba(197, 34, 51, 0.2);
-    transform: scale(1.05);
+    background: transparent;
+    box-shadow: none;
+    transform: translateY(-0.1rem);
   }
 
   .icon-wrapper svg {
-    width: 1.35rem;
-    height: 1.35rem;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .mobile-nav-label {
+    display: none;
+  }
+
+  .mobile-nav-label.active {
     display: none;
   }
   
@@ -1187,9 +1232,11 @@
 .nav-active-bg {
   position: absolute;
   inset: 0;
-  border-radius: var(--radius-xl);
-  background: var(--accent-primary);
-  box-shadow: 0 4px 16px rgba(197, 34, 51, 0.3);
+  border-radius: 1rem;
+  background: #ef4a5d;
+  box-shadow:
+    0 10px 24px rgba(239, 74, 93, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
   z-index: 0;
 }
 
@@ -1199,11 +1246,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-width: 0;
 }
 
 .nav-item-content svg {
   width: 1.1rem;
   height: 1.1rem;
+  flex: 0 0 auto;
+}
+
+.nav-item-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @keyframes tabSlideIn {
