@@ -218,6 +218,64 @@
   color: var(--text-muted);
 }
 
+/* Unified analyzer polish */
+.analyzer-grid {
+  gap: clamp(1rem, 2vw, 1.25rem);
+}
+
+.analyzer-panel,
+.risk-badge-pill,
+.summary-box {
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-2)), var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-card);
+}
+
+.analyzer-title {
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.analyzer-icon {
+  color: var(--accent-solid);
+}
+
+.control-input {
+  border-radius: 0.85rem;
+  background: var(--surface-2);
+}
+
+.control-input:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-subtle);
+}
+
+.control-input:focus {
+  border-color: rgba(239, 74, 93, 0.34);
+  box-shadow: var(--focus-ring);
+  background: var(--surface-1);
+}
+
+.summary-box {
+  background: var(--surface-2);
+}
+
+.confidence-badge {
+  border-radius: 0.7rem;
+  background: var(--surface-2);
+}
+
+@media (max-width: 640px) {
+  .analyzer-header {
+    gap: 0.75rem;
+  }
+
+  .controls-grid {
+    gap: 1rem;
+  }
+}
+
 .timeline-list {
   margin-top: 1.5rem;
   display: flex;

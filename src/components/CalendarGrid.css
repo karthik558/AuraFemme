@@ -467,3 +467,54 @@
   --ring-bg-hover: linear-gradient(145deg, rgba(56, 189, 248, 0.15), rgba(2, 132, 199, 0.2));
   --ring-glow: rgba(56, 189, 248, 0.25);
 }
+
+/* Unified calendar polish */
+.calendar-grid-section {
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-2)), var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 1.1rem;
+  box-shadow: var(--shadow-card);
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.legend-badge,
+.calendar-nav-pill,
+.btn-today {
+  background: var(--surface-2);
+  border-color: var(--border-subtle);
+  border-radius: 0.85rem;
+}
+
+.nav-btn {
+  border-radius: 0.7rem;
+}
+
+.nav-btn:hover,
+.btn-today:hover {
+  color: var(--accent-solid);
+  background: var(--accent-solid-soft);
+  border-color: rgba(239, 74, 93, 0.25);
+}
+
+.calendar-day-cell {
+  border-radius: 0.85rem;
+}
+
+.calendar-day-cell:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 767px) {
+  .calendar-grid-section {
+    gap: 1rem;
+  }
+
+  .calendar-legend-glass {
+    gap: 0.45rem;
+  }
+
+  .legend-badge {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.68rem;
+  }
+}

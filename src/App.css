@@ -452,14 +452,14 @@
 
 .report-grid-3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 20px;
   margin-bottom: 30px;
 }
 
 .report-grid-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 20px;
   margin-bottom: 40px;
 }
@@ -470,6 +470,13 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.tab-panel-container,
+.tab-content {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Sidebar Panels */

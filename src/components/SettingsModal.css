@@ -534,3 +534,119 @@ kbd {
     transform: translateY(0) scale(1);
   }
 }
+
+/* Unified 2026 surface pass */
+.settings-modal {
+  max-width: min(560px, calc(100vw - 2rem));
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(180deg, var(--surface-1), var(--surface-2)),
+    var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-soft);
+  gap: 1rem;
+}
+
+.settings-header {
+  align-items: center;
+  padding-bottom: 1rem;
+}
+
+.settings-header-icon,
+.settings-close-btn,
+.settings-avatar,
+.setting-row-icon {
+  border-radius: 0.85rem;
+}
+
+.settings-header-icon,
+.setting-row-icon {
+  background: var(--accent-solid-soft);
+  color: var(--accent-solid);
+}
+
+.settings-close-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+}
+
+.settings-close-btn:hover {
+  color: var(--accent-solid);
+  background: var(--accent-solid-soft);
+}
+
+.settings-profile,
+.setting-row,
+.shortcuts-grid,
+.theme-switcher-group {
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-2)), var(--panel-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.95rem;
+  box-shadow: var(--shadow-card);
+}
+
+.settings-profile::before {
+  display: none;
+}
+
+.settings-avatar,
+.theme-option.active {
+  background: var(--accent-solid);
+  box-shadow: 0 10px 24px rgba(239, 74, 93, 0.22);
+}
+
+.theme-switcher-group {
+  border-radius: 0.95rem;
+  padding: 0.25rem;
+}
+
+.theme-option {
+  border-radius: 0.75rem;
+  min-height: 2.45rem;
+  font-weight: 750;
+}
+
+.setting-row {
+  padding: 0.9rem;
+}
+
+.setting-row:hover {
+  border-color: rgba(239, 74, 93, 0.28);
+  background: linear-gradient(180deg, var(--surface-hover), var(--surface-1)), var(--panel-bg);
+  transform: translateY(-1px);
+}
+
+.setting-action-btn {
+  border-radius: 0.75rem;
+  font-weight: 750;
+}
+
+.setting-action-btn:hover:not(:disabled) {
+  background: var(--accent-solid-soft);
+  border-color: rgba(239, 74, 93, 0.3);
+  color: var(--accent-solid);
+}
+
+.setting-action-btn.danger,
+.signout-btn {
+  color: #ef4a5d;
+  border-color: rgba(239, 74, 93, 0.22);
+  background: rgba(239, 74, 93, 0.08);
+}
+
+.signout-btn {
+  border-radius: 0.9rem;
+}
+
+@media (max-width: 480px) {
+  .settings-overlay {
+    align-items: flex-end;
+    padding: 0.75rem;
+  }
+
+  .settings-modal {
+    max-height: calc(100vh - 1.5rem);
+    overflow-y: auto;
+    border-radius: 1rem;
+  }
+}
