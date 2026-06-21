@@ -180,6 +180,12 @@ function App({ onGoHome }: AppProps = {}) {
     lastIntercourseDate, setLastIntercourseDate,
     pastPeriodDates, setPastPeriodDates
   } = store
+
+  const handleTabChange = React.useCallback((tab: TabKey) => {
+    React.startTransition(() => {
+      setActiveTab(tab);
+    });
+  }, [setActiveTab]);
   
   useEffect(() => {
     const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
@@ -408,12 +414,12 @@ function App({ onGoHome }: AppProps = {}) {
       // Tab Switching (1-6)
       if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
         switch (e.key) {
-          case '1': setActiveTab('overview'); break;
-          case '2': setActiveTab('calendar'); break;
-          case '3': setActiveTab('safety'); break;
-          case '4': setActiveTab('reports'); break;
-          case '5': setActiveTab('history'); break;
-          case '6': setActiveTab('reference'); break;
+          case '1': handleTabChange('overview'); break;
+          case '2': handleTabChange('calendar'); break;
+          case '3': handleTabChange('safety'); break;
+          case '4': handleTabChange('reports'); break;
+          case '5': handleTabChange('history'); break;
+          case '6': handleTabChange('reference'); break;
         }
       }
       
@@ -524,7 +530,7 @@ function App({ onGoHome }: AppProps = {}) {
       // Innovative quick action on long press
       if (tab === 'overview') {
         // Quick log: switch to calendar (where logging happens) and give feedback
-        setActiveTab('calendar');
+        handleTabChange('calendar');
         store.addToast('Quick log mode — tap a day to log symptoms', 'info');
       } else if (tab === 'calendar') {
         // Go to today
@@ -638,7 +644,7 @@ function App({ onGoHome }: AppProps = {}) {
             </div>
 
             {/* Center Logo */}
-            <div className="header-brand" style={{ cursor: 'pointer' }} onClick={() => onGoHome ? onGoHome() : setActiveTab('overview')}>
+            <div className="header-brand" style={{ cursor: 'pointer' }} onClick={() => onGoHome ? onGoHome() : handleTabChange('overview')}>
               <picture>
                 <source media="(max-width: 768px)" srcSet={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} />
                 <img src={userProfile?.appMode === 'pregnancy' ? pregnancyLogo : auraLogo} alt="Aura Femme Logo" className="brand-logo-img" />
@@ -669,7 +675,7 @@ function App({ onGoHome }: AppProps = {}) {
             <button
               key={tab}
               type="button"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               className={`nav-item ${activeTab === tab ? 'active' : ''}`}
               style={{ position: 'relative' }}
             >
@@ -997,7 +1003,7 @@ function App({ onGoHome }: AppProps = {}) {
                             onLutealPhaseLengthChange={setDraftLutealPhaseLength}
                             lastIntercourseDate={lastIntercourseDate}
                             onLastIntercourseDateChange={setLastIntercourseDate}
-                            onExport={(result) => { setSharedCaseStudy(result); setActiveTab('reports'); }} 
+                            onExport={(result) => { setSharedCaseStudy(result); handleTabChange('reports'); }} 
                           />
                         )}
                       </div>
@@ -1091,7 +1097,7 @@ function App({ onGoHome }: AppProps = {}) {
             <button
               key={tab}
               type="button"
-              onClick={() => setActiveTab(tab)}
+              onClick={() => handleTabChange(tab)}
               onPointerDown={(e) => handleTabPointerDown(tab, e)}
               onPointerUp={handleTabPointerUp}
               onPointerLeave={handleTabPointerUp}
